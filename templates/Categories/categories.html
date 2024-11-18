@@ -1,0 +1,47 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}Categories{% endblock %}
+
+    {% block main_content %}
+
+    <div class="col-lg-8 ">
+        <h2>Categories</h2>
+
+    <!-- List of Categories -->
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Category Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category in categories %}
+            <tr>
+                <td>{{ category.id }}</td>
+                <td>{{ category.category_name }}</td>
+                <td>
+                    <a href="{{ url_for('category.edit_category', category_id=category.id) }}" class="btn btn-warning">Edit</a>
+                    <form action="{{ url_for('category.delete_category', category_id=category.id) }}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Add Category Form -->
+    <h3>Add New Category</h3>
+    <form action="{{ url_for('category.add_category') }}" method="POST">
+        <div class="mb-3">
+            <label for="category_name" class="form-label">Category Name</label>
+            <input type="text" class="form-control" id="category_name" name="category_name" required>
+        </div>
+        <button type="submit" class="btn btn-success">Add Category</button>
+    </form>
+    </div>
+
+
+    {% endblock %}

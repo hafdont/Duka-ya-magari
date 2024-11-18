@@ -1,0 +1,41 @@
+{% extends 'base.html'%}
+{% block title %}  
+Log in
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid d-flex align-items-center justify-content-center login vh-100" >
+    <div class="row align-items-center justify-content-center w-100" >
+
+        <div class="form login col-lg-4 col-md-6 bg-dark rounded p-4" >
+            <form action="{{ url_for('user.login') }}" method="POST" class="text-white" id="loginForm">
+                <h4 class="text-center">Log in here</h4>
+                <div class="mb-3">
+                    <label for="identifier" class="form-label">Email or Username</label>
+                    <input type="text" class="form-control" name="identifier" placeholder="Email or Username" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                </div>
+                <button class="btn btn-primary mb-3 mt-4" type="submit">Log in</button>
+            </form>
+            <div class="text-center">
+                <p class="text-white">Don't have an account? <a href="{{ url_for('user.register') }}" class="text-info">Register here</a></p>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 d-none d-lg-block">
+            <div class="text-center">
+                <img src="{{ url_for('static', filename='img/illustration.png') }}" alt="" class="img-fluid rounded">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+{% endblock %}

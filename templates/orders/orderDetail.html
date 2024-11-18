@@ -1,0 +1,118 @@
+{% extends 'admin_base.html' %}
+
+{% block main_content %}
+<div class="container mt-4">
+
+    <div class="mt-1 mb-3">
+        <h2 class="heading">Order Details</h2>
+        <p> {{ order.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+        <button class="btn btn-primary"> {{ order.get_status_display() }}</button>
+        
+        <p></p>
+    </div>
+    
+
+    <div class="row">
+
+
+        <!-- User Info Card -->
+        <div class="col-md-4 text-2xs">
+            <div class="card">
+                <div class="m-2 heading">User Info</div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> {{ order.guest_name if not order.user else order.user.username }}</p>
+                    <p><strong>Email:</strong> {{ order.guest_email if not order.user else order.user.email }}</p>
+                    <p><strong>Phone:</strong> {{ order.guest_phone if not order.user else order.user.phone }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Info Card -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="m-2 heading">Order Info</div>
+                <div class="card-body">
+                    <p><strong>Order ID:</strong> {{ order.id }}</p>
+                    <p><strong>Total Price:</strong> {{ order.total_price }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="m-2 heading">Notes</div>
+                <div class="card-body">
+                    <p><strong>Message:</strong> {{ order.message }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="">
+        <!-- Cars Table -->
+        <h4 class="mt-4">Cars in Order</h4>
+        <div class="table-responsive"> <!-- Make the table responsive -->
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Brand</th>
+                        <th>Model</th>
+                        <th>Car</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for car in order.cars %}
+                        {% set order_car = car.order_car[0] if car.order_car else None %}
+                        <tr>
+                            <td>{{ car.brand }}</td>
+                            <td>{{ car.model }}</td>
+                            <td><a href="{{ url_for('car.get_car', car_id=car.id) }}">{{ car.id }}</a></td>
+                            <td>{{ car.price }}</td>
+                            <td>{{ order_car.quantity }}</td> <!-- Accessing the quantity from the association -->
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Update Order Button -->
+    <form id="update-order-form" class="mt-4 col-lg-3">
+        <select name="status" id="order-status" class="form-select">
+            <option value="pending" {% if order.order_status == 'pending' %}selected{% endif %}>Pending</option>
+            <option value="approved" {% if order.order_status == 'approved' %}selected{% endif %}>Approved</option>
+            <option value="rejected" {% if order.order_status == 'rejected' %}selected{% endif %}>Rejected</option>
+            <option value="completed" {% if order.order_status == 'completed' %}selected{% endif %}>Completed</option>
+        </select>
+        <button type="button" class="btn btn-primary mt-2" id="update-order-btn">Update Order</button>
+    </form>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#update-order-btn').on('click', function() {
+            const status = $('#order-status').val();
+            const orderId = {{ order.id }};
+
+            $.ajax({
+                url: `/orders/${orderId}`,
+                type: 'PUT',
+                contentType: 'application/json', // Set the content type
+                data: JSON.stringify({ status: status }), // Send data as JSON
+                success: function(response) {
+                    $('#status-message').text(response.message).removeClass('text-danger').addClass('text-success');
+                },
+                error: function(xhr) {
+                    const errorMessage = xhr.responseJSON ? xhr.responseJSON.error : 'An error occurred.';
+                    $('#status-message').text(errorMessage).removeClass('text-success').addClass('text-danger');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
+

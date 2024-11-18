@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}All Cars{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid m-3">
+    <div class="row">
+      <div class="col-lg-3 mb-4 rounded filter">
+        <h4>Filter</h4>
+        <div class="mb-3">
+          <label for="filter-year" class="form-label">Year</label>
+          <select id="filter-year" class="form-select">
+            <option value="">Select Year</option>
+            <!-- Add year options dynamically -->
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="filter-transmission" class="form-label">Transmission</label>
+          <select id="filter-transmission" class="form-select">
+            <option value="">Select Transmission</option>
+            <option value="Automatic">Automatic</option>
+            <option value="Manual">Manual</option>
+          </select>
+        </div>
+      </div>
+  
+      <div class="col-lg-8 m-3 carholder">
+        <h2>All Cars</h2>
+        <a href="{{ url_for('car.create_car') }}" class="btn btn-primary mb-3">Add New Car</a>
+  
+        <div class="row">
+          {% for car in cars %}
+          <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+            <div class="card car-card" style="cursor: pointer;" onclick="location.href='{{ url_for('car.get_car', car_id=car.id) }}'">
+              <div id="carousel-{{ car.id }}" class="carousel slide" data-bs-ride="carousel">
+                  <div class="carousel-inner">
+                      {% if car.car_images|length > 0 %}
+                          {% for image in car.car_images %}
+                          <div class="carousel-item {% if loop.first %}active{% endif %}">
+                              <img class="d-block w-100 rounded" src="{{ url_for('uploaded_file', folder='cars', filename=image.image_path) }}" alt="Car Image" style="height: 200px; object-fit: cover;">
+                          </div>
+                          {% endfor %}
+                      {% else %}
+                      <div class="carousel-item active">
+                          <img src="path/to/default-image.jpg" class="d-block w-100" alt="Default Thumbnail" style="height: 200px; object-fit: cover;">
+                      </div>
+                      {% endif %}
+                  </div>
+                  {% if car.car_images|length > 1 %}
+                  <a class="carousel-control-prev" href="#carousel-{{ car.id }}" role="button" data-bs-slide="prev" onclick="event.stopPropagation();">
+                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Previous</span>
+                  </a>
+                  <a class="carousel-control-next" href="#carousel-{{ car.id }}" role="button" data-bs-slide="next" onclick="event.stopPropagation();">
+                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Next</span>
+                  </a>
+                  {% endif %}
+              </div>
+              <div class="card-body" style="font-size: 0.8rem;">
+                  <p class="card-text mb-0">Model: {{ car.model }}</p>
+                  <p class="mb-0"><strong>Year: </strong>{{ car.year }}</p>
+                  <p class="mb-0"><strong>Mileage: </strong>{{ car.mileage }} miles</p>
+                  <p class="mb-0"><strong>Transmission: </strong>{{ car.transmission }}</p>
+                  <div class="btmBorder mt-1"></div>
+                  <div class="d-flex justify-content-between align-items-center mt-2">
+                      <div class="d-flex align-items-center">
+                          <i id="like-icon-{{ car.id }}" 
+                             class="{{ 'fa-solid' if car.id in liked_cars else 'fa-thin' }} fa-heart fa-2xl" 
+                             style="color: #74C0FC;" 
+                             title="{{ 'Remove from Wishlist' if car.id in liked_cars else 'Add to Wishlist' }}" 
+                             onclick="event.stopPropagation(); toggleLike({{ car.id }}, '{{ 'unlike' if car.id in liked_cars else 'like' }}', this)"></i>
+                      </div>
+                      <p class="price mb-0" style="font-size: 1rem; text-align: right;"><strong>${{ car.price }}</strong></p>
+                  </div>
+              </div>
+          </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+</div>
+
+
+{% endblock %}

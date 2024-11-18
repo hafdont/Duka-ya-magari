@@ -1,0 +1,113 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}Add Car{% endblock %}
+
+{% block main_content %}
+
+<div class="row">
+    <h2>Add New Car</h2>
+<form action="{{ url_for('car.create_car') }}" method="POST" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label for="model" class="form-label">Model</label>
+        <input type="text" class="form-control" id="model" name="model" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="year" class="form-label">Year</label>
+        <input type="number" class="form-control" id="year" name="year" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="price" class="form-label">Price</label>
+        <input type="number" step="0.01" class="form-control" id="price" name="price" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="mileage" class="form-label">Mileage</label>
+        <input type="number" class="form-control" id="mileage" name="mileage" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="interior_color" class="form-label">Interior Color</label>
+        <input type="text" class="form-control" id="interior_color" name="interior_color" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="exterior_color" class="form-label">Exterior Color</label>
+        <input type="text" class="form-control" id="exterior_color" name="exterior_color" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="condition" class="form-label">Condition</label>
+        <select class="form-select" id="condition" name="condition" required>
+            <option value="new">New</option>
+            <option value="used">Used</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="transmission" class="form-label">Transmission</label>
+        <select class="form-select" id="transmission" name="transmission" required>
+            <option value="automatic">Automatic</option>
+            <option value="manual">Manual</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="fuel_type" class="form-label">Fuel Type</label>
+        <select class="form-select" id="fuel_type" name="fuel_type" required>
+            <option value="petrol">Petrol</option>
+            <option value="diesel">Diesel</option>
+            <option value="electric">Electric</option>
+            <option value="hybrid">Hybrid</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="brand_id" class="form-label">Brand</label>
+        <select class="form-select" id="brand_id" name="brand_id" required>
+            {% for brand in brands %}
+                <option value="{{ brand.id }}">{{ brand.brand_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div class="mb-3">
+        <label for="category_id" class="form-label">Category</label>
+        <select class="form-select" id="category_id" name="category_id" required>
+            {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.category_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="location" class="form-label">Location</label>
+        <input type="text" class="form-control" id="location" name="location" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="vin" class="form-label">VIN</label>
+        <input type="text" class="form-control" id="vin" name="vin" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="warranty" class="form-label">Warranty</label>
+        <input type="text" class="form-control" id="warranty" name="warranty">
+    </div>
+
+    <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label for="images" class="form-label">Upload Images</label>
+        <input type="file" class="form-control" id="images" name="images" multiple>
+    </div>
+
+    <button type="submit" class="btn btn-success">Add Car</button>
+</form>
+</div>
+
+{% endblock %}

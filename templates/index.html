@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block content %}
+<!-- Main container that will handle the layout -->
+
+<div class="container-fluid landingD d-none d-sm-block">
+    <div class="row">
+
+        <div class="justify-content-center text-center m-0">
+            <img src="{{ url_for('static', filename='img/landing.jpg') }}" alt="" class="w-100 m-0 landing rounded">
+            <h1 class="heading text-center text-white" style="top: 40%; position: absolute;">Thinks am selling rocks</h1>
+        </div>
+    </div>
+</div>
+
+<div class="container ">
+    <div class="row">
+
+        <!-- Updated Filter Form -->
+        <div class="container mt-3 d-none">
+            <h3 class="text-center">Filter Cars</h3>
+            <form id="car-filter-form" method="GET" action="{{ url_for('home_bp.index') }}">
+                <div class="row">
+                    <!-- Year Filter -->
+                    <div class="col-sm-3">
+                        <label for="year">Year</label>
+                        <select class="form-control" id="year" name="year">
+                            <option value="">Any Year</option>
+                            {% for year in range(2000, 2025) %}
+                                <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Brand Filter -->
+                    <div class="col-sm-3">
+                        <label for="brand">Brand</label>
+                        <input type="text" class="form-control" id="brand" name="brand" placeholder="Brand" value="{{ selected_brand }}">
+                    </div>
+
+                    <!-- Category Filter -->
+                    <div class="col-sm-3">
+                        <label for="category">Category</label>
+                        <select class="form-control" id="category" name="category">
+                            <option value="">Any Category</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}" {% if category.id == selected_category %}selected{% endif %}>{{ category.category_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Price Filter -->
+                    <div class="col-sm-3">
+                        <label for="price-range">Price Range (USD)</label>
+                        <input type="range" class="form-range" id="price-range" name="price" min="1000" max="100000" step="1000" value="{{ selected_price or 10000 }}">
+                        <span id="price-value">${{ selected_price or 10000 }}</span>
+                    </div>
+                </div>
+
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                </div>
+            </form>
+        </div>
+        
+    </div>
+
+    <div class="">
+
+            <h1 class="text-center heading mt-5 mb-5">Featured Cars</h1>
+
+            <div class="row">
+                {% for car in cars %}
+                <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
+                  <div class="card car-card" style="cursor: pointer;" onclick="location.href='{{ url_for('car.get_car', car_id=car.id) }}'">
+                    <div id="carousel-{{ car.id }}" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            {% if car.car_images|length > 0 %}
+                                {% for image in car.car_images %}
+                                <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                    <img class="d-block w-100 rounded" src="{{ url_for('uploaded_file', folder='cars', filename=image.image_path) }}" alt="Car Image" style="height: 200px; object-fit: cover;">
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                            <div class="carousel-item active">
+                                <img src="path/to/default-image.jpg" class="d-block w-100" alt="Default Thumbnail" style="height: 200px; object-fit: cover;">
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% if car.car_images|length > 1 %}
+                        <a class="carousel-control-prev" href="#carousel-{{ car.id }}" role="button" data-bs-slide="prev" onclick="event.stopPropagation();">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carousel-{{ car.id }}" role="button" data-bs-slide="next" onclick="event.stopPropagation();">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </a>
+                        {% endif %}
+                    </div>
+                    <div class="card-body text-uppercase" style="font-size: 0.8rem;">
+                        <!-- Car Information Section -->
+                        <div class="d-flex justify-content-between mb-2">
+                            <!-- Year and Mileage -->
+                            <p class="mb-0 mr-1">
+                                <i class="fa-solid fa-calendar" style="color: #74C0FC;"></i> 
+                                 {{ car.year }}
+                            </p>
+                            <p class="mb-0 mr-1">
+                                <i class="fa-solid fa-tachometer-alt" style="color: #74C0FC;"></i>
+                                {{ car.mileage }} miles
+                            </p>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <!-- Added At and Transmission -->
+                            <p class="mb-0 mr-1">
+                                <i class="fa-solid fa-calendar-day" style="color: #74C0FC;"></i> 
+                                {{ car.added_at.strftime('%b %d, %Y') }}
+                            </p>
+                            <p class="mb-0 mr-1">
+                                <i class="fa-solid fa-cogs" style="color: #74C0FC;"></i> 
+                                 {{ car.transmission }}
+                            </p>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <!-- Fuel Type and Status -->
+                            <p class="mb-0 ">
+                                <i class="fa-solid fa-gas-pump mr-1" style="color: #74C0FC;"></i> 
+                                 {{ car.fuel_type }}
+                            </p>
+                            <p class="mb-0 mr-1">
+                                <i class="fa-solid fa-circle" style="color: #74C0FC;"></i> 
+                                {{ car.status }}
+                            </p>
+                        </div>
+                        <div class="btmBorder mt-1"></div>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <!-- Wishlist Button -->
+                            <div class="d-flex align-items-center">
+                                <i id="like-icon-{{ car.id }}" 
+                                class="fa-2xl {{ 'fa-solid fa-heart' if car.id in liked_cars else 'fa-regular fa-heart' }}" 
+                                style="color: #74C0FC;" 
+                                title="{{ 'Remove from Wishlist' if car.id in liked_cars else 'Add to Wishlist' }}" 
+                                onclick="event.stopPropagation(); toggleLike({{ car.id }}, '{{ 'unlike' if car.id in liked_cars else 'like' }}', this)">
+                                </i>
+                            </div>
+                            <!-- Price -->
+                            <p class="price mb-0" style="font-size: 1rem; text-align: right;"><strong><strong>{{ "{:,.2f}".format(car.price) }}</strong></strong></p>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                {% endfor %}
+              </div>
+
+              <!-- Pagination -->
+            <div class="d-flex justify-content-center mt-4">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        {% if pagination.has_prev %}
+                            <li class="page-item"><a class="page-link" href="{{ url_for('home_bp.index', page=pagination.prev_num) }}">&laquo; Prev</a></li>
+                        {% endif %}
+                        {% for page_num in pagination.iter_pages() %}
+                            {% if page_num %}
+                                <li class="page-item {% if page_num == pagination.page %}active{% endif %}">
+                                    <a class="page-link" href="{{ url_for('home_bp.index', page=page_num) }}">{{ page_num }}</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if pagination.has_next %}
+                            <li class="page-item"><a class="page-link" href="{{ url_for('home_bp.index', page=pagination.next_num) }}">Next &raquo;</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+
+
+    </div>
+
+</div>
+
+
+<script>
+    // Get the range slider and the text spans to display the value
+    const priceSlider = document.getElementById('price-range');
+    const priceValue = document.getElementById('price-value');
+    const priceMin = document.getElementById('price-min');
+    const priceMax = document.getElementById('price-max');
+
+    // Initialize price values
+    priceValue.textContent = `$${priceSlider.value.toLocaleString()}`;
+    priceMin.textContent = `$${priceSlider.min.toLocaleString()}`;
+    priceMax.textContent = `$${priceSlider.max.toLocaleString()}`;
+
+    // Update the price value as the slider moves
+    priceSlider.oninput = function() {
+        priceValue.textContent = `$${this.value.toLocaleString()}`;
+    };
+</script>
+{% endblock %}
+
+

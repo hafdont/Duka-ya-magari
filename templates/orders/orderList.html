@@ -1,0 +1,75 @@
+{% extends 'admin_base.html' %}
+
+{% block main_content %}
+<div class="container mt-4">
+    <h2 class="heading">Orders by Status</h2>
+
+    <!-- Bootstrap Tabs -->
+    <ul class="nav nav-tabs" id="orderStatusTabs" role="tablist">
+        {% for status in ['pending', 'approved', 'rejected', 'completed'] %}
+            <li class="nav-item">
+                <a class="nav-link {% if loop.index == 1 %}active{% endif %}" id="{{ status }}-tab" data-bs-toggle="tab" href="#{{ status }}" role="tab" aria-controls="{{ status }}" aria-selected="{% if loop.index == 1 %}true{% else %}false{% endif %}">
+                    {{ status.capitalize() }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <div class="tab-content" id="orderStatusTabContent">
+        {% for status in ['pending', 'approved', 'rejected', 'completed'] %}
+            <div class="tab-pane fade {% if loop.index == 1 %}show active{% endif %}" id="{{ status }}" role="tabpanel" aria-labelledby="{{ status }}-tab">
+                <h4 class="mt-4">{{ status.capitalize() }} Orders</h4>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr class="mt-1 mb-1" scope="col">
+                                <th class="mt-1 mb-1" scope="col">Order ID</th>
+                                <th class="mt-1 mb-1" scope="col">Guest/User Name</th>
+                                <th class="mt-1 mb-1" scope="col">Created At</th>
+                                <th class="mt-1 mb-1" scope="col">Total Price</th>
+                                <th class="mt-1 mb-1" scope="col">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% set orders = orders_by_status[status] %}
+                            {% if orders %}
+                                {% for order in orders %}
+                                    <tr class="order-row" onclick="location.href='{{ url_for('order.get_order', order_id=order.id) }}'" style="cursor: pointer;">
+                                        <td class="mt-1 mb-1">{{ order.id }}</td>
+                                        <td class="mt-1 mb-1">
+                                            {% if order.user %}
+                                                <a href="{{ url_for('user.view_profile', user_id=order.user.id) }}">
+                                                    {% if order.user.profile_picture %}
+                                                        <img src="{{ url_for('uploaded_file', folder='users', filename=order.user.profile_picture) }}" alt="" width="32" height="32" class="rounded-circle me-2">
+                                                    {% else %}
+                                                        <img src="{{ url_for('uploaded_file', folder='users', filename='defaultuser.jpg') }}" alt="Default Icon" width="32" height="32" class="rounded-circle me-2">
+                                                    {% endif %}
+                                                    {{ order.user.username }}
+                                                </a>
+                                            {% else %}
+                                                {{ order.guest_name }}
+                                            {% endif %}
+                                        </td>
+                                        <td class="mt-1 mb-1">{{ order.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                                        <td class="mt-1 mb-1">{{ order.total_price }}</td>
+                                        <td class="mt-1 mb-1">
+                                            <span class="status-circle" style="background-color: {% if order.order_status == 'pending' %}red{% elif order.order_status == 'approved' %}blue{% elif order.order_status == 'rejected' %}yellow{% elif order.order_status == 'completed' %}green{% endif %};"></span>
+                                            {{ order.get_status_display() }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-center">No orders found</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- CSS for Status Circle -->
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'admin_base.html' %}
+
+{% block main_content %}
+<div class="col-lg-8">
+    <h1>All Brands</h1>
+<a href="{{ url_for('brand_bp.create_brand') }}" class="btn btn-primary mt-3">Create New Brand</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Brand Name</th>
+            <th>Brand Logo</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for brand in brands %}
+        <tr>
+            <td>{{ brand.id }}</td>
+            <td>{{ brand.brand_name }}</td>
+            <td><img src="{{ url_for('uploaded_file', folder='brands', filename=brand.brand_logo) }}"  alt=""  class="rounded-circle w-100"></td>
+            <td>
+                <a href="{{ url_for('brand_bp.read_brand', brand_id=brand.id) }}" class="btn btn-info">View</a>
+                <a href="{{ url_for('brand_bp.update_brand', brand_id=brand.id) }}" class="btn btn-warning">Edit</a>
+                <form action="{{ url_for('brand_bp.delete_brand', brand_id=brand.id) }}" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+{% endblock %}

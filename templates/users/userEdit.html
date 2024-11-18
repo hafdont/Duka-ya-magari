@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+
+<div class="container-fluid d-flex align-items-center justify-content-center">
+    <div class="row align-items-center justify-content-center w-100">
+        <div class="col-6">
+            <h2>Edit Profile</h2>
+            <form method="POST" action="{{ url_for('user.edit_profile', user_id=user.id) }}" enctype="multipart/form-data">
+                
+                <!-- Name Group -->
+                <div class="mb-3 d-flex">
+                    <div class="me-2" style="flex: 1;">
+                        <label for="firstname" class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="firstname" name="firstname" value="{{ user.firstname }}" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <label for="lastname" class="form-label">Last Name</label>
+                        <input type="text" class="form-control" id="lastname" name="lastname" value="{{ user.lastname }}" required>
+                    </div>
+                </div>
+
+                <!-- Email and Username Group -->
+                <div class="mb-3 d-flex">
+                    <div class="me-2" style="flex: 1;">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                    </div>
+                </div>
+
+                <!-- Phone Number Group -->
+                <div class="mb-3">
+                    <label for="phone_number" class="form-label">Phone Number</label>
+                    <input type="text" class="form-control" id="phone_number" name="phone_number" value="{{ user.phone_number }}">
+                </div>
+
+                <!-- Location and Address Group -->
+                <div class="mb-3">
+                    <label for="location" class="form-label">Location</label>
+                    <input type="text" class="form-control" id="location" name="location" value="{{ user.location }}">
+                </div>
+                
+                <div class="mb-3">
+                    <label for="postal_code" class="form-label">Postal Code</label>
+                    <input type="text" class="form-control" id="postal_code" name="postal_code" value="{{ user.postal_code }}">
+                </div>
+
+                <!-- Country Field -->
+                <div class="mb-3">
+                    <label for="country" class="form-label">Country</label>
+                    <input type="text" class="form-control" id="country" name="country" value="{{ user.country }}">
+                </div>
+
+                <!-- Bio Section -->
+                <div class="mb-3">
+                    <label for="bio" class="form-label">Bio</label>
+                    <textarea class="form-control" id="bio" name="bio" rows="4">{{ user.bio }}</textarea>
+                </div>
+
+                <!-- Profile Picture Upload -->
+                <div class="mb-3">
+                    <label for="profile_picture" class="form-label">Profile Picture</label>
+                    <input type="file" class="form-control" id="profile_picture" name="profile_picture">
+                </div>
+
+                <!-- Gender Section -->
+                <div class="mb-3">
+                    <label for="gender" class="form-label">Gender</label>
+                    <select class="form-select" id="gender" name="gender">
+                        <option value="male" {% if user.gender == 'male' %}selected{% endif %}>Male</option>
+                        <option value="female" {% if user.gender == 'female' %}selected{% endif %}>Female</option>
+                    </select>
+                </div>
+
+                <!-- Status Field (Only visible to admins) -->
+                {% if session.user.role == 'admin' %}
+                <div class="mb-3">
+                    <label for="status" class="form-label">User Status</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value="active" {% if user.status == 'active' %}selected{% endif %}>Active</option>
+                        <option value="inactive" {% if user.status == 'inactive' %}selected{% endif %}>Inactive</option>
+                    </select>
+                </div>
+                {% endif %}
+
+                <!-- Role Management (Visible only to admins) -->
+                {% if session.user.role == 'admin' %}
+                <div class="mb-3">
+                    <label for="role" class="form-label">User Role</label>
+                    <select class="form-select" id="role" name="role">
+                        <option value="customer" {% if user.role == 'customer' %}selected{% endif %}>Customer</option>
+                        <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                    </select>
+                </div>
+                {% endif %}
+
+                <button type="submit" class="btn btn-primary">Update Profile</button>
+                <a href="{{ url_for('user.view_profile', user_id=user.id) }}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
