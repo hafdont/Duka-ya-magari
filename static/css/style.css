@@ -81,7 +81,6 @@
   }
 }
 
-
 /* Apply Poppins font to the body */
 body {
     font-family: 'Poppins', sans-serif;
@@ -115,15 +114,15 @@ body {
 
   .table {
     width: 100%;
-    margin: 10px 0;
+    margin: 8px 0;
     border-collapse: separate;
-    border-spacing: 0 10px;
+    border-spacing: 0 7px;
   }
 
   .table thead th {
     background-color: white;
     color: black;
-    padding: 5px;
+    padding: 3px;
     text-align: left;
     border: none; /* Remove borders from header cells */
   }
@@ -137,7 +136,7 @@ body {
 
 /* Cell styling */
 .table tbody td {
-  padding: 20px; /* Add padding */
+  padding: 7px; /* Add padding */
   color: black; /* Text color */
   border: none; /* No borders on cells */
 }

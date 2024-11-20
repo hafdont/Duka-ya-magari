@@ -1,6 +1,6 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash, session, jsonify
 from werkzeug.utils import secure_filename
-from models import db, Car, User
+from models import db, Car, User, CategoryType,StockStatus
 from .admin_routes import admin_required
 import os
 from models import Car, Brand, Category, Image, User, Like, Review
@@ -30,26 +30,12 @@ def get_car_data_from_form(form):
         'transmission': form.get('transmission'),
         'fuel_type': form.get('fuel_type'),
         'location': form.get('location'),
-        'seller_id': session['user']['id'],  # Assuming the seller is the logged-in user
+        'seller_id': session['user']['id'], 
         'warranty': form.get('warranty'),
         'vin': form.get('vin'),
         'features': form.get('features'),
         'status': form.get('status', 'available')
     }
-
-@car_bp.route('/cars', methods=['GET'])
-def get_cars():
-    current_user = session.get('user', None)
-    cars = Car.query.all()
-    users = User.query.all()
-
-    liked_cars = []
-    if current_user:
-        liked_cars = [like.target_id for like in Like.query.filter_by(user_id=current_user['id'], target_type='car').all()]
-
-
-    return render_template('cars/carList.html', cars=cars, user=current_user, liked_cars=liked_cars, users=users)
-
 
 @car_bp.route('/cars/create', methods=['GET', 'POST'])
 @admin_required
@@ -59,13 +45,10 @@ def create_car():
     if request.method == 'GET':
         brands = Brand.query.all()
         categories = Category.query.all()
-        return render_template('cars/newCar.html', brands=brands, categories=categories, user=current_user)
+        return render_template('cars/newCar.html', brands=brands, user=current_user, categories = Category.query.filter_by(category_type=CategoryType.CARS.value).all())
 
     if request.method == 'POST':
         car_data = get_car_data_from_form(request.form)
-
-        # Debugging: Print form data
-        print("Car Data from Form:", car_data)
 
         # Check for duplicate VIN
         existing_car = Car.query.filter_by(vin=car_data['vin']).first()
@@ -119,6 +102,17 @@ def create_car():
         flash("Image upload required.", "danger")
         return redirect(url_for('car.create_car'))
 
+@car_bp.route('/cars', methods=['GET'])
+def get_cars():
+    current_user = session.get('user', None)
+    cars = Car.query.all()
+    users = User.query.all()
+
+    liked_cars = []
+    if current_user:
+        liked_cars = [like.target_id for like in Like.query.filter_by(user_id=current_user['id'], target_type='car').all()]
+
+    return render_template('cars/carList.html', cars=cars, user=current_user, liked_cars=liked_cars, users=users)
 
 @car_bp.route('/cars/<int:car_id>', methods=['GET'])
 def get_car(car_id):
@@ -162,7 +156,7 @@ def update_car(car_id):
     if request.method == 'GET':
         brands = Brand.query.all()
         categories = Category.query.all()
-        return render_template('cars/updateCar.html', car=car, brands=brands, categories=categories, user=current_user)
+        return render_template('cars/updateCar.html', car=car, brands=brands, categories = Category.query.filter_by(category_type=CategoryType.CARS.value).all(),user=current_user)
 
     if request.method == 'POST':
         car_data = get_car_data_from_form(request.form)

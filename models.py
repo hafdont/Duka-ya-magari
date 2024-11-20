@@ -5,6 +5,11 @@ from flask_sqlalchemy import SQLAlchemy
 from app import db
 
 
+class StockStatus(Enum):
+    IN_STOCK = "In Stock"
+    OUT_OF_STOCK = "Out of Stock"
+    LIMITED = "Limited"
+
 class UserRole(Enum):
     ADMIN = 'admin'
     CUSTOMER = 'customer'
@@ -12,7 +17,6 @@ class UserRole(Enum):
 class UserStatus(Enum):
     ACTIVE = 'active'
     INACTIVE = 'inactive'
-
 
 class OrderStatus(Enum):
     PENDING = "pending"
@@ -23,6 +27,26 @@ class OrderStatus(Enum):
 class Gender(Enum):
     MALE = 'male'
     FEMALE = 'female'
+
+# Updated Category Enum
+class CategoryType(Enum):
+    TOOLS_MACHINERY = 'Tools & Machinery'
+    CAR_PARTS = 'Car Parts'
+    HOUSEHOLD_ITEMS = 'Household Items'
+    COMPUTERS = 'Computers'
+    CARS = 'cars'
+
+class Category(db.Model):
+    __tablename__ = 'categories'
+    id = db.Column(db.Integer, primary_key=True)
+    category_name = db.Column(db.String(50), nullable=False)
+    category_type = db.Column(db.String(50), nullable=False)
+
+    # Relationship to access all cars in this category
+    cars_in_category = db.relationship('Car', back_populates='category', lazy=True)
+    
+    def __repr__(self):
+        return f"<Category {self.category_name}>"
 
 # User model
 class User(db.Model):
@@ -51,13 +75,14 @@ class User(db.Model):
     profile_picture = db.Column(db.String(255), nullable=True)
 
     # New fields
-    date_of_birth = db.Column(db.Date, nullable=True)  # Date of birth
-    gender = db.Column(db.Enum(Gender), nullable=True)  # Gender
+    date_of_birth = db.Column(db.Date, nullable=True) 
+    gender = db.Column(db.Enum(Gender), nullable=True)  
 
     # Relationships
     owned_cars = db.relationship('Car', back_populates='seller')
     orders = db.relationship('Order', backref='customer', lazy=True)
-    likes = db.relationship('Like', backref='liked_items', lazy=True) 
+    likes = db.relationship('Like', backref='liked_items', lazy=True)
+    products = db.relationship('Product', back_populates='user')  # Relationship to products
 
     def __repr__(self):
         return f"<User {self.username}>"
@@ -78,32 +103,59 @@ class User(db.Model):
     def wishlist_count(self):
         return len(self.likes)
 
+# Updated Product model
+class Product(db.Model):
+    __tablename__ = 'products'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    price = db.Column(db.Numeric(10, 2), nullable=False)
+    stock = db.Column(db.Integer, default=1)
+    StockStatus = db.Column(db.Enum(StockStatus), default=StockStatus.IN_STOCK, nullable=False)
+    category = db.Column(db.Enum(CategoryType), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    added_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Foreign key to link to the User model
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    # Relationships
+    user = db.relationship('User', back_populates='products')
+    specifications = db.relationship('ProductSpecification', backref='product', lazy=True)
+
+    def __repr__(self):
+        return f"<Product {self.name}>"
+
+
+# ProductSpecification model
+class ProductSpecification(db.Model):
+    __tablename__ = 'product_specifications'
+    id = db.Column(db.Integer, primary_key=True)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
+    key = db.Column(db.String(50), nullable=False)
+    value = db.Column(db.String(255), nullable=False)
+
+    def __repr__(self):
+        return f"<Specification {self.key}: {self.value}>"
+
+
 # Brand model
 class Brand(db.Model):
     __tablename__ = 'brands'
     id = db.Column(db.Integer, primary_key=True)
     brand_name = db.Column(db.String(50), nullable=False)
     brand_logo = db.Column(db.String(255), nullable=True)
+    category = db.Column(db.Enum(CategoryType), nullable=False)
 
     def __repr__(self):
         return f"<Brand {self.brand_name}>"
 
 
 # Category model
-class Category(db.Model):
-    __tablename__ = 'categories'
-    id = db.Column(db.Integer, primary_key=True)
-    category_name = db.Column(db.String(50), nullable=False)
-
-    def __repr__(self):
-        return f"<Category {self.category_name}>"
-
-
 class Car(db.Model):
     __tablename__ = 'cars'
     id = db.Column(db.Integer, primary_key=True)
     brand_id = db.Column(db.Integer, db.ForeignKey('brands.id'), nullable=False)
-    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)  
     model = db.Column(db.String(50), nullable=False)
     year = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Numeric(10, 2), nullable=False)
@@ -112,6 +164,7 @@ class Car(db.Model):
     exterior_color = db.Column(db.String(30), nullable=False)
     description = db.Column(db.Text)
     stock = db.Column(db.Integer, default=1)
+    StockStatus = db.Column(db.Enum(StockStatus), default=StockStatus.IN_STOCK, nullable=False)
     added_at = db.Column(db.DateTime, default=datetime.utcnow)
     condition = db.Column(db.String(20), nullable=False)
     transmission = db.Column(db.String(20), nullable=False)
@@ -125,7 +178,7 @@ class Car(db.Model):
 
     # Relationships
     brand = db.relationship('Brand', backref=db.backref('cars', lazy=True))
-    category = db.relationship('Category', backref=db.backref('cars', lazy=True))
+    category = db.relationship('Category', back_populates='cars_in_category')
     seller = db.relationship('User', back_populates='owned_cars')
 
     def __repr__(self):
@@ -177,7 +230,6 @@ order_car = db.Table('order_car',
     db.Column('price', db.Numeric(10, 2), nullable=False)
 )
 
-
 # Payment model
 class Payment(db.Model):
     __tablename__ = 'payments'
@@ -196,7 +248,6 @@ class Payment(db.Model):
     def __repr__(self):
         return f"<Payment {self.id} for Order {self.order_id}>"
 
-
 # Review model
 class Review(db.Model):
     __tablename__ = 'reviews'
@@ -214,7 +265,6 @@ class Review(db.Model):
     def __repr__(self):
         return f"<Review {self.rating} for Car {self.car.model}>"
 
-
 # Cart model
 class Cart(db.Model):
     __tablename__ = 'carts'
@@ -230,7 +280,6 @@ class Cart(db.Model):
 
     def __repr__(self):
         return f"<Cart {self.id} for User {self.user.username}>"
-
 
 class Like(db.Model):
     __tablename__ = 'likes'

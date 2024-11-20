@@ -78,7 +78,7 @@
                     </select>
                 </div>
 
-                <!-- Status Field (Only visible to admins) -->
+                <!-- Status and roles Field (Only visible to admins) -->
                 {% if session.user.role == 'admin' %}
                 <div class="mb-3">
                     <label for="status" class="form-label">User Status</label>
@@ -87,10 +87,7 @@
                         <option value="inactive" {% if user.status == 'inactive' %}selected{% endif %}>Inactive</option>
                     </select>
                 </div>
-                {% endif %}
 
-                <!-- Role Management (Visible only to admins) -->
-                {% if session.user.role == 'admin' %}
                 <div class="mb-3">
                     <label for="role" class="form-label">User Role</label>
                     <select class="form-select" id="role" name="role">
@@ -99,6 +96,8 @@
                     </select>
                 </div>
                 {% endif %}
+
+
 
                 <button type="submit" class="btn btn-primary">Update Profile</button>
                 <a href="{{ url_for('user.view_profile', user_id=user.id) }}" class="btn btn-secondary">Cancel</a>

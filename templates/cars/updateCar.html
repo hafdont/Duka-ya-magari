@@ -82,4 +82,29 @@
     </div>
 
     <div class="mb-3">
-        <label for="images" class="form-label">Upload Images
+        <label for="stock_status" class="form-label">Stock Status</label>
+        <select class="form-select" id="stock_status" name="stock_status" required>
+            <option value="in_stock" {% if car.stock_status == 'in_stock' %}selected{% endif %}>In Stock</option>
+            <option value="out_of_stock" {% if car.stock_status == 'out_of_stock' %}selected{% endif %}>Out of Stock</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="category" class="form-label">Category</label>
+        <select class="form-select" id="category" name="category" required>
+            {% for category in categories %}
+                <option value="{{ category.value }}" {% if car.category == category.value %}selected{% endif %}>
+                    {{ category.category_name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="images" class="form-label">Upload Images</label>
+        <input type="file" class="form-control" id="images" name="images[]" multiple>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update Car</button>
+</form>
+{% endblock %}

@@ -1,218 +1,115 @@
-{% extends 'base.html' %}
+{% extends 'admin_base.html' %}
 
-{% block content %}
-<div class="container-fluid m-3">
-    
+{% block title %}Edit Car{% endblock %}
+
+{% block main_content %}
+<h2>Edit Car: {{ car.model }}</h2>
+<form action="{{ url_for('car.update_car', car_id=car.id) }}" method="POST" enctype="multipart/form-data">
+    <!-- Grouped fields -->
     <div class="row">
-        <!-- Left Column -->
-        <div class="col-lg-7 mb-4 car">
-            <div class="car-image w-100">
-                <!-- Main Car Image Carousel -->
-                <div id="carousel-{{ car.id }}" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        {% if car.car_images|length > 0 %}
-                            {% for image in car.car_images %}
-                            <div class="carousel-item {% if loop.first %}active{% endif %}">
-                                <img class="d-block w-100" src="{{ url_for('uploaded_file', folder='cars', filename=image.image_path) }}" alt="Car Image" style="height: 400px; object-fit: cover;">
-                            </div>
-                            {% endfor %}
-                        {% else %}
-                            <div class="carousel-item active w-100">
-                                <img src="" class="d-block w-100" alt="Default Thumbnail" style="height: 400px; object-fit: cover;">
-                            </div>
-                        {% endif %}
-                    </div>
-                    {% if car.car_images|length > 1 %}
-                    <a class="carousel-control-prev" href="#carousel-{{ car.id }}" role="button" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </a>
-                    <a class="carousel-control-next" href="#carousel-{{ car.id }}" role="button" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </a>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Thumbnails of Other Car Images -->
-            <div class="small-images mt-3 d-flex">
-                {% for image in car.car_images %}
-                    <img src="{{ url_for('uploaded_file', folder='cars', filename=image.image_path) }}" alt="Car Thumbnail" class="img-thumbnail me-2" style="height: 100px; object-fit: cover;">
-                {% endfor %}
-            </div>
-
-            <div class="car-description mt-4" style="font-size: .8rem;">
-
-                <h4 class="heading">Overview</h4>
-                <div class="profile-info col-md-9">
-
-                    <div class="panel">
-
-                        <div class="panel-body bio-graph-info">
-                            <div class="row">
-                                <div class="bio-row">
-                                    <p><span>Make </span>: <strong> {{ car.brand.brand_name }}</strong></p>
-                                </div>
-                                <div class="bio-row">
-                                    <p><span>Car Model  </span>: <strong> {{ car.model }}</strong> </p>
-                                </div>
-                                <div class="bio-row">
-                                    <p><span>Y.O.M</span>: <strong>  {{ car.year }}</strong></p>
-                                </div>
-                                <div class="bio-row">
-                                    <p><span>Mileage </span>: <strong> {{ car.mileage }} mi</strong>  </p>
-                                </div>
-
-                                <div class="bio-row">
-                                    <p><span>Transmission:</span>: <strong> {{ car.transmission }} </strong></p>
-                                </div>
-                                <div class="bio-row">
-                                    <p><span>Exterior Color</span>: <strong> {{ car.exterior_color }}</strong></p>
-                                </div>
-                                <div class="bio-row">
-                                    <p><span>Interior Color</span>: <strong>  {{ car.interior_color }}</strong></p>
-                                </div>
-
-
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <h4 class="heading">Description</h4>
-                <p>{{ car.description }}</p>
-
-                <h4>Vehicle's Features</h4>
-
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="model" class="form-label">Model</label>
+                <input type="text" class="form-control" id="model" name="model" value="{{ car.model }}" required>
             </div>
         </div>
-
-        <!-- Right Column (4/12) -->
-        <div class="col-lg-4 mb-4 order ">
-            <div class="text-center">
-                <h4 class="uppercase">{{ car.brand.brand_name }} {{ car.model }}</h4>
-                <p class="text-align-center">Mileage: <strong> {{ car.mileage }} </strong> mi! Fuel Type: <strong> {{ car.fuel_type }}</p> </strong>
-                <p></p>
-                <h3 class="text-primary"> Ksh {{ "{:,.2f}".format(car.price) }}</h3> 
-
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="brand" class="form-label">Brand</label>
+                <input type="text" class="form-control" id="brand" name="brand" value="{{ car.brand }}" required>
             </div>
-
-
-
-            {% if session.user %}
-            <div class="mt-3 mb-3">
-                <h4>INTERESTED IN THIS VEHICLE?</h4>
-                <form action="{{ url_for('order.create_order') }}" method="POST">
-                    <input type="hidden" name="car_id" value="{{ car.id }}">  <!-- Make sure to pass the car ID -->
-                    <input type="hidden" name="total_price" value="{{ car.price }}">  <!-- Pass the total price if needed -->
-                    <button type="submit" class="btn btn-primary">Order This Car</button>
-                    <div class="">
-                        <label class="form-label" for="message" >Add a message to your order</label>
-                        <input type="text" class="form-control" id="message" name="message" placeholder="Add a short message to your order">
-                    </div>
-                </form>
-            </div>
-
-            {% else %}
-                <h4>INTERESTED IN THIS VEHICLE?</h4>
-                <form action="{{ url_for('order.create_order') }}" method="POST">
-                    <input type="hidden" name="car_id" value="{{ car.id }}">
-                    <input type="hidden" name="total_price" value="{{ car.price }}">
-                    
-                    <div class="mb-3">
-                        <label for="guest_name" class="form-label">Name:</label>
-                        <input type="text" class="form-control" name="guest_name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="guest_email" class="form-label">Email:</label>
-                        <input type="email" class="form-control" name="guest_email" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="guest_phone" class="form-label">Phone:</label>
-                        <input type="tel" class="form-control" name="guest_phone" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="quantity" class="form-label">Quantity:</label>
-                        <input type="number" class="form-control" name="quantity" value="1" min="1" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="message" class="form-label">Message:</label>
-                        <textarea class="form-control" name="message" rows="3"></textarea>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary">Order This Car</button>
-                </form>
-            {% endif %}
-        
-
-
-
         </div>
     </div>
 
-    <div class="row ">
-        <h4>Reviews</h4>
-        <div id="reviews" class="col-lg-12">
-            {% if reviews and reviews|length > 0 %}
-                {% for review in reviews %}
-                    <div class="review col-lg-8">
-                        <div class="d-flex align-items-center">
-
-
-                            {% if review.user.profile_picture %} 
-                                <img src="{{ url_for('uploaded_file', folder='users', filename=review.user.profile_picture) }}" alt="" width="32" height="32" class="rounded-circle me-2">
-                            {% else %}
-                                <img src="{{ url_for('uploaded_file', folder='users', filename='defaultuser.jpg') }}" alt="Default Icon" width="32" height="32" class="rounded-circle me-2">
-                            {% endif %}
-
-
-                            <strong>{{ review.user.username }}</strong>
-                        </div>
-                        <p>{{ review.comment }}</p>
-                        <p>Rating: {{ review.rating }}</p>
-                        {% if session.user and (session.user.id == review.user_id or session.user.role == 'admin') %}
-                            <div class="">
-                                <a href="{{ url_for('review.edit_review', review_id=review.id) }}" class="btn btn-secondary btn-sm">Edit</a>
-                                <form action="{{ url_for('review.delete_review', review_id=review.id) }}" method="POST" style="display:inline;">
-                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                </form>
-                            </div>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-            {% else %}
-                <p>No reviews yet. Be the first to review this car!</p>
-            {% endif %}
-            
-            {% if session.user %}
-                <div class="col-lg-12 mt-4">
-                    <h3>Add A Review</h3>
-                    <form class="reviews" action="{{ url_for('review.add_review', car_id=car.id) }}" method="POST">
-                        <div class="mb-3">
-                            <textarea name="comment" class="form-control" placeholder="Write your review..." required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="rating" class="form-label">Rating</label>
-                            <select name="rating" class="form-select" required>
-                                <option value="">Select Rating</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Submit Review</button>
-                    </form>
-                </div>
-            {% endif %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="year" class="form-label">Year</label>
+                <input type="number" class="form-control" id="year" name="year" value="{{ car.year }}" required>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="price" class="form-label">Price</label>
+                <input type="number" step="0.01" class="form-control" id="price" name="price" value="{{ car.price }}" required>
+            </div>
         </div>
     </div>
 
-</div>
+    <!-- Radio buttons for category -->
+    <div class="mb-3">
+        <label for="category" class="form-label">Category</label>
+        <div>
+            {% for category in car_categories %}
+                <input type="radio" id="category_{{ category.id }}" name="category" value="{{ category.id }}"
+                {% if car.category == category.id %}checked{% endif %}>
+                <label for="category_{{ category.id }}">{{ category.name }}</label>
+            {% endfor %}
+        </div>
+    </div>
 
+    <!-- Stock quantity -->
+    <div class="mb-3">
+        <label for="stock_qty" class="form-label">Stock Quantity</label>
+        <input type="number" class="form-control" id="stock_qty" name="stock_qty" value="{{ car.stock_qty }}" required>
+    </div>
 
+    <!-- Other grouped fields -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="condition" class="form-label">Condition</label>
+                <div>
+                    <input type="radio" id="condition_new" name="condition" value="new" {% if car.condition == 'new' %}checked{% endif %}>
+                    <label for="condition_new">New</label>
+                    <input type="radio" id="condition_used" name="condition" value="used" {% if car.condition == 'used' %}checked{% endif %}>
+                    <label for="condition_used">Used</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="transmission" class="form-label">Transmission</label>
+                <div>
+                    <input type="radio" id="trans_auto" name="transmission" value="automatic" {% if car.transmission == 'automatic' %}checked{% endif %}>
+                    <label for="trans_auto">Automatic</label>
+                    <input type="radio" id="trans_manual" name="transmission" value="manual" {% if car.transmission == 'manual' %}checked{% endif %}>
+                    <label for="trans_manual">Manual</label>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="fuel_type" class="form-label">Fuel Type</label>
+                <div>
+                    <input type="radio" id="fuel_petrol" name="fuel_type" value="petrol" {% if car.fuel_type == 'petrol' %}checked{% endif %}>
+                    <label for="fuel_petrol">Petrol</label>
+                    <input type="radio" id="fuel_diesel" name="fuel_type" value="diesel" {% if car.fuel_type == 'diesel' %}checked{% endif %}>
+                    <label for="fuel_diesel">Diesel</label>
+                    <input type="radio" id="fuel_electric" name="fuel_type" value="electric" {% if car.fuel_type == 'electric' %}checked{% endif %}>
+                    <label for="fuel_electric">Electric</label>
+                    <input type="radio" id="fuel_hybrid" name="fuel_type" value="hybrid" {% if car.fuel_type == 'hybrid' %}checked{% endif %}>
+                    <label for="fuel_hybrid">Hybrid</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="mileage" class="form-label">Mileage</label>
+                <input type="number" class="form-control" id="mileage" name="mileage" value="{{ car.mileage }}" required>
+            </div>
+        </div>
+    </div>
+
+    <!-- Remaining fields -->
+    <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" id="description" name="description" rows="3">{{ car.description }}</textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update Car</button>
+</form>
 {% endblock %}
