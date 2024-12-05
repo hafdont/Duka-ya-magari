@@ -123,19 +123,16 @@ def edit_profile(user_id):
         flash("User not found.", "danger")
         return redirect(url_for('home_bp.index'))
 
-    # Authorization check
-    if current_user['role'] != 'ADMIN' and current_user['id'] != user_id:
-        flash("Unauthorized access!", "danger")
+    # Updated Authorization check
+    if UserRole(current_user['role'].lower()) != UserRole.ADMIN and current_user['id'] != user_id:
+        flash("Unauthorized access! Only admins can edit other users' profiles.", "danger")
         return redirect(url_for('home_bp.index'))
 
     if request.method == 'GET':
-        return render_template('users/userEdit.html', user=user_to_edit)
+        return render_template('users/userEdit.html', user=user_to_edit, roles=UserRole)
 
     if request.method == 'POST':
         user_data = get_user_data_from_form(request.form)
-
-        # Debugging: Check the form data
-        print("Form Data Received:", user_data)
 
         # Handle profile picture upload with validation
         if 'profile_picture' in request.files:
@@ -181,11 +178,9 @@ def edit_profile(user_id):
                 user_to_edit.date_of_birth = datetime.strptime(user_data['date_of_birth'], '%Y-%m-%d')
             if user_data.get('gender'):
                 user_to_edit.gender = user_data['gender']
-
             # Update role only if current user is an admin
-            if current_user['role'] == 'ADMIN' and user_data.get('role'):
-                user_to_edit.role = UserRole[user_data['role'].upper()]
-
+            if current_user['role']:
+                user_to_edit.role = user_data['role']
             # Commit changes
             db.session.commit()
             flash("Profile updated successfully!", "success")

@@ -3,7 +3,8 @@ import os
 from flask import Blueprint, request, render_template, session, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 from .user_routes import admin_required
-from models import User, Brand, db
+from models import User, Brand,CategoryType, db
+
 
 
 brand_bp = Blueprint('brand_bp', __name__)
@@ -19,8 +20,39 @@ def allowed_file(filename):
 @brand_bp.route('/brands', methods=['GET'])
 def view_all_brands():
     current_user = session.get('user', None)
-    brands = Brand.query.all()  # Fetch all brands from the database
-    return render_template('Brand/index.html', brands=brands, user=current_user)
+    
+    # Restrict access if user is not logged in
+    if not current_user:
+        flash("Please log in to access this page.", "warning")
+        return redirect(url_for('user.login'))
+
+    # Query all brands
+    all_brands = Brand.query.all()
+    
+    # Filter brands by category
+    brands_by_category = {
+        'tools_machinery': Brand.query.filter_by(category='tools_machinery').all(),
+        'car_parts': Brand.query.filter_by(category='car_parts').all(),
+        'household_items': Brand.query.filter_by(category='household_items').all(),
+        'computers': Brand.query.filter_by(category='computers').all(),
+        'cars': Brand.query.filter_by(category='cars').all(),
+    }
+
+    # Additional grouping logic if needed (optional)
+    grouped_brands = {}
+    for category in CategoryType:
+        grouped_brands[category.name] = [
+            brand for brand in all_brands if brand.category == category.name
+        ]
+
+    return render_template(
+        'Brand/index.html',
+        user=current_user,
+        all_brands=all_brands,
+        brands_by_category=brands_by_category,
+        grouped_brands=grouped_brands
+    )
+
 
 # Create a Brand
 @brand_bp.route('/brands/create', methods=['GET', 'POST'])
@@ -28,14 +60,15 @@ def view_all_brands():
 def create_brand():
     current_user = session.get('user', None)
     if request.method == 'GET':
-        return render_template('Brand/create.html',user=current_user)
+        return render_template('Brand/create.html',user=current_user, cats=CategoryType )
 
     if request.method == 'POST':
+        category = request.form.get('category')
         brand_name = request.form.get('brand_name')
         file = request.files.get('brand_logo')
 
         # Validate the brand name
-        if not brand_name:
+        if not brand_name or not category:
             flash("Brand name is required!", "danger")
             return redirect(url_for('brand_bp.create_brand'))
 
@@ -46,7 +79,7 @@ def create_brand():
             
             try:
                 file.save(file_path)  # Save the file to the designated folder
-                new_brand = Brand(brand_name=brand_name, brand_logo=filename)  # Store filename only
+                new_brand = Brand(brand_name=brand_name, brand_logo=filename, category=category)  # Store filename only
                 db.session.add(new_brand)
                 db.session.commit()
                 flash("Brand created successfully!", "success")

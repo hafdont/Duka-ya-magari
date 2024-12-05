@@ -1,7 +1,7 @@
 # routes/admin_routes.py
 from flask import Blueprint, render_template, session
 from .user_routes import admin_required
-from models import User  # Ensure this import is correct
+from models import User 
 
 admin_bp = Blueprint('admin_bp', __name__)
 

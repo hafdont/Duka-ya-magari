@@ -2,10 +2,10 @@
 
 {% block title %}Categories{% endblock %}
 
-    {% block main_content %}
+{% block main_content %}
 
-    <div class="col-lg-8 ">
-        <h2>Categories</h2>
+<div class="col-lg-8">
+    <h2>Categories</h2>
 
     <!-- List of Categories -->
     <table class="table">
@@ -13,7 +13,7 @@
             <tr>
                 <th>ID</th>
                 <th>Category Name</th>
-                <th>Category Type </th>
+                <th>Category Type</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -21,13 +21,25 @@
             {% for category in categories %}
             <tr>
                 <td>{{ category.id }}</td>
-                <td>{{ category.category_name }}</td>
-                <td> {{ category.category_type}} </td>
                 <td>
-                    <a href="{{ url_for('category.edit_category', category_id=category.id) }}" class="btn btn-warning">Edit</a>
-                    <form action="{{ url_for('category.delete_category', category_id=category.id) }}" method="POST" style="display:inline;">
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
+                    <input type="text" class="form-control form-control-sm edit-category-name" 
+                           value="{{ category.category_name }}" 
+                           data-category-id="{{ category.id }}">
+                </td>
+                <td>
+                    <select class="form-control form-control-sm edit-category-type" 
+                            data-category-id="{{ category.id }}">
+                        {% for type in cats %}
+                        <option value="{{ type.value }}" {% if category.category_type == type.value %}selected{% endif %}>
+                            {{ type.value }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-success save-category" data-category-id="{{ category.id }}">
+                        Save
+                    </button>
                 </td>
             </tr>
             {% endfor %}
@@ -51,6 +63,6 @@
         </div>
         <button type="submit" class="btn btn-success">Add Category</button>
     </form>
+</div>
 
-
-    {% endblock %}
+{% endblock %}

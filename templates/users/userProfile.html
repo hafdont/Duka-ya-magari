@@ -7,12 +7,16 @@
             <div class="panel">
                 <div class="user-heading round">
                     <a href="#">
-                        <img src="{{ user.profile_picture or 'https://bootdey.com/img/Content/avatar/avatar3.png' }}" alt="Profile Picture">
+                        {% if user.profile_picture %}
+                        <img src="{{ url_for('uploaded_file', folder='users', filename=user.profile_picture) }}" alt="" width="70" height="70" class="rounded-circle me-2">
+                        {% else %}
+                        <img src="{{ url_for('uploaded_file', folder='users', filename='defaultuser.jpg') }}" alt="" width="70" height="70" class="rounded-circle me-2">
+                        {% endif %}
                     </a>
                     <h1>{{ user.full_name() }}</h1>
                     <p>{{ user.email }}</p>
                 </div>
-                <div class="edit-delete-buttons">
+                <div class="edit-delete-buttons mb-3 mt-3">
                     <a href="{{ url_for('user.edit_profile', user_id=user.id) }}" class="btn btn-info">Edit Profile</a>
                     <a href="{{ url_for('user.delete_profile', user_id=user.id) }}" class="btn btn-danger">Delete Account</a>
                 </div>

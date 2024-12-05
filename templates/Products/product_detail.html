@@ -1,0 +1,258 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+
+<div class="container-fluid m-3">
+    
+    <div class="row">
+        <!-- Left Column -->
+        <div class="col-lg-7 mb-4 car">
+            <div class="car-image w-100">
+                <!-- Main Car Image Carousel -->
+                <div id="carousel-{{ product.id }}" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        {% if product.product_images|length > 0 %}
+                            {% for image in product.product_images %}
+                            <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                <img class="d-block w-100" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" alt="Product Image" style="height: 400px; object-fit: cover;">
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="carousel-item active w-100">
+                                <img src="" class="d-block w-100" alt="Default Thumbnail" style="height: 400px; object-fit: cover;">
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% if product.product_images|length > 1 %}
+                    <a class="carousel-control-prev" href="#carousel-{{ product.id }}" role="button" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carousel-{{ product.id }}" role="button" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Thumbnails of Other Car Images -->
+            <div class="small-images mt-3 d-flex">
+                {% for image in product.product_images %}
+                    <img src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" alt="Product Thumbnail" class="img-thumbnail me-2" style="height: 100px; object-fit: cover;">
+                {% endfor %}
+            </div>
+
+            <div class="car-description mt-4" style="font-size: .8rem;">
+                <h4 class="heading">Overview</h4>
+                <div class="profile-info col-md-9">
+                    <div class="panel">
+                        <div class="panel-body bio-graph-info">
+                            <div class="row">
+                                <div class="bio-row">
+                                    <p><span>Name </span>: {{ product.name }}<strong></strong></p>
+                                </div>
+                                <div class="bio-row">
+                                    <p><span> Price  </span>: <strong> Ksh {{ "{:,.2f}".format(product.price) }}  </strong> </p>
+                                </div>
+                                <div class="bio-row">
+                                    <p><span>Stock Status</span>: <strong> {{ product.stock }}</strong>  </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="heading">Description</h4>
+                <p> {{ product.description }} </p>
+
+                <h4>Product specifications</h4>
+
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            {% if session.user %}
+            <div class="mt-3 mb-3">
+                <h4>INTERESTED IN THIS PRODUCT?</h4>
+                <h3>Make an Order right now</h3>
+                <form action="{{ url_for('order.create_order') }}" method="POST">
+                    <input type="hidden" name="total_price" value="{{ product.price }}">  <!-- Pass the total price -->
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                    <input class="form-control mt-2 mb-2" type="number" name="quantity" id="quantity" required placeholder="Qty">  <!-- Default quantity, can be changed -->
+                    
+                    <div class="mb-3">
+                        <label class="form-label" for="message">Add a message to your order</label>
+                        <input type="text" class="form-control" id="message" name="message" placeholder="Add a short message to your order">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Order Product</button>
+                </form>
+            </div>
+            {% else %}
+                <h4>INTERESTED IN THIS VEHICLE?</h4>
+                <form action="{{ url_for('order.create_order') }}" method="POST">
+                    <input type="hidden" name="product_id" value="{{ product.id }}" id="product_id">  <!-- Pass the product ID -->
+                    <input type="hidden" name="total_price" value="{{ product.price }}" > <!-- Pass the total price -->
+                    
+                    <div class="mb-3">
+                        <label for="guest_name" class="form-label">Name:</label>
+                        <input type="text" class="form-control" name="guest_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="guest_email" class="form-label">Email:</label>
+                        <input type="email" class="form-control" name="guest_email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="guest_phone" class="form-label">Phone:</label>
+                        <input type="tel" class="form-control" name="guest_phone" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Quantity:</label>
+                        <input type="number" class="form-control" name="quantity" value="1" min="1" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Message:</label>
+                        <textarea class="form-control" name="message" rows="3"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Order This Product Today</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+        {% if session.user and session.user.role == 'admin' %}
+
+            <div class="m-4">
+
+                <button class="btn btn-info mb-3 mt-3" id="toggle-specifications-form">Toggle Specifications Form</button>
+
+            </div>
+            
+        
+        
+
+            <div id="specifications-form" style="display:none;" class="mt-4 container">
+                <h4 class="heading">Add Product Specifications</h4>
+                <form action="{{ url_for('product.add_specifications', product_id=product.id) }}" method="POST">
+                    <div class="mb-3">
+                        <label for="brand" class="form-label">Select Brand</label>
+                        <select class="form-select" name="brand" required>
+                            <option value="">Select a Brand</option>
+                            {% for brand in brands %}
+                                <option value="{{ brand.id }}">{{ brand.brand_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Select Category</label>
+                        <select class="form-select" name="category" required>
+                            <option value="">Select a Category</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.category_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Specification Key and Value Fields -->
+                    <div id="specifications-container">
+                        <div class="specification-row">
+                            <div class="mb-3">
+                                <label for="spec_key" class="form-label">Specification Key</label>
+                                <input type="text" class="form-control" name="spec_key[]" placeholder="Enter specification key" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="spec_value" class="form-label">Specification Value</label>
+                                <input type="text" class="form-control" name="spec_value[]" placeholder="Enter specification value" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" id="add-spec-button" class="btn btn-secondary mb-2 mt-2">Add Another Specification</button>
+                    <button type="submit" class="btn btn-primary mb-2 mt-2">Save Specifications</button>
+                </form>
+            </div>
+
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-lg-6">
+                        <h4 class="heading mt-2 mb-3">Orders for this Product</h4>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders_with_product  %}
+                                    <tr>
+                                        <td>{{ order.id }}</td>
+                                        <td>{{ order.user_id }} </td>
+                                        <td>{{ order.order_status.value }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <h4 class="heading mt-2 mb-3">Stock Activity (Completed Sales)</h4>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Sale ID</th>
+                                    <th>Quantity Sold</th>
+                                    <th>Sale Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in completed_orders_with_product %}
+                                    <tr>
+                                        <td>{{ order.id }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        {% endif %}
+
+        <script>
+            // Toggle specifications form visibility
+            document.getElementById("toggle-specifications-form").addEventListener("click", function() {
+                const form = document.getElementById("specifications-form");
+                form.style.display = form.style.display === "none" ? "block" : "none";
+            });
+        
+            // Add new specification row
+            document.getElementById("add-spec-button").addEventListener("click", function() {
+                let container = document.getElementById("specifications-container");
+                let newRow = document.createElement("div");
+                newRow.classList.add("specification-row");
+                newRow.innerHTML = `
+                    <div class="mb-3">
+                        <label for="spec_key" class="form-label">Specification Key</label>
+                        <input type="text" class="form-control" name="spec_key[]" placeholder="Enter specification key" required>
+                    </div>
+        
+                    <div class="mb-3">
+                        <label for="spec_value" class="form-label">Specification Value</label>
+                        <input type="text" class="form-control" name="spec_value[]" placeholder="Enter specification value" required>
+                    </div>
+                `;
+                container.appendChild(newRow);
+            });
+        </script>
+
+
+{% endblock %}
+

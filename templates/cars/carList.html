@@ -32,7 +32,7 @@
         <div class="row">
           {% for car in cars %}
           <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-            <div class="card car-card" style="cursor: pointer;" onclick="location.href='{{ url_for('car.get_car', car_id=car.id) }}'">
+            <div class="card car-card" style="cursor: pointer;" onclick="location.href=`{{ url_for('car.get_car', car_id=car.id) }}`">
               <div id="carousel-{{ car.id }}" class="carousel slide" data-bs-ride="carousel">
                   <div class="carousel-inner">
                       {% if car.car_images|length > 0 %}
@@ -70,7 +70,7 @@
                              class="{{ 'fa-solid' if car.id in liked_cars else 'fa-thin' }} fa-heart fa-2xl" 
                              style="color: #74C0FC;" 
                              title="{{ 'Remove from Wishlist' if car.id in liked_cars else 'Add to Wishlist' }}" 
-                             onclick="event.stopPropagation(); toggleLike({{ car.id }}, '{{ 'unlike' if car.id in liked_cars else 'like' }}', this)"></i>
+                             onclick="event.stopPropagation(); toggleLike({{ car.id }}, `{{ 'unlike' if car.id in liked_cars else 'like' }}`, this)"></i>
                       </div>
                       <p class="price mb-0" style="font-size: 1rem; text-align: right;"><strong>${{ car.price }}</strong></p>
                   </div>

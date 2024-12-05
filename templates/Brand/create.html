@@ -16,6 +16,15 @@
                     <label for="brand_logo">Brand Logo:</label>
                     <input type="file" class="form-control-file" id="brand_logo" name="brand_logo" required>
                 </div>
+                <div class="mb-3">
+                    <label for="category" class="form-label">Category Type</label>
+                    <select class="form-control" id="category" name="category" required>
+                        <option value="">Select A brand</option>
+                        {% for type in cats %}
+                        <option value="{{ type.value }}">{{ type.value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
                 <button type="submit" class="btn btn-primary mb-2 mt-3">Create Brand</button>
             </form>
             </div>

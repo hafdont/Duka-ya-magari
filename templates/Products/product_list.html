@@ -1,0 +1,143 @@
+{% extends "admin_base.html" %}
+
+{% block main_content %}
+<div class="container mt-4">
+    <h2>Product List</h2>
+    <div class="d-flex justify-content-end mb-3">
+        <!-- Toggle Buttons -->
+        <button class="btn btn-primary me-2" id="toggle-detailed" onclick="toggleView('detailed')">Detailed View</button>
+        <button class="btn btn-secondary" id="toggle-grid" onclick="toggleView('grid')">Grid View</button>
+    </div>
+    <!-- Detailed View -->
+    <div id="detailed-view" class="row">
+        {% for product in products %}
+        <div class="col-12 mb-4">
+            <!-- Add anchor tag to make the whole card clickable -->
+            <a href="{{ url_for('product.get_product', product_id=product.id) }}" class="text-decoration-none text-dark">
+                <div class="row border rounded p-3">
+                    <div class="col-md-4">
+                        <div id="carousel-{{ product.id }}" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                {% if product.product_images|length > 0 %}
+                                    {% for image in product.product_images %}
+                                    <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                        <img class="d-block w-100" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" alt="Product Image" style="height: 200px; object-fit: cover;">
+                                    </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="carousel-item active">
+                                        <img src="path/to/default-image.jpg" class="d-block w-100" alt="Default Thumbnail" style="height: 200px; object-fit: cover;">
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-7 offset-md-1">
+                        <h4 class="heading">{{ product.name }}</h4>
+                        <p><strong>Description:</strong> {{ product.description }}</p>
+                        <p><strong>Category:</strong> {{ product.category }}</p>
+                        <p><strong>Price:</strong> ${{ "{:,.2f}".format(product.price) }}</p>
+                        <!-- Buttons Section -->
+                        <div class="mt-3 d-flex gap-3">
+                            <!-- Add to Cart Button -->
+                            <button class="btn btn-outline-primary d-flex align-items-center">
+                                <i class="bi bi-cart me-2"></i> Add to Cart
+                            </button>
+                            <!-- Like Button -->
+                            <button class="btn btn-outline-warning d-flex align-items-center">
+                                <i class="bi bi-star me-2"></i> Like
+                            </button>
+                            <!-- Make an Order Button -->
+                            <button class="btn btn-success d-flex align-items-center">
+                                <i class="bi bi-bag-check me-2"></i> Make an Order
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    <!-- Grid View -->
+    <div id="grid-view" class="row" style="display: none;">
+        {% for product in products %}
+        <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
+            <div class="card" style="cursor: pointer;" onclick="location.href='{{ url_for('product.get_product', product_id=product.id) }}'">
+                <div id="carousel-{{ product.id }}" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        {% if product.product_images|length > 0 %}
+                            {% for image in product.product_images %}
+                            <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                <img class="d-block w-100" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" alt="Product Image" style="height: 200px; object-fit: cover;">
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="carousel-item active">
+                                <img src="path/to/default-image.jpg" class="d-block w-100" alt="Default Thumbnail" style="height: 200px; object-fit: cover;">
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text"><strong>Price:</strong> ${{ product.price }}</p>
+                </div>
+                <div class="card-footer d-flex justify-content-around py-3">
+                    <!-- Add to Cart Button -->
+                     <div class="">
+                        <button class="btn btn-sm btn-outline-primary d-flex align-items-center">
+                            <i class="bi bi-cart me-2">Add to Cart</i> 
+                        </button>
+                     </div>
+                     <div class="">
+                        <!-- Like Button -->
+                        <button class="btn btn-sm btn-outline-warning d-flex align-items-center">
+                            <i class="bi bi-star me-2">Like</i> 
+                        </button>
+                     </div>
+                     <div class="">
+                        <!-- Make an Order Button -->
+                        <button class="btn btn-sm btn-success d-flex align-items-center">
+                            <i class="bi bi-bag-check me-2">Order</i> 
+                        </button>
+                     </div>
+                    
+
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+</div>
+
+<script>
+function toggleView(view) {
+    const detailedView = document.getElementById('detailed-view');
+    const gridView = document.getElementById('grid-view');
+    const toggleDetailed = document.getElementById('toggle-detailed');
+    const toggleGrid = document.getElementById('toggle-grid');
+
+    if (view === 'detailed') {
+        detailedView.style.display = 'flex';
+        gridView.style.display = 'none';
+        toggleDetailed.classList.add('btn-primary');
+        toggleDetailed.classList.remove('btn-secondary');
+        toggleGrid.classList.add('btn-secondary');
+        toggleGrid.classList.remove('btn-primary');
+    } else {
+        detailedView.style.display = 'none';
+        gridView.style.display = 'flex';
+        toggleGrid.classList.add('btn-primary');
+        toggleGrid.classList.remove('btn-secondary');
+        toggleDetailed.classList.add('btn-secondary');
+        toggleDetailed.classList.remove('btn-primary');
+    }
+}
+</script>
+{% endblock %}
+
+
+

@@ -2,7 +2,6 @@ from flask import Flask, send_from_directory, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
-from flask_wtf.csrf import CSRFProtect
 from dotenv import load_dotenv
 import os
 import pymysql
@@ -26,14 +25,15 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 USER_UPLOAD_FOLDER = os.getenv('USER_UPLOAD_FOLDER', 'uploads/users')
 BRAND_UPLOAD_FOLDER = os.getenv('BRAND_UPLOAD_FOLDER', 'uploads/brands')
 CARS_UPLOAD_FOLDER = os.getenv('CARS_UPLOAD_FOLDER', 'uploads/cars')
+PRODUCTS_UPLOAD_FOLDER = os.getenv('PRODUCTS_UPLOAD_FOLDER', 'uploads/products')
 
 # Ensure the upload folders exist
 os.makedirs(USER_UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(BRAND_UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(CARS_UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(PRODUCTS_UPLOAD_FOLDER, exist_ok=True)
 
-
-ALLOWED_FOLDERS = ['users', 'brands', 'cars']
+ALLOWED_FOLDERS = ['users', 'brands', 'cars', 'products']
 
 # Configure JWT
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'default_secret_key')
@@ -53,7 +53,7 @@ def b64encode(data):
 app.jinja_env.filters['b64encode'] = b64encode
 
 # Import models after initializing db
-from models import Brand, Category, Car, Image, User, Cart, Order, Review, Payment, Like
+from models import Brand, Category, Car, Image, User, Cart, Order, Review, Payment, Like, Product
 
 # Create a function to create tables if they don't exist
 def create_tables():
@@ -78,6 +78,8 @@ def uploaded_file(folder, filename):
         upload_folder = BRAND_UPLOAD_FOLDER
     elif folder == 'cars':
         upload_folder = CARS_UPLOAD_FOLDER
+    elif folder == 'products':
+        upload_folder = PRODUCTS_UPLOAD_FOLDER
 
     try:
         return send_from_directory(os.path.join(app.root_path, 'uploads', folder), filename)

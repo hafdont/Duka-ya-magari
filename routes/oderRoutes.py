@@ -1,8 +1,9 @@
 from flask import Blueprint, request, jsonify, render_template, session, redirect, url_for, flash
-from models import db, Order, User, Car, order_car, OrderStatus
+from models import db, Order, User, Car, OrderStatus, Product, Item
 from functools import wraps
 from sqlalchemy.orm import joinedload
-from .carRoutes import get_car
+import traceback
+from .user_routes import admin_required
 
 order_bp = Blueprint('order', __name__)
 
@@ -19,22 +20,23 @@ def user_required(f):
 
 @order_bp.route('/orders', methods=['POST'])
 def create_order():
-    total_price = request.form.get('total_price')
+    itemPrice = float(request.form.get('total_price'))
     car_id = request.form.get('car_id')  # Get car_id from the form
-    quantity = request.form.get('quantity', 1)  # Default to 1 if not provided
+    product_id = request.form.get('product_id')
+    quantity = int(request.form.get('quantity', 1))  # Default to 1 if not provided
     message = request.form.get('message')  # Message field from the form
 
     if 'user' in session:
         # Logged-in user scenario
         current_user = session['user']
-        new_order = Order(user_id=current_user['id'], total_price=total_price, message=message)
+        new_order = Order(user_id=current_user['id'], total_price=itemPrice, message=message)
     else:
         # Unauthenticated user scenario (using a contact form)
         guest_name = request.form.get('guest_name')
         guest_email = request.form.get('guest_email')
         guest_phone = request.form.get('guest_phone')
 
-        new_order = Order(user_id=None, total_price=total_price, 
+        new_order = Order(user_id=None, total_price=itemPrice, 
                           guest_name=guest_name, 
                           guest_email=guest_email, 
                           guest_phone=guest_phone,
@@ -42,24 +44,46 @@ def create_order():
 
     # Add the order to the database
     db.session.add(new_order)
-    db.session.commit()
+    db.session.flush()
 
-    # Create a record in the association table for the order and car
-    order_car_entry = order_car.insert().values(
-        order_id=new_order.id,
-        car_id=car_id,
-        quantity=quantity,
-        price=total_price
-    )
-    db.session.execute(order_car_entry)
+    car_id = request.form.get('car_id')
+    product_id = request.form.get('product_id')
+
+    if car_id:
+        total_item_price = itemPrice * quantity 
+        new_item = Item(
+            order_id=new_order.id,
+            car_id=car_id,
+            quantity=quantity,
+            price=itemPrice,
+            total_price= total_item_price,
+        )
+    elif product_id:
+        total_item_price = itemPrice * quantity
+        new_item = Item(
+            order_id=new_order.id,
+            product_id=product_id,
+            quantity=quantity,
+            price=itemPrice,
+            total_price=total_item_price,
+        )
+    else:
+        flash("No valid item provided for the order.", "error")
+        return redirect(url_for('home.index'))
+
+    # Add the item to the database
+    db.session.add(new_item)
     db.session.commit()
 
     flash("Order created successfully! We will contact you shortly.", "success")
-    return redirect(url_for('car.get_car', car_id=car_id))
+
+    # Redirect to the appropriate page based on item type
+    if car_id:
+        return redirect(url_for('car.get_car', car_id=car_id))
+    elif product_id:
+        return redirect(url_for('product.get_product', product_id=product_id))
    
 
-
-# Read all orders for a user (only for logged-in users)
 @order_bp.route('/orders', methods=['GET'])
 def get_orders():
     current_user = session['user']
@@ -98,22 +122,24 @@ def get_orders():
                            completed_orders=completed_orders, orders_by_status=orders_by_status)
 
 
-
 @order_bp.route('/orders/<int:order_id>', methods=['GET'])
+@admin_required
 def get_order(order_id):
     if 'user' not in session:
         flash("You must be logged in to access this feature.", "danger")
         return redirect(url_for('user.login'))
 
     current_user = session['user']  # Access session data only after the check
+    order = Order.query.get(order_id)  # Fetch a single order by its ID
 
-    order = Order.query.options(joinedload(Order.cars)).get_or_404(order_id)
+    if order is None:
+        flash("Order not found.", "danger")
+        return redirect(url_for('order.get_orders'))  # Redirect to the orders list if the order doesn't exist
 
-    if current_user.get('role') != 'admin' and order.user_id != current_user['id']:
-        flash("You are not authorized to view this order.", "danger")
-        return redirect(url_for('order.get_orders'))
+    # Query the items associated with the order
+    items = Item.query.filter_by(order_id=order_id).all()  # Fetch all items for the order
 
-    return render_template('orders/orderDetail.html', order=order, user=current_user)
+    return render_template('orders/orderDetail.html', order=order, user=current_user, items=items)
 
 
 # Update an order (e.g., change status)

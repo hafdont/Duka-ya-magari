@@ -4,7 +4,6 @@ from enum import Enum
 from flask_sqlalchemy import SQLAlchemy
 from app import db
 
-
 class StockStatus(Enum):
     IN_STOCK = "In Stock"
     OUT_OF_STOCK = "Out of Stock"
@@ -30,11 +29,11 @@ class Gender(Enum):
 
 # Updated Category Enum
 class CategoryType(Enum):
-    TOOLS_MACHINERY = 'Tools & Machinery'
-    CAR_PARTS = 'Car Parts'
-    HOUSEHOLD_ITEMS = 'Household Items'
+    TOOLS_MACHINERY = 'Tools_and_Machinery'
+    CAR_PARTS = 'Car_Parts'
+    HOUSEHOLD_ITEMS = 'Household_Items'
     COMPUTERS = 'Computers'
-    CARS = 'cars'
+    CARS = 'Cars'
 
 class Category(db.Model):
     __tablename__ = 'categories'
@@ -103,6 +102,22 @@ class User(db.Model):
     def wishlist_count(self):
         return len(self.likes)
 
+class Item(db.Model):
+    __tablename__ = 'items'
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.id'), nullable=False)  # Add the foreign key
+    car_id = db.Column(db.Integer, db.ForeignKey('cars.id'), nullable=True)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=True)
+    quantity = db.Column(db.Integer, default=1)
+    price = db.Column(db.Numeric(10, 2), nullable=False)
+    total_price = db.Column(db.Numeric(10 , 2), nullable=False)
+
+    car = db.relationship('Car', backref=db.backref('associated_items', lazy=True))
+    product = db.relationship('Product', backref=db.backref('associated_items', lazy=True))
+
+    def __repr__(self):
+        return f"<Item (Car: {self.car_id}, Product: {self.product_id})>"
+
 # Updated Product model
 class Product(db.Model):
     __tablename__ = 'products'
@@ -111,20 +126,22 @@ class Product(db.Model):
     price = db.Column(db.Numeric(10, 2), nullable=False)
     stock = db.Column(db.Integer, default=1)
     StockStatus = db.Column(db.Enum(StockStatus), default=StockStatus.IN_STOCK, nullable=False)
-    category = db.Column(db.Enum(CategoryType), nullable=False)
     description = db.Column(db.Text, nullable=True)
     added_at = db.Column(db.DateTime, default=datetime.utcnow)
+    category = db.Column(db.Enum(CategoryType), nullable=False)
+
 
     # Foreign key to link to the User model
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    specifications = db.relationship('ProductSpecification', backref='product', lazy=True)
 
+
+    
     # Relationships
     user = db.relationship('User', back_populates='products')
-    specifications = db.relationship('ProductSpecification', backref='product', lazy=True)
 
     def __repr__(self):
         return f"<Product {self.name}>"
-
 
 # ProductSpecification model
 class ProductSpecification(db.Model):
@@ -133,10 +150,57 @@ class ProductSpecification(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
     key = db.Column(db.String(50), nullable=False)
     value = db.Column(db.String(255), nullable=False)
+    brand_name = db.Column(db.String(100), nullable=True)  # Store the brand name directly
+    category_name = db.Column(db.String(100), nullable=True)  # Store the category name directly
+
+
+    # Relationships
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=True)
+    brand_id = db.Column(db.Integer, db.ForeignKey('brands.id'), nullable=True)
+    brand = db.relationship('Brand', backref='products', lazy=True)
 
     def __repr__(self):
         return f"<Specification {self.key}: {self.value}>"
 
+class Order(db.Model):
+    __tablename__ = 'orders'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)  # Allow nullable user_id
+    total_price = db.Column(db.Numeric(10, 2), nullable=False)
+    order_status = db.Column(db.Enum(OrderStatus), default=OrderStatus.PENDING)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    message = db.Column(db.Text, nullable=True)
+
+    # Guest user fields
+    guest_name = db.Column(db.String(100), nullable=True)
+    guest_email = db.Column(db.String(100), nullable=True)
+    guest_phone = db.Column(db.String(15), nullable=True)
+
+    # Relationships
+    user = db.relationship('User', backref='user_orders', lazy=True)
+
+
+    def __repr__(self):
+        return f"<Order {self.id} for User {self.user.username if self.user else self.guest_name}>"
+
+    def get_status_display(self):
+        return self.order_status.value
+
+# Image model for storing multiple images for Cars, Users, and potentially Admins
+class Image(db.Model):
+    __tablename__ = 'images'
+    id = db.Column(db.Integer, primary_key=True)
+    car_id = db.Column(db.Integer, db.ForeignKey('cars.id'), nullable=True)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=True)
+    image_path = db.Column(db.String(255), nullable=False)
+    uploaded_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Relationships
+    car = db.relationship('Car', backref=db.backref('car_images', lazy=True))
+    product = db.relationship('Product', backref=db.backref('product_images', lazy=True))
+
+    def __repr__(self):
+        return f"<Image {self.image_path}>"
 
 # Brand model
 class Brand(db.Model):
@@ -149,9 +213,9 @@ class Brand(db.Model):
     def __repr__(self):
         return f"<Brand {self.brand_name}>"
 
-
 # Category model
 class Car(db.Model):
+    
     __tablename__ = 'cars'
     id = db.Column(db.Integer, primary_key=True)
     brand_id = db.Column(db.Integer, db.ForeignKey('brands.id'), nullable=False)
@@ -183,52 +247,6 @@ class Car(db.Model):
 
     def __repr__(self):
         return f"<Car {self.model} {self.year}>"
-
-# Image model for storing multiple images for Cars, Users, and potentially Admins
-class Image(db.Model):
-    __tablename__ = 'images'
-    id = db.Column(db.Integer, primary_key=True)
-    car_id = db.Column(db.Integer, db.ForeignKey('cars.id'), nullable=True)
-    image_path = db.Column(db.String(255), nullable=False)
-    uploaded_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-    # Relationships
-    car = db.relationship('Car', backref=db.backref('car_images', lazy=True))
-
-    def __repr__(self):
-        return f"<Image {self.image_path}>"
-
-class Order(db.Model):
-    __tablename__ = 'orders'
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)  # Allow nullable user_id
-    total_price = db.Column(db.Numeric(10, 2), nullable=False)
-    order_status = db.Column(db.Enum(OrderStatus), default=OrderStatus.PENDING)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    message = db.Column(db.Text, nullable=True)
-
-    # Guest user fields
-    guest_name = db.Column(db.String(100), nullable=True)
-    guest_email = db.Column(db.String(100), nullable=True)
-    guest_phone = db.Column(db.String(15), nullable=True)
-
-    # Relationships
-    user = db.relationship('User', backref='user_orders', lazy=True)
-    cars = db.relationship('Car', secondary='order_car', backref=db.backref('orders', lazy=True))
-
-    def __repr__(self):
-        return f"<Order {self.id} for User {self.user.username if self.user else self.guest_name}>"
-
-    def get_status_display(self):
-        return self.order_status.value
-
-# Association table between Orders and Cars (many-to-many)
-order_car = db.Table('order_car',
-    db.Column('order_id', db.Integer, db.ForeignKey('orders.id'), primary_key=True),
-    db.Column('car_id', db.Integer, db.ForeignKey('cars.id'), primary_key=True),
-    db.Column('quantity', db.Integer, default=1),
-    db.Column('price', db.Numeric(10, 2), nullable=False)
-)
 
 # Payment model
 class Payment(db.Model):

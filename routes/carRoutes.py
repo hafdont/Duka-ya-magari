@@ -1,9 +1,8 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash, session, jsonify
 from werkzeug.utils import secure_filename
-from models import db, Car, User, CategoryType,StockStatus
+from models import db, Car, User, CategoryType, StockStatus, Brand, Category, Image, Like, Review
 from .admin_routes import admin_required
 import os
-from models import Car, Brand, Category, Image, User, Like, Review
 
 car_bp = Blueprint('car', __name__)
 
@@ -45,7 +44,7 @@ def create_car():
     if request.method == 'GET':
         brands = Brand.query.all()
         categories = Category.query.all()
-        return render_template('cars/newCar.html', brands=brands, user=current_user, categories = Category.query.filter_by(category_type=CategoryType.CARS.value).all())
+        return render_template('cars/newCar.html', brands=brands, user=current_user,categories = Category.query.filter_by(category_type=CategoryType.CARS.value).all())
 
     if request.method == 'POST':
         car_data = get_car_data_from_form(request.form)
@@ -125,7 +124,7 @@ def get_car(car_id):
 def toggle_like():
     data = request.get_json()
     target_id = data.get('car_id')  # Ensure the key matches what you send from the frontend
-    target_type = data.get('target_type')  # This may not be necessary if you're only dealing with cars
+    target_type = data.get('target_type')  
     current_user = session.get('user')  # Get the current user from the session
 
     if not current_user:

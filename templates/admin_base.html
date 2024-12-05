@@ -6,69 +6,76 @@
 
 
 
-        <!-- Sidebar -->
-        <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark col-lg-2 col-md-3 col-sm-4 min-vh-100">
-            <a href="{{ url_for('admin_bp.home') }}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                <span class="fs-4">Admin Sidebar</span>
+<!-- Sidebar -->
+<div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark col-md-6 col-lg-2 min-vh-100">
+    <a href="{{ url_for('admin_bp.home') }}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+        <span class="fs-4">Admin</span>
+    </a>
+    <hr>
+    <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+            <a href="{{ url_for('admin_bp.home') }}" class="nav-link active" aria-current="page">
+                <i class="bi bi-house-door"></i> <!-- Bootstrap Home Icon -->
+                <span class="d-none d-md-inline"> Home</span>
             </a>
-            <hr>
-            <ul class="nav nav-pills flex-column mb-auto">
-                <li class="nav-item">
-                    <a href="{{ url_for('admin_bp.home') }}" class="nav-link active" aria-current="page">
-                        <i class="bi bi-house"></i>
-                        <span class="d-none d-md-inline"> Home</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ url_for('brand_bp.view_all_brands') }}" class="nav-link text-white">
-                        <i class="bi bi-tags"></i>
-                        <span class="d-none d-md-inline"> Brands</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ url_for('user.view_all_users') }}" class="nav-link text-white">
-                        <i class="bi bi-person"></i>
-                        <span class="d-none d-md-inline"> Users</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ url_for('car.get_cars') }}" class="nav-link text-white">
-                        <i class="bi bi-car"></i>
-                        <span class="d-none d-md-inline"> Cars</span>
-                    </a>
-                </li>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url_for('brand_bp.view_all_brands') }}" class="nav-link text-white">
+                <i class="bi bi-tags"></i> <!-- Bootstrap Tags Icon -->
+                <span class="d-none d-md-inline"> Brands</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url_for('user.view_all_users') }}" class="nav-link text-white">
+                <i class="bi bi-person"></i> <!-- Bootstrap Person Icon -->
+                <span class="d-none d-md-inline"> Users</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url_for('car.get_cars') }}" class="nav-link text-white">
+                <i class="bi bi-car"></i> <!-- Bootstrap Car Icon -->
+                <span class="d-none d-md-inline"> Cars</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url_for('category.list_categories') }}" class="nav-link text-white">
+                <i class="bi bi-list"></i> <!-- Bootstrap List Icon -->
+                <span class="d-none d-md-inline"> Categories</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url_for('order.get_orders') }}" class="nav-link text-white">
+                <i class="bi bi-box"></i> <!-- Bootstrap Box Icon for Orders -->
+                <span class="d-none d-md-inline"> Orders</span>
+            </a>
+        </li>
+        <!-- New Products Link -->
+        <li class="nav-item">
+            <a href="{{ url_for('product.get_products') }}" class="nav-link text-white">
+                <i class="bi bi-boxes"></i> <!-- Bootstrap Boxes Icon for Products -->
+                <span class="d-none d-md-inline"> Products</span>
+            </a>
+        </li>
+    </ul>
+    <hr>
+    <div class="dropdown">
+        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            {% if user.profile_picture %}
+                <img src="{{ url_for('uploaded_file', folder='users', filename=user.profile_picture) }}" alt="" width="32" height="32" class="rounded-circle me-2">
+            {% else %}
+                <img src="{{ url_for('uploaded_file', folder='users', filename='defaultuser.jpg') }}" alt="Default Icon" width="32" height="32" class="rounded-circle me-2">
+            {% endif %}
+            <strong>{{ user.username }}</strong>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+            <li><a class="dropdown-item" href="{{ url_for('user.edit_profile', user_id=user.id) }}">Update Profile</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('user.view_profile', user_id=user.id) }}">View Profile</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{{ url_for('user.logout') }}">Sign out</a></li>
+        </ul>
+    </div>
+</div>
 
-                <li>
-                    <a href="{{ url_for('category.list_categories') }}" class="nav-link text-white">
-                        <i class="bi bi-list"></i>
-                        <span class="d-none d-md-inline"> Categories</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ url_for('order.get_orders') }}" class="nav-link text-white">
-                        <i class="bi bi-list"></i>
-                        <span class="d-none d-md-inline"> Orders</span>
-                    </a>
-                </li>
-            </ul>
-            <hr>
-            <div class="dropdown">
-                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                    {% if user.profile_picture %}
-                        <img src="{{ url_for('uploaded_file', folder='users', filename=user.profile_picture) }}" alt="" width="32" height="32" class="rounded-circle me-2">
-                        {% else %}
-                        <img src="{{ url_for('uploaded_file', folder='users', filename='defaultuser.jpg') }}" alt="Default Icon" width="32" height="32" class="rounded-circle me-2">
-                        {% endif %}
-                    <strong>{{ user.username }}</strong>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-                    <li><a class="dropdown-item" href="{{ url_for('user.edit_profile', user_id=user.id) }}">Update Profile</a></li>
-                    <li><a class="dropdown-item" href="{{ url_for('user.view_profile', user_id=user.id) }}">View Profile</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="{{ url_for('user.logout') }}">Sign out</a></li>
-                </ul>
-            </div>
-        </div>
 
         <!-- Main content area -->
         <div class="col-lg-10 col-md-9 col-sm-8">

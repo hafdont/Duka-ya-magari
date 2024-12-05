@@ -14,6 +14,7 @@
     --secondary-btn-color: #95A5A6; /* Secondary button color */
     --border-color: #76c6fb;
     --footer-bg-color: #060606;
+    --tabele-bg-color: #2298e6;
 }
 
 
@@ -120,9 +121,9 @@ body {
   }
 
   .table thead th {
-    background-color: white;
-    color: black;
-    padding: 3px;
+    background-color: var(--tabele-bg-color);
+    color: var(--nav-text-color);
+    padding: 5px;
     text-align: left;
     border: none; /* Remove borders from header cells */
   }
@@ -139,13 +140,15 @@ body {
   padding: 7px; /* Add padding */
   color: black; /* Text color */
   border: none; /* No borders on cells */
+  border-radius: 5px;
 }
 
 /* Hover effect for rows */
 .table tbody tr:hover {
-  transform: scale(1.02); /* Slightly increase size on hover */ 
+  transform: scale(1.018); /* Slightly increase size on hover */ 
   color: white!important; /* Change text color */
   border: none;
+  background-color: var(--tabele-bg-color);
 }
 
 /* Optional: Align actions cell, if needed */
@@ -780,8 +783,6 @@ a {
   right: auto;
   width: 100%
 }
-
-
 
 .whatsapp-button {
   position: fixed; /* Fixes the button at a specific position */
