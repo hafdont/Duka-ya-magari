@@ -4,16 +4,15 @@
 <div class="container mt-4">
     <div class="mt-1 mb-3">
         <h2 class="heading">Order Details</h2>
-        <p>{{ order.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
-        <button class="btn btn-primary"> {{ order.get_status_display() }}</button>
-        <p></p>
+        <p>{{ order.created_at.strftime('%d-%m-%Y- %H:%M:%S') }}</p>
+        <p class="bubble col-lg-2"> {{ order.get_status_display() }}</p>
     </div>
 
     <div class="row d-flex justify-content-center">
         <!-- User Info Card -->
         <div class="col-md-5 text-2xs">
             <div class="card">
-                <div class="m-2 heading">User Info</div>
+                <h3 class="m-2 heading">User Info</h3>
                 <div class="card-body">
                     <p><strong>Name:</strong> {{ order.guest_name if not order.user else order.user.username }}</p>
                     <p><strong>Email:</strong> {{ order.guest_email if not order.user else order.user.email }}</p>

@@ -1,7 +1,7 @@
 {% extends 'admin_base.html' %}
 
 {% block main_content %}
-<div class="col-lg-8">
+<div class="col-lg-8 brands">
     <h1>All Brands</h1>
     <a href="{{ url_for('brand_bp.create_brand') }}" class="btn btn-primary mt-3">Create New Brand</a>
 
@@ -51,13 +51,19 @@
                             <img src="{{ url_for('uploaded_file', folder='brands', filename=brand.brand_logo) }}" 
                                  alt="" width="40" height="40" class="rounded-circle me-2">
                         </td>
-                        <td>
-                            <a href="{{ url_for('brand_bp.read_brand', brand_id=brand.id) }}" class="btn btn-info">View</a>
-                            <a href="{{ url_for('brand_bp.update_brand', brand_id=brand.id) }}" class="btn btn-warning">Edit</a>
-                            <form action="{{ url_for('brand_bp.delete_brand', brand_id=brand.id) }}" method="POST" style="display:inline;">
-                                <button type="submit" class="btn btn-danger">Delete</button>
+                        <td class="action-cell d-flex justify-content-around align-items-center">
+                            <a href="{{ url_for('brand_bp.read_brand', brand_id=brand.id) }}" class="text-primary m-1">
+                              <i class="fa-duotone fa-solid fa-eye fa-lg"></i>
+                            </a>
+                            <a href="{{ url_for('brand_bp.update_brand', brand_id=brand.id) }}" class="text-info m-1">
+                              <i class="fa-duotone fa-solid fa-pen-to-square fa-lg"></i>
+                            </a>
+                            <form action="{{ url_for('brand_bp.delete_brand', brand_id=brand.id) }}" method="POST" class="d-inline-block">
+                              <button type="submit" class="btn btn-sm btn-danger">
+                                <i class="fa-duotone fa-solid fa-trash-can fa-lg"></i>
+                              </button>
                             </form>
-                        </td>
+                          </td>
                     </tr>
                     {% endfor %}
                 </tbody>

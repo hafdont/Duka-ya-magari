@@ -14,15 +14,15 @@
 <body>
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark">
-    <div class="container-fluid">
+    <div class="container-fluid ">
         <a class="navbar-brand" href="#">
             <img src="" alt="" width="30" height="24">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <div class="collapse navbar-collapse justify-content-center d-flex" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto justify-content-center d-flex mb-2 mb-lg-0">
               <li class="nav-item">
                 <a class="nav-link active" aria-current="page" 
                     href="{{ url_for('admin_bp.home') if (session.get('user') and session['user']['role'] == 'admin') else url_for('home_bp.index') }}">
@@ -31,31 +31,31 @@
             </li>
             <li>
                 <a class="nav-link active" aria-current="page" 
-                href="{{ url_for('admin_bp.home') if (session.get('user') and session['user']['role'] == 'admin') else url_for('home_bp.index') }}">
+                href="{{ url_for('home_bp.cars') }}">
                 Cars
             </a>
             </li>
             <li>
                 <a class="nav-link active" aria-current="page" 
-                href="{{ url_for('admin_bp.home') if (session.get('user') and session['user']['role'] == 'admin') else url_for('home_bp.index') }}">
+                href="{{ url_for('home_bp.carParts') }}">
                 Cars Parts
             </a>
             </li>
             <li>
                 <a class="nav-link active" aria-current="page" 
-                href="{{ url_for('admin_bp.home') if (session.get('user') and session['user']['role'] == 'admin') else url_for('home_bp.index') }}">
+                href="{{ url_for('home_bp.tools') }}">
                 Tools
             </a>
             </li>
             <li>
                 <a class="nav-link active" aria-current="page" 
-                href="{{ url_for('admin_bp.home') if (session.get('user') and session['user']['role'] == 'admin') else url_for('home_bp.index') }}">
+                href="{{ url_for('home_bp.househldItems') }}">
                 House hold items
             </a>
             </li>
             <li>
                 <a class="nav-link active" aria-current="page" 
-                href="{{ url_for('admin_bp.home') if (session.get('user') and session['user']['role'] == 'admin') else url_for('home_bp.index') }}">
+                href="{{ url_for('home_bp.computers') }}">
                 Computers
             </a>
             </li>
@@ -201,7 +201,7 @@
     });
 
 
-  function toggleLike(carId, action, element) {
+    function toggleLike(carId, action, element) {
     fetch('/likes', {
         method: 'POST',
         headers: {
@@ -226,9 +226,6 @@
     })
     .catch(error => console.error('Error:', error));
 }
-
-
-
 </script>
 
 

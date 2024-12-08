@@ -216,6 +216,9 @@
                                 {% for order in completed_orders_with_product %}
                                     <tr>
                                         <td>{{ order.id }}</td>
+                                        <td>{{ order.total_price }} </td>
+                                        <td> {{ order.created_at }} </td>
+                                        
                                     </tr>
                                 {% endfor %}
                             </tbody>

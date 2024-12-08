@@ -11,7 +11,7 @@ def toggle_like():
     if not current_user_id:
         return jsonify({'error': 'User not logged in'}), 401
 
-    car_id = request.json.get('car_id')
+    target_id = request.json.get('target_id')
     action = request.json.get('action')  # "like" or "unlike"
 
     if not car_id:
@@ -41,23 +41,3 @@ def toggle_like():
     db.session.commit()
     return jsonify({'message': message}), 200
 
-
-@like_bp.route('/like_review', methods=['POST'])
-def toggle_like_review():
-    data = request.get_json()
-    review_id = data.get('review_id')
-    current_user = session.get('user')
-
-    if not current_user:
-        return jsonify({'success': False, 'message': 'User not logged in'}), 403
-
-    existing_like = Like.query.filter_by(user_id=current_user['id'], target_id=review_id, target_type='review').first()
-
-    if existing_like:
-        db.session.delete(existing_like)
-    else:
-        new_like = Like(user_id=current_user['id'], target_id=review_id, target_type='review')
-        db.session.add(new_like)
-
-    db.session.commit()
-    return jsonify({'success': True})

@@ -89,7 +89,7 @@
                 <div class="mb-3">
                     <label for="role" class="form-label">User Role</label>
                     <select class="form-select" id="role" name="role">
-                        <option value=""> {{ user.role.value }} {{ user.role.name }} </option>
+                        <option value="{{ user.role.value }}">  {{ user.role.name }} </option>
                         {% for role in roles %}
                         <option id="role" name="role" value="{{ role.value }}">{{ role.name }}</option>
                         {% endfor %}

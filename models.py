@@ -27,6 +27,12 @@ class Gender(Enum):
     MALE = 'male'
     FEMALE = 'female'
 
+class targetType(Enum):
+    Car= 'cars'
+    Review = 'review'
+    Product= 'product'
+    Comment = 'comment'
+
 # Updated Category Enum
 class CategoryType(Enum):
     TOOLS_MACHINERY = 'Tools_and_Machinery'
