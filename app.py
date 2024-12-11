@@ -1,7 +1,9 @@
+from authlib.integrations.flask_client import OAuth
 from flask import Flask, send_from_directory, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
+from flask_login import LoginManager
 from dotenv import load_dotenv
 import os
 import pymysql
@@ -44,6 +46,8 @@ jwt = JWTManager(app)  # Initialize JWTManager
 # Initialize SQLAlchemy and Flask-Migrate
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+oauth = OAuth(app)  # Initialize OAuth with the app
+login_manager = LoginManager(app)  # Initialize LoginManager with the app
 
 # Define the base64 encoding filter
 def b64encode(data):
@@ -61,7 +65,7 @@ def create_tables():
         db.create_all()
 
 # Import and register routes
-from routes import register_routes  # Ensure this imports correctly
+from routes import register_routes  
 register_routes(app)
 
 

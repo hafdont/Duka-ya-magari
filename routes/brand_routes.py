@@ -3,9 +3,7 @@ import os
 from flask import Blueprint, request, render_template, session, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 from .user_routes import admin_required
-from models import User, Brand,CategoryType, db
-
-
+from models import User, Brand,CategoryType, Product, Order, Item, ProductSpecification, Car, db
 
 brand_bp = Blueprint('brand_bp', __name__)
 
@@ -92,12 +90,38 @@ def create_brand():
             flash("Invalid file format or no file uploaded!", "danger")
             return redirect(url_for('brand_bp.create_brand'))
         
+
 # Read One Brand
 @brand_bp.route('/brand/<int:brand_id>', methods=['GET'])
+@admin_required
 def read_brand(brand_id):
     current_user = session.get('user', None)
     brand = Brand.query.get_or_404(brand_id)  # Fetch brand by ID
-    return render_template('Brand/view.html', brand=brand, user=current_user)
+    
+    # Count the number of cars under this brand
+    cars_count = Car.query.filter_by(brand_id=brand.id).count()
+
+    # Get the list of cars under this brand
+    cars = Car.query.filter_by(brand_id=brand.id).all()
+
+    # Count the number of products under this brand (via ProductSpecification)
+    products_count = db.session.query(Product).join(ProductSpecification).filter(ProductSpecification.brand_id == brand.id).count()
+
+    # Get the list of products under this brand
+    products = db.session.query(Product).join(ProductSpecification).filter(ProductSpecification.brand_id == brand.id).all()
+
+    # Count the number of orders containing products or cars from this brand
+    orders_count = db.session.query(Order).join(Item).outerjoin(Product, Item.product_id == Product.id).outerjoin(Car, Item.car_id == Car.id) \
+    .filter((ProductSpecification.brand_id == brand.id) | (Car.brand_id == brand.id)) \
+    .distinct(Order.id).count()
+
+    # Get the list of orders containing products or cars from this brand
+    orders = db.session.query(Order).join(Item).outerjoin(Product, Item.product_id == Product.id).outerjoin(Car, Item.car_id == Car.id) \
+    .filter((ProductSpecification.brand_id == brand.id) | (Car.brand_id == brand.id)) \
+    .distinct(Order.id).all()
+
+    return render_template('Brand/view.html', brand=brand, user=current_user, cars_count=cars_count, products_count=products_count, orders_count=orders_count, cars=cars, products=products, orders=orders)
+
 
 # Update a Brand
 @brand_bp.route('/brands/edit/<int:brand_id>', methods=['GET', 'POST'])

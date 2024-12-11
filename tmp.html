@@ -1,0 +1,92 @@
+
+
+
+
+
+        <div class="row mt-4">
+            <!-- Car Jumbotron -->
+            <div class="col-12 col-md-2 mb-4">
+                <div class="jumbotron jumbotron-fluid" style="background-image: url('{{ url_for('static', filename='img/car-banner.jpg') }}'); background-size: cover; height: 300px;">
+                    <div class="">
+                        <h1 class="display-4">Cars</h1>
+                        <p class="lead">Explore our wide range of cars from trusted manufacturers.</p>
+                        <a class="btn btn-primary" href="{{ url_for('home_bp.cars') }}">Explore Cars</a>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Tools Jumbotron -->
+            <div class="col-12 col-md-2 mb-4">
+                <div class="jumbotron jumbotron-fluid" style="background-image: url('{{ url_for('static', filename='img/tools-banner.jpg') }}'); background-size: cover; height: 300px;">
+                    <div class="">
+                        <h1 class="display-4">Tools</h1>
+                        <p class="lead">Discover top tools for DIY projects and professional use.</p>
+                        <a class="btn btn-primary" href="{{ url_for('home_bp.tools') }}">Explore Tools</a>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Household Items Jumbotron -->
+            <div class="col-12 col-md-2 mb-4">
+                <div class="jumbotron jumbotron-fluid" style="background-image: url('{{ url_for('static', filename='img/household-banner.jpg') }}'); background-size: cover; height: 300px;">
+                    <div class="">
+                        <h1 class="display-4">Household Items</h1>
+                        <p class="lead">Shop for your everyday needs with a variety of household products.</p>
+                        <a class="btn btn-primary" href="{{ url_for('home_bp.househldItems') }}">Explore Household Items</a>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Car Parts Jumbotron -->
+            <div class="col-12 col-md-2 mb-4">
+                <div class="jumbotron jumbotron-fluid" style="background-image: url('{{ url_for('static', filename='img/car-parts-banner.jpg') }}'); background-size: cover; height: 300px;">
+                    <div class="">
+                        <h1 class="display-4">Car Parts</h1>
+                        <p class="lead">Find high-quality car parts for repairs and upgrades.</p>
+                        <a class="btn btn-primary" href="{{ url_for('home_bp.carParts') }}">Explore Car Parts</a>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Computers Jumbotron -->
+            <div class="col-12 col-md-2 mb-4">
+                <div class="jumbotron jumbotron-fluid" style="background-image: url('{{ url_for('static', filename='img/computers-banner.jpg') }}'); background-size: cover; height: 300px;">
+                    <div class="">
+                        <h1 class="display-4">Computers</h1>
+                        <p class="lead">Browse through a variety of high-performance computers and accessories.</p>
+                        <a class="btn btn-primary" href="{{ url_for('home_bp.computers') }}">Explore Computers</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2>Our Brands</h2>
+                {% if brands %}
+                    <div id="brandCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            {% for brand in brands %}
+                            <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <a href=" ">
+                                        <img src="{{ url_for('uploaded_file', folder='brands', filename=brand.logo) }}" class="d-block w-50" alt="{{ brand.name }}">
+                                    </a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#brandCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#brandCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                {% else %}
+                    <p>No brands available at the moment.</p>
+                {% endif %}
+            </div>
+        </div>

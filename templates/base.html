@@ -13,81 +13,84 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark">
-    <div class="container-fluid ">
-        <a class="navbar-brand" href="#">
-            <img src="" alt="" width="30" height="24">
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-center d-flex" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto justify-content-center d-flex mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" 
-                    href="{{ url_for('admin_bp.home') if (session.get('user') and session['user']['role'] == 'admin') else url_for('home_bp.index') }}">
-                    Home
-                </a>                
-            </li>
-            <li>
-                <a class="nav-link active" aria-current="page" 
-                href="{{ url_for('home_bp.cars') }}">
-                Cars
+    <nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('home_bp.index') }}">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="" width="30" height="24">
             </a>
-            </li>
-            <li>
-                <a class="nav-link active" aria-current="page" 
-                href="{{ url_for('home_bp.carParts') }}">
-                Cars Parts
-            </a>
-            </li>
-            <li>
-                <a class="nav-link active" aria-current="page" 
-                href="{{ url_for('home_bp.tools') }}">
-                Tools
-            </a>
-            </li>
-            <li>
-                <a class="nav-link active" aria-current="page" 
-                href="{{ url_for('home_bp.househldItems') }}">
-                House hold items
-            </a>
-            </li>
-            <li>
-                <a class="nav-link active" aria-current="page" 
-                href="{{ url_for('home_bp.computers') }}">
-                Computers
-            </a>
-            </li>
-
-
-                <!-- Other links -->
-            </ul>
-
-            {% if user %}
-            <div class="dropdown">
-                <a href="#" class="nav-link dropdown-toggle" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    {% if user.profile_picture %}
-                    <img src="{{ url_for('uploaded_file', folder='users', filename=user.profile_picture) }}" alt="" width="32" height="32" class="rounded-circle me-2">
-                    {% else %}
-                    <img src="{{ url_for('uploaded_file', folder='users', filename='defaultuser.jpg') }}" alt="" width="32" height="32" class="rounded-circle me-2">
-                    {% endif %}
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li><a class="dropdown-item" href="{{ url_for('user.edit_profile', user_id=user.id) }}">Update Profile</a></li>
-                    <li><a class="dropdown-item" href="{{ url_for('user.view_profile', user_id=user.id) }}">View Profile</a></li>
-                    <li><a class="dropdown-item" href="{{ url_for('user.logout') }}">Logout</a></li>
-                    <li><a class="dropdown-item" href=""><i class="fa-thin fa-cart-shopping" style="color: #74C0FC;"></i></a></li>
+    
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+    
+            <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
+                <!-- Center the ul with ms-auto and use d-flex to control the layout -->
+                <ul class="navbar-nav mb-2 mb-lg-0 d-flex justify-content-center ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{ url_for('admin_bp.home') if (session.get('user') and session['user']['role'] == 'admin') else url_for('home_bp.index') }}">
+                            Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{ url_for('home_bp.cars') }}">
+                            Cars
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{ url_for('home_bp.carParts') }}">
+                            Car Parts
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{ url_for('home_bp.tools') }}">
+                            Tools
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{ url_for('home_bp.househldItems') }}">
+                            Household Items
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{ url_for('home_bp.computers') }}">
+                            Computers
+                        </a>
+                    </li>
                 </ul>
+    
+                <!-- Buttons for Orders and Add to Cart -->
+                <div class="d-flex align-items-center">
+                    <a href=" " class="btn  me-2">Orders</a>
+                    <a href="" class="btn ">Add to Cart</a>
+                </div>
+    
+                <!-- User Profile Dropdown -->
+                {% if user %}
+                <div class="dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {% if user.profile_picture %}
+                        <img src="{{ url_for('uploaded_file', folder='users', filename=user.profile_picture) }}" alt="" width="32" height="32" class="rounded-circle me-2">
+                        {% else %}
+                        <img src="{{ url_for('uploaded_file', folder='users', filename='defaultuser.jpg') }}" alt="" width="32" height="32" class="rounded-circle me-2">
+                        {% endif %}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="{{ url_for('user.edit_profile', user_id=user.id) }}">Update Profile</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('user.view_profile', user_id=user.id) }}">View Profile</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('user.logout') }}">Logout</a></li>
+                        <li><a class="dropdown-item" href=""><i class="fa-thin fa-cart-shopping" style="color: #74C0FC;"></i></a></li>
+                    </ul>
+                </div>
+                {% else %}
+                <a href="{{ url_for('user.login') }}" class="nav-link">
+                    <i class="bi bi-person-circle"></i> Log In
+                </a>
+                {% endif %}
             </div>
-            {% else %}
-            <a href="{{ url_for('user.login') }}" class="nav-link">
-                <i class="bi bi-person-circle"></i> Log In
-            </a>
-            {% endif %}
         </div>
-    </div>
-</nav>
+    </nav>
+    
+    
 
 {% with messages = get_flashed_messages(with_categories=True) %}
     {% if messages %}

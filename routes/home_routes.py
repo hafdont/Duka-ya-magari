@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, session, request, flash, redirect, url_for
-from models import Car, Category, Like,  Product
+from models import Car, Category, Like,  Product, Brand
 from flask_sqlalchemy import SQLAlchemy
 from app import db
 
@@ -9,6 +9,7 @@ home_bp = Blueprint('home_bp', __name__)
 def index():
     current_user = session.get('user')  # Fetch user from session
     categories = Category.query.all()
+    brands = Brand.query.all()
 
     # Get filter parameters
     selected_year = request.args.get('year', '')
@@ -67,7 +68,8 @@ def index():
         selected_mileage=selected_mileage,
         selected_model=selected_model,
         selected_category=selected_category,
-        selected_brand=selected_brand
+        selected_brand=selected_brand,
+        brands=brands
     )
 
 @home_bp.route('/cars')

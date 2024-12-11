@@ -11,9 +11,129 @@ Home Page
 
         <div class="justify-content-center text-center m-0">
             <img src="{{ url_for('static', filename='img/landing.jpg') }}" alt="" class="w-100 m-0 landing rounded">
-            <h1 class="heading text-center text-white" style="top: 40%; position: absolute;">Thinks am selling rocks</h1>
+
+            <div class="" style="top: 40%; position: absolute;">
+                <h1 class="heading text-center" >Thinks am selling rocks</h1>
+                <span class="btn btn-warning"> Get Started</span>
+
+            </div>
+
         </div>
     </div>
+</div>
+
+
+<div class="container-fluid mt-5">
+
+    <div class="row col-12 mb-3 bg-light shadow m-2">
+        <div class="text-center ">
+            <h2 class="heading mt-3 m-4 p-4">Nasim General Merchants </h2>
+            <p>
+                We are a leading seller of high-quality products ranging from cars to household items.
+                Our aim is to provide top-notch goods at affordable prices, ensuring a seamless shopping experience for our customers.
+            </p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center bg-light">
+        <div class="col-12 text-center">
+            <h2 class="heading mb-3">Our Top Products</h2>
+        </div>
+
+        <div class="row justify-content-center bg-light col-lg-12">
+
+                        <!-- Car Jumbotron -->
+                        <div class="jumbotron jumbotron-fluid col-2" >
+                            <div class="">
+                                <h4 class="heading">Cars</h4>
+                                <img src="{{ url_for('static', filename='img/carrs.png') }}"
+                                     class="d-block w-100"  width="100" height="100" >
+                                <p class="text-center">Explore our wide range of cars from trusted manufacturers.</p>
+                                <a class="btn btn-primary" href="{{ url_for('home_bp.cars') }}">Explore Cars</a>
+                            </div>
+                        </div>
+        
+                    <!-- Tools Jumbotron -->
+                        <div class="jumbotron jumbotron-fluid col-2">
+                            <div class=" ">
+                                <h4 class="heading">Tools</h4>
+                                <img src="{{ url_for('static', filename='img/tools.jpg') }}"
+                                     class="d-block w-100"  width="100" height="100" >
+                                <p class="text-center">Discover top tools for DIY projects and professional use.</p>
+                                <a class="btn btn-primary" href="{{ url_for('home_bp.tools') }}">Explore Tools</a>
+                            </div>
+                        </div>
+        
+                        <!-- Household Items Jumbotron -->
+                        <div class="jumbotron jumbotron-fluid col-2">
+                            <div class=" ">
+                                <h5 class="heading">Household Items</h5>
+
+                                <img src="{{ url_for('static', filename='img/tableware.jpg') }}"
+                                    class="d-block w-100"  width="100" height="100" >
+                                
+                                <p class="text-center">Shop for your everyday needs with a variety of household products.</p>
+                                <a class="btn btn-primary" href="{{ url_for('home_bp.househldItems') }}">Explore Household Items</a>
+                            </div>
+                        </div>
+                        <!-- car parts Jumbotron -->
+
+                        <div class="jumbotron jumbotron-fluid col-2" >
+                            <div class=" ">
+                                <h4 class="heading">Car Parts</h4>
+                                <img src="{{ url_for('static', filename='img/toolsAndMerch.jpg') }}"
+                                class="d-block w-100"  width="100" height="100" >
+
+                                <p class="text-center">Find high-quality car parts for repairs and upgrades.</p>
+                                <a class="btn btn-primary" href="{{ url_for('home_bp.carParts') }}">Explore Car Parts</a>
+                            </div>
+                        </div>
+
+                    <!-- car parts Jumbotron -->
+                    <div class="jumbotron jumbotron-fluid col-2">
+                        <div class=" ">
+                            <h4 class="heading">Computers</h4>
+                            <img src="{{ url_for('static', filename='img/computers.jpg') }}"
+                            class="d-block w-100"  width="100" height="100" >
+                            <p class="text-center">Browse through a variety of high-performance computers and accessories.</p>
+                            <a class="btn btn-primary" href="{{ url_for('home_bp.computers') }}">Explore Computers</a>
+                            
+                        </div>
+                    </div>
+
+                                                                                
+        
+
+        </div>
+
+
+    </div>
+
+    <div class="row">
+        <div class="col-12 text-center mt-3">
+            <h2 class="heading">Our Brands</h2>
+            {% if brands %}
+            <div class="row">
+                {% for brand in brands %}
+                    <div class="col-12 col-md-2 mb-4">
+                        <div class="d-flex justify-content-center">
+                            <a href="{{ url_for('brand_bp.read_brand', brand_id=brand.id) }} ">
+                                <img src="{{ url_for('uploaded_file', folder='brands', filename=brand.brand_logo) }}" 
+                                    class="d-block w-100" alt="{{ brand.name }}" width="100" height="100"> 
+                            </a>
+                        </div>
+                    </div>
+                    {% if loop.index % 10 == 0 and not loop.last %}
+                        </div><div class="row">
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No brands available at the moment.</p>
+        {% endif %}
+        </div>
+    </div>
+
 </div>
 
 <div class="container ">
@@ -185,6 +305,8 @@ Home Page
 </div>
 
 
+
+
 <script>
     // Get the range slider and the text spans to display the value
     const priceSlider = document.getElementById('price-range');
@@ -203,5 +325,4 @@ Home Page
     };
 </script>
 {% endblock %}
-
 

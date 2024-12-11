@@ -159,7 +159,6 @@ class ProductSpecification(db.Model):
     brand_name = db.Column(db.String(100), nullable=True)  # Store the brand name directly
     category_name = db.Column(db.String(100), nullable=True)  # Store the category name directly
 
-
     # Relationships
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=True)
     brand_id = db.Column(db.Integer, db.ForeignKey('brands.id'), nullable=True)

@@ -2,15 +2,92 @@
 
 {% block main_content %}
 
-<div class="col-lg-8">
-    <h1>Brand: {{ brand.brand_name }}</h1>
-    <p><strong>ID:</strong> {{ brand.id }}</p>
-    <p><strong>Logo:</strong> <img src="{{ url_for('uploaded_file', folder='brands', filename=brand.brand_logo) }}" alt="{{ brand.brand_name }} Logo" /></p>
+
+
+<div class="col-lg-8 brandview">
+    <h1 class="heading mt-3 mb-2">Brand name: {{ brand.brand_name }}</h1>
+    <p class="heading"><strong>Logo:</strong> <img src="{{ url_for('uploaded_file', folder='brands', filename=brand.brand_logo) }}" alt="{{ brand.brand_name }} Logo" /></p>
     <a href="{{ url_for('brand_bp.update_brand', brand_id=brand.id) }}" class="btn btn-warning">Edit</a>
     <form action="{{ url_for('brand_bp.delete_brand', brand_id=brand.id) }}" method="POST" style="display:inline;">
         <button type="submit" class="btn btn-danger">Delete</button>
     </form>
     <a href="{{ url_for('brand_bp.view_all_brands')}}" class="btn btn-secondary">Back to All Brands</a>
 </div>
+
+
+<div class="admin mt-4" style="font-size: .7rem;">
+    <h5>Number of Cars under this brand: <strong>{{ cars_count }}</strong></h5>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Model</th>
+                    <th>Year</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for car in cars %}
+                    <tr>
+                        <td>{{ car.model }}</td>
+                        <td>{{ car.year }}</td>
+                        <td>{{ car.price }}</td>
+                        <td>{{ car.status }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <h5>Number of Products under this brand: <strong>{{ products_count }}</strong></h5>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                    <tr>
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.price }}</td>
+                        <td>{{ product.stock }}</td>
+                        <td>{{ product.description }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <h5>Number of Orders containing products from this brand: <strong>{{ orders_count }}</strong></h5>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Total Price</th>
+                    <th>Status</th>
+                    <th>Created At</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                    <tr>
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.total_price }}</td>
+                        <td>{{ order.order_status }}</td>
+                        <td>{{ order.created_at }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
 
 {% endblock %}

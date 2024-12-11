@@ -7,9 +7,15 @@ from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 from enum import Enum
 from models import User, UserRole,  UserStatus, Gender
-from app import db
+from app import db, oauth, login_manager
+from authlib.integrations.flask_client import OAuth
+from flask_login import login_user, logout_user, LoginManager
+
+bcrypt = Bcrypt()
+user_bp = Blueprint('user', __name__)
 
 load_dotenv()
+
 
 USER_UPLOAD_FOLDER = os.getenv('USER_UPLOAD_FOLDER', 'uploads/users')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -17,8 +23,17 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-bcrypt = Bcrypt()
-user_bp = Blueprint('user', __name__)
+
+google = oauth.register(
+    name='google',
+    client_id=os.getenv('GOOGLE_CLIENT_ID'),
+    client_secret=os.getenv('GOOGLE_CLIENT_SECRET'),
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+    authorize_params=None,
+    access_token_url='https://accounts.google.com/o/oauth2/token',
+    access_token_params=None,
+    client_kwargs={'scope': 'email profile'}
+)
 
 def get_user_data_from_form(form):
     return {
@@ -193,7 +208,6 @@ def edit_profile(user_id):
 
     return redirect(url_for('home_bp.index'))  # Fallback return
 
-
 # Delete User Profile
 @user_bp.route('/delete_profile', methods=['POST'])
 @admin_required
@@ -232,8 +246,6 @@ def logout():
     flash("You have been logged out!", "success")
     return redirect(url_for('home_bp.index'))
 
-
-
 # User Profile
 @user_bp.route('/viewProfile/<int:user_id>', methods=['GET'])
 def view_profile(user_id):
@@ -261,3 +273,62 @@ def view_profile(user_id):
                            likes_count=user_likes_count,
                            cars_count=user_cars_count,
                            reviews_count=user_reviews_count)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+
+@user_bp.route('/login/google')
+def login_google():
+    redirect_uri = url_for('user.authorize_google', _external=True)
+    return google.authorize_redirect(redirect_uri)
+
+@user_bp.route('/auth/google/callback')
+def google_callback():
+    token = google.authorize_access_token()
+    user_info = google.get('https://www.googleapis.com/oauth2/v1/userinfo').json()
+    
+    # Find or create user in your database
+    user = User.query.filter_by(email=user_info['email']).first()
+    if not user:
+        user = User(
+            username=user_info['email'].split('@')[0],
+            firstname=user_info.get('given_name'),
+            lastname=user_info.get('family_name'),
+            email=user_info['email'],
+            role=UserRole.CUSTOMER  # Default role
+        )
+        db.session.add(user)
+        db.session.commit()
+    
+    session['user'] = {
+        'id': user.id,
+        'username': user.username,
+        'firstname': user.firstname,
+        'lastname': user.lastname,
+        'role': user.role.value,
+    }
+    flash("Logged in with Google!", "success")
+    return redirect(url_for('home_bp.index'))
+
+@user_bp.route('/authorize/google')
+def authorize_google():
+    token = google.authorize_access_token()
+    user_info = google.get('https://www.googleapis.com/oauth2/v1/userinfo').json()
+    
+    if user_info:
+        session['user'] = {
+            'username': user_info['email'],
+            'firstname': user_info.get('given_name', ''),
+            'lastname': user_info.get('family_name', ''),
+            'email': user_info['email'],
+            'role': 'customer',  # Default role for Google sign-ins
+        }
+        flash("Login successful via Google!", "success")
+        return redirect(url_for('home_bp.index'))
+    
+    flash("Google login failed!", "danger")
+    return redirect(url_for('user.login'))
+

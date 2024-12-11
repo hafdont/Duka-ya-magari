@@ -16,7 +16,7 @@
                 <div class="card-body">
                     <p><strong>Name:</strong> {{ order.guest_name if not order.user else order.user.username }}</p>
                     <p><strong>Email:</strong> {{ order.guest_email if not order.user else order.user.email }}</p>
-                    <p><strong>Phone:</strong> {{ order.guest_phone if not order.user else order.user.phone }}</p>
+                    <p><strong>Phone:</strong> {{ order.guest_phone if not order.user else order.user.phone_number }}</p>
                 </div>
             </div>
         </div>
@@ -43,7 +43,8 @@
                     <tr>
                         <th>Item ID</th>
                         <th>Name</th>
-                        <th>Stock</th>
+                        <th>Number in Stock</th>
+                        <th>Stock Status </th>
                         <th>Price</th>
                     </tr>
                 </thead>
@@ -71,9 +72,9 @@
                             </td>
                             <td>
                                 {% if item.car %}
-                                    {{ item.car.stock_status }}
+                                    {{ item.car.StockStatus.value }}
                                 {% elif item.product %}
-                                    {{ item.product.stock_status }}
+                                    {{ item.product.StockStatus.value }}
                                 {% else %}
                                     N/A
                                 {% endif %}
