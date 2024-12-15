@@ -43,8 +43,8 @@ def create_car():
 
     if request.method == 'GET':
         brands = Brand.query.all()
-        categories = Category.query.all()
-        return render_template('cars/newCar.html', brands=brands, user=current_user,categories = Category.query.filter_by(category_type=CategoryType.CARS.value).all())
+        categories = Category.query.filter_by(category_type=CategoryType.CARS.value).all()
+        return render_template('cars/newCar.html', brands=brands, user=current_user,categories = categories )
 
     if request.method == 'POST':
         car_data = get_car_data_from_form(request.form)
@@ -61,7 +61,7 @@ def create_car():
             print("Files Uploaded:", files)
 
             if not files or all(file.filename == '' for file in files):
-                print("No files selected.")
+                flash("No files selected.", "danger")
                 flash("Invalid file type or no file selected.", "danger")
                 return redirect(url_for('car.create_car'))
 

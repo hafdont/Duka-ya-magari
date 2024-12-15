@@ -22,7 +22,7 @@
 body {
   font-family: 'Poppins', sans-serif;
   margin: 0; /* Set body margin to 0 */
-  background-color: var(--body-bg-color);
+  background-color: var(--body-bg-color)!important;
 }
 .flashes {
   list-style-type: none;

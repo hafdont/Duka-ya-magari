@@ -1,6 +1,5 @@
-<div class="row" id=" ">
-    {% for computer in computers %}
-    <div class="col-lg-3 col-md-6 col-sm-6 mb-4 product-row">
+{% for computer in computers %}
+    <div class="col-lg-3 col-md-6 col-sm-6 mb-4 ">
         <div class="card car-card" style="cursor: pointer;" onclick="location.href='{{ url_for('product.get_product', product_id=computer.id) }}'"></div>
             <!-- Carousel Section -->
 
@@ -10,8 +9,6 @@
                         {% for image in computer.computer_images %}
                         <div class="carousel-item {% if loop.first %}active{% endif %}">
                             <img class="d-block w-100 rounded" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" alt="Product Image" style="height: 200px; object-fit: cover;">
-                            <p>{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}</p>
-
                         </div>
                         {% endfor %}
                     {% else %}
@@ -22,11 +19,11 @@
                 </div>
 
                 {% if computer.computer_images|length > 1 %}
-                <a class="carousel-control-prev" href="#carousel-{{ computer.product.id }}" role="button" data-bs-slide="prev" onclick="event.stopPropagation();">
+                <a class="carousel-control-prev" href="#carousel-{{ computer.id }}" role="button" data-bs-slide="prev" onclick="event.stopPropagation();">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Previous</span>
                 </a>
-                <a class="carousel-control-next" href="#carousel-{{ computer.product.id }}" role="button" data-bs-slide="next" onclick="event.stopPropagation();">
+                <a class="carousel-control-next" href="#carousel-{{ computer.id }}" role="button" data-bs-slide="next" onclick="event.stopPropagation();">
                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Next</span>
                 </a>
@@ -56,5 +53,7 @@
                 </div>
             </div>
     </div>
-    {% endfor %}
-</div>
+{% endfor %}
+
+
+
