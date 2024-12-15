@@ -102,6 +102,7 @@ def create_car():
         return redirect(url_for('car.create_car'))
 
 @car_bp.route('/cars', methods=['GET'])
+@admin_required
 def get_cars():
     current_user = session.get('user', None)
     cars = Car.query.all()

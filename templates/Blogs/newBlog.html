@@ -1,0 +1,48 @@
+{% extends "admin_base.html" %}
+
+{% block title %}  
+Create_Blog
+{% endblock %}
+
+<div class="container mt-5">
+    <h2>Create a New Blog Post</h2>
+    <form action="{{ url_for('blogs.create_blog') }}" method="POST">
+
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="title" name="title" required placeholder="Enter blog title">
+        </div>
+
+        <div class="mb-3">
+            <label for="content" class="form-label">Content</label>
+            <textarea class="form-control" id="content" name="content" rows="5" required placeholder="Enter your blog content"></textarea>
+        </div>
+
+        <div class="mb-3 d-none">
+            <label for="user_id" class="form-label">User</label>>
+            <input type="text" value="{{ user.id }}" class="form-control" id="user_id" name="user_id" >
+        </div>
+        <div class="mb-3">
+            <label for="images" class="form-label">Blog Images</label>
+            <input type="file" class="form-control" id="images" name="images" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Create Blog</button>
+    </form>
+</div>
+
+<!-- Bootstrap 5 JS and Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+</body>
+</html>
+
+{% block main_content %}
+
+
+
+
+
+    
+{% endblock %}

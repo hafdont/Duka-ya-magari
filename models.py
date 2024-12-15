@@ -89,6 +89,7 @@ class User(db.Model):
     likes = db.relationship('Like', backref='liked_items', lazy=True)
     products = db.relationship('Product', back_populates='user')  # Relationship to products
 
+
     def __repr__(self):
         return f"<User {self.username}>"
 
@@ -191,12 +192,30 @@ class Order(db.Model):
     def get_status_display(self):
         return self.order_status.value
 
+class Blog(db.Model):
+    __tablename__ = 'blogs'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    # Relationship to store blog images
+    images = db.relationship('Image', backref='blog', lazy=True)
+    # Relationship to store blog comments
+    comments = db.relationship('Comment', backref='blog', lazy=True)
+    # Relationship to store blog likes
+    likes = db.relationship('Like', backref='liked_blog', lazy=True)
+    # Reference to the user who created the blog post
+    user = db.relationship('User', backref='blogs')
+
 # Image model for storing multiple images for Cars, Users, and potentially Admins
 class Image(db.Model):
     __tablename__ = 'images'
     id = db.Column(db.Integer, primary_key=True)
     car_id = db.Column(db.Integer, db.ForeignKey('cars.id'), nullable=True)
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=True)
+    blog_id = db.Column(db.Integer, db.ForeignKey('blogs.id'), nullable=True)
     image_path = db.Column(db.String(255), nullable=False)
     uploaded_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -271,22 +290,39 @@ class Payment(db.Model):
     def __repr__(self):
         return f"<Payment {self.id} for Order {self.order_id}>"
 
+class Comment(db.Model):
+    __tablename__ = 'comments'
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    blog_id = db.Column(db.Integer, db.ForeignKey('blogs.id'), nullable=False)
+
+    # Reference to the user who created the comment
+    user = db.relationship('User', backref=db.backref('comments', lazy=True))
+
+    def __repr__(self):
+        return f"<Comment by {self.user.username} on Blog {self.blog.title}>"
+
 # Review model
 class Review(db.Model):
     __tablename__ = 'reviews'
     id = db.Column(db.Integer, primary_key=True)
     car_id = db.Column(db.Integer, db.ForeignKey('cars.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=True)
     rating = db.Column(db.Integer, nullable=False)  # Consider adding a check constraint
     comment = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     # Relationships
     car = db.relationship('Car', backref=db.backref('reviews', lazy=True))
+    product = db.relationship('Product', backref=db.backref('reviews', lazy=True), uselist=False)
     user = db.relationship('User', backref=db.backref('reviews', lazy=True))
 
+
     def __repr__(self):
-        return f"<Review {self.rating} for Car {self.car.model}>"
+        return f"<Review {self.rating} for Car {self.car.model}>" if self.car else f"<Review {self.rating} for Product {self.product.name}>"
 
 # Cart model
 class Cart(db.Model):
@@ -308,10 +344,25 @@ class Like(db.Model):
     __tablename__ = 'likes'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    target_id = db.Column(db.Integer, nullable=False)  # ID of the liked item
-    target_type = db.Column(db.String(50), nullable=False)  # 'car', 'review', etc.
+    
+    # Foreign Keys for the liked items
+    car_id = db.Column(db.Integer, db.ForeignKey('cars.id'), nullable=True)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=True)
+    blog_id = db.Column(db.Integer, db.ForeignKey('blogs.id'), nullable=True)
+    review_id = db.Column(db.Integer, db.ForeignKey('reviews.id'), nullable=True)
+    comment_id = db.Column(db.Integer, db.ForeignKey('comments.id'), nullable=True)
 
+    target_type = db.Column(db.String(50), nullable=False)  # e.g., 'car', 'product', 'blog', 'review', 'comment'
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Relationships
     user = db.relationship('User', backref='liked_items')
+    car = db.relationship('Car', backref=db.backref('likes', lazy=True), foreign_keys=[car_id])
+    product = db.relationship('Product', backref=db.backref('likes', lazy=True), foreign_keys=[product_id])
+    blog = db.relationship('Blog', backref=db.backref('liked_blog', lazy=True), foreign_keys=[blog_id])
+    review = db.relationship('Review', backref=db.backref('likes', lazy=True), foreign_keys=[review_id])
+    comment = db.relationship('Comment', backref=db.backref('likes', lazy=True), foreign_keys=[comment_id])
 
     def __repr__(self):
         return f"<Like {self.id} for User {self.user.username}>"
+

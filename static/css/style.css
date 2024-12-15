@@ -8,6 +8,7 @@
     --body-bg-color: #ebebeb; /* Background color for body */
     --body-text-color: #34495E; /* Text color for body */
     --card-bg-color: #fdfdfd; /* Background color for cards, forms, and tables */
+    --secondary-bg-color: #f1eeee;
     --heading-color: #337ab7; /* Color for headings */
     --icon-color: #7F8C8D; /* Color for icons */
     --primary-btn-color: #3498DB; /* Primary button color */
@@ -17,7 +18,12 @@
     --tabele-bg-color: #2298e6;
 }
 
-
+/* Apply Poppins font to the body */
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0; /* Set body margin to 0 */
+  background-color: var(--body-bg-color);
+}
 .flashes {
   list-style-type: none;
   padding: 0;
@@ -63,6 +69,32 @@
   border-radius: 5px;
 }
 
+  /*============= NAVIGATION =============*/
+  
+  .navbar-brand img{
+    height: 3rem;
+  }
+  .navbar {
+    font-weight: 600;
+    letter-spacing: .1rem; 
+    box-shadow: 0 .5rem .5rem rgb(0, 0, 0, .1 );
+    z-index: 1;
+
+  }
+  
+  .nav-item{
+    padding: .5rem;
+  }
+  
+  .nav-link{
+    color:rgb(31, 27, 27)!important;
+  }
+
+  .nav-link.active,
+  .nav-link:hover{
+    color: var(--heading-color)!important;
+  }
+
 
 /* Keyframes for fade-in animation */
 @keyframes fadeIn {
@@ -90,12 +122,7 @@
   }
 }
 
-/* Apply Poppins font to the body */
-body {
-    font-family: 'Poppins', sans-serif;
-    margin: 0; /* Set body margin to 0 */
-    background-color: var(--body-bg-color);
-}
+
 
 .carholder, .filter, .car, .order, .reviews, .review, .brands, .brandview, .admin{
     background-color: var(--card-bg-color);
@@ -103,7 +130,9 @@ body {
     border-radius: 5px;
     margin: 10px;
 }
-
+.car-card{
+  background-color: var(--secondary-bg-color);
+}
   .car-card:hover {
     border:  1.5px solid var(--border-color);
   }
@@ -847,4 +876,80 @@ a {
 
 .scrollarea {
   overflow-y: auto;
+}
+
+.pagination-buttons button {
+  padding: 10px 20px;
+  margin: 5px;
+  font-size: 1rem;
+  border-radius: 5px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination-buttons button:hover {
+  background-color: #74C0FC;
+  color: white;
+}
+
+.jumbotron {
+  padding: 2rem;
+  margin: 1rem;
+  border-radius: 2%;
+  background-color: var(--card-bg-color);
+  box-shadow: 0 20px 20px rgba(0, 0, 0, 0.2), 0px 0px 50px rgba(0, 0, 0, 0.2);
+
+  /* Permanent 3D Shadow */
+  box-shadow: 
+    0 2px 5px rgba(0, 0, 0, 0.1),    /* Soft shadow for subtle depth */
+    0 4px 10px rgba(0, 0, 0, 0.05);  /* Slightly deeper shadow for a 3D look */
+
+  /* Gradient Border Effect */
+  position: relative;
+  overflow: hidden;
+}
+
+/* Optional: Slight Lift Effect on Hover */
+.jumbotron:hover {
+  transform: translateY(-5px);
+  box-shadow: 
+    0 4px 10px rgba(0, 0, 0, 0.15), 
+    0 8px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.Demo {
+  box-shadow: 0 20px 20px rgba(0, 0, 0, 0.2), 0px 0px 50px rgba(0, 0, 0, 0.2);
+  background-color: var(--secondary-bg-color);
+  padding: 1.5rem;
+  margin: 2rem;
+}
+
+.btn {
+  border: none;
+  color: #ffff;
+  border-radius: 10px;
+  margin: auto;
+  position: relative;
+  box-shadow: 3px 3px 2px var(--border-color);
+  transition: all 0.3s ease;
+}
+.btn:hover {
+  top: 3px;
+}
+.btn:active {
+  box-shadow: none;
+  top: 5px;
+}
+
+
+/* Default icon color */
+#toggle-detailed i,
+#toggle-grid i {
+    color: #000; /* Default black color */
+    transition: color 0.2s ease;
+}
+
+/* Active icon color */
+.active-icon {
+    color: #74C0FC; /* Blue color for the active icon */
 }

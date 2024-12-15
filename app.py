@@ -28,12 +28,14 @@ USER_UPLOAD_FOLDER = os.getenv('USER_UPLOAD_FOLDER', 'uploads/users')
 BRAND_UPLOAD_FOLDER = os.getenv('BRAND_UPLOAD_FOLDER', 'uploads/brands')
 CARS_UPLOAD_FOLDER = os.getenv('CARS_UPLOAD_FOLDER', 'uploads/cars')
 PRODUCTS_UPLOAD_FOLDER = os.getenv('PRODUCTS_UPLOAD_FOLDER', 'uploads/products')
+BLOGS_UPLOAD_FOLDER = os.getenv('BLOGS_UPLOAD_FOLDER', 'uploads/blogs')
 
 # Ensure the upload folders exist
 os.makedirs(USER_UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(BRAND_UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(CARS_UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(PRODUCTS_UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(BLOGS_UPLOAD_FOLDER, exist_ok=True)
 
 ALLOWED_FOLDERS = ['users', 'brands', 'cars', 'products']
 
@@ -84,11 +86,16 @@ def uploaded_file(folder, filename):
         upload_folder = CARS_UPLOAD_FOLDER
     elif folder == 'products':
         upload_folder = PRODUCTS_UPLOAD_FOLDER
+    elif folder == 'blogs':
+        upload_folder = BLOGS_UPLOAD_FOLDER
 
     try:
         return send_from_directory(os.path.join(app.root_path, 'uploads', folder), filename)
     except FileNotFoundError:
         abort(404)  # Return a 404 error if the file is not found
+
+
+
 
 
 # Run the application

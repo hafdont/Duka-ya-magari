@@ -1,0 +1,85 @@
+{% for car in cars %}
+<div class="col-lg-3 col-md-6 col-sm-6 mb-4 cars-row">
+    <div class="card car-card" style="cursor: pointer;" onclick="location.href='{{ url_for('car.get_car', car_id=car.id) }}'">
+        <div id="carousel-{{ car.id }}" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                {% if car.car_images|length > 0 %}
+                    {% for image in car.car_images %}
+                    <div class="carousel-item {% if loop.first %}active{% endif %}">
+                        <img class="d-block w-100 rounded" src="{{ url_for('uploaded_file', folder='cars', filename=image.image_path) }}" alt="Car Image" style="height: 200px; object-fit: cover;">
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="carousel-item active">
+                    <img src="path/to/default-image.jpg" class="d-block w-100" alt="Default Thumbnail" style="height: 200px; object-fit: cover;">
+                </div>
+                {% endif %}
+            </div>
+            {% if car.car_images|length > 1 %}
+            <a class="carousel-control-prev" href="#carousel-{{ car.id }}" role="button" data-bs-slide="prev" onclick="event.stopPropagation();">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carousel-{{ car.id }}" role="button" data-bs-slide="next" onclick="event.stopPropagation();">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </a>
+            {% endif %}
+        </div>
+        <div class="card-body text-uppercase" style="font-size: 0.8rem;">
+            <!-- Car Information Section -->
+            <div class="d-flex justify-content-between mb-2">
+                <!-- Year and Mileage -->
+                <p class="mb-0 mr-1">
+                    <i class="fa-solid fa-calendar" style="color: #74C0FC;"></i> 
+                    {{ car.year }}
+                </p>
+                <p class="mb-0 mr-1">
+                    <i class="fa-solid fa-tachometer-alt" style="color: #74C0FC;"></i>
+                    {{ car.mileage }} miles
+                </p>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+                <!-- Added At and Transmission -->
+                <p class="mb-0 mr-1">
+                    <i class="fa-solid fa-calendar-day" style="color: #74C0FC;"></i> 
+                    {{ car.added_at.strftime('%b %d, %Y') }}
+                </p>
+                <p class="mb-0 mr-1">
+                    <i class="fa-solid fa-cogs" style="color: #74C0FC;"></i> 
+                    {{ car.transmission }}
+                </p>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+                <!-- Fuel Type and Status -->
+                <p class="mb-0 ">
+                    <i class="fa-solid fa-gas-pump mr-1" style="color: #74C0FC;"></i> 
+                    {{ car.fuel_type }}
+                </p>
+                <p class="mb-0 mr-1">
+                    <i class="fa-solid fa-circle" style="color: #74C0FC;"></i> 
+                    {{ car.status }}
+                </p>
+            </div>
+            <div class="btmBorder mt-1"></div>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+                <!-- Wishlist Button -->
+                <div class="d-flex align-items-center">
+                    <i id="like-icon-{{ car.id }}" 
+                    class="fa-2xl {{ 'fa-solid fa-heart' if car.id in liked_items['cars'] else 'fa-regular fa-heart' }}" 
+                    style="color: #74C0FC;" 
+                    title="{{ 'Remove from Wishlist' if car.id in liked_items['cars'] else 'Add to Wishlist' }}"
+                    onclick="event.stopPropagation(); toggleLike({{ car.id }}, 'car', '{{ 'unlike' if car.id in liked_items['cars'] else 'like' }}', this)">
+                </i>
+
+                </div>                            
+                <!-- Price -->
+                <p class="price mb-0" style="font-size: 1rem; text-align: right;"><strong><strong>{{ "{:,.2f}".format(car.price) }}</strong></strong></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+

@@ -35,91 +35,82 @@ Home Page
         </div>
     </div>
 
-    <div class="row justify-content-center bg-light">
+    <div class="row justify-content-center bg-light shadow">
         <div class="col-12 text-center">
-            <h2 class="heading mb-3">Our Top Products</h2>
+            <h2 class="heading mt-3 mb-3">Our Products</h2>
         </div>
 
         <div class="row justify-content-center bg-light col-lg-12">
 
-                        <!-- Car Jumbotron -->
-                        <div class="jumbotron jumbotron-fluid col-2" >
-                            <div class="">
-                                <h4 class="heading">Cars</h4>
-                                <img src="{{ url_for('static', filename='img/carrs.png') }}"
-                                     class="d-block w-100"  width="100" height="100" >
-                                <p class="text-center">Explore our wide range of cars from trusted manufacturers.</p>
-                                <a class="btn btn-primary" href="{{ url_for('home_bp.cars') }}">Explore Cars</a>
-                            </div>
-                        </div>
-        
-                    <!-- Tools Jumbotron -->
-                        <div class="jumbotron jumbotron-fluid col-2">
-                            <div class=" ">
-                                <h4 class="heading">Tools</h4>
-                                <img src="{{ url_for('static', filename='img/tools.jpg') }}"
-                                     class="d-block w-100"  width="100" height="100" >
-                                <p class="text-center">Discover top tools for DIY projects and professional use.</p>
-                                <a class="btn btn-primary" href="{{ url_for('home_bp.tools') }}">Explore Tools</a>
-                            </div>
-                        </div>
-        
-                        <!-- Household Items Jumbotron -->
-                        <div class="jumbotron jumbotron-fluid col-2">
-                            <div class=" ">
-                                <h5 class="heading">Household Items</h5>
+            <!-- Car Jumbotron -->
+            <div class="jumbotron jumbotron-fluid col-12 col-sm-4 col-md-3 col-lg-2 mb-4">
+                <div class="">
+                    <h4 class="heading">Cars</h4>
+                    <img src="{{ url_for('static', filename='img/carrs.png') }}"
+                         class="d-block w-100" width="100" height="100" >
+                    <p class="text-center">Explore our wide range of cars from trusted manufacturers.</p>
+                    <a class="btn btn-primary" href="{{ url_for('home_bp.cars') }}">Explore Cars</a>
+                </div>
+            </div>
 
-                                <img src="{{ url_for('static', filename='img/tableware.jpg') }}"
-                                    class="d-block w-100"  width="100" height="100" >
-                                
-                                <p class="text-center">Shop for your everyday needs with a variety of household products.</p>
-                                <a class="btn btn-primary" href="{{ url_for('home_bp.househldItems') }}">Explore Household Items</a>
-                            </div>
-                        </div>
-                        <!-- car parts Jumbotron -->
+            <!-- Tools Jumbotron -->
+            <div class="jumbotron jumbotron-fluid col-12 col-sm-4 col-md-3 col-lg-2 mb-4">
+                <div class="">
+                    <h4 class="heading">Tools</h4>
+                    <img src="{{ url_for('static', filename='img/tools.jpg') }}"
+                         class="d-block w-100" width="100" height="100" >
+                    <p class="text-center">Discover top tools for DIY projects and professional use.</p>
+                    <a class="btn btn-primary" href="{{ url_for('home_bp.tools') }}">Explore Tools</a>
+                </div>
+            </div>
 
-                        <div class="jumbotron jumbotron-fluid col-2" >
-                            <div class=" ">
-                                <h4 class="heading">Car Parts</h4>
-                                <img src="{{ url_for('static', filename='img/toolsAndMerch.jpg') }}"
-                                class="d-block w-100"  width="100" height="100" >
+            <!-- Household Items Jumbotron -->
+            <div class="jumbotron jumbotron-fluid col-12 col-sm-4 col-md-3 col-lg-2 mb-4">
+                <div class="">
+                    <h5 class="heading">Household Items</h5>
+                    <img src="{{ url_for('static', filename='img/tableware.jpg') }}"
+                         class="d-block w-100" width="100" height="100" >
+                    <p class="text-center">Shop for your everyday needs with a variety of household products.</p>
+                    <a class="btn btn-primary" href="{{ url_for('home_bp.househldItems') }}">Explore Household Items</a>
+                </div>
+            </div>
 
-                                <p class="text-center">Find high-quality car parts for repairs and upgrades.</p>
-                                <a class="btn btn-primary" href="{{ url_for('home_bp.carParts') }}">Explore Car Parts</a>
-                            </div>
-                        </div>
+            <!-- Car Parts Jumbotron -->
+            <div class="jumbotron jumbotron-fluid col-12 col-sm-4 col-md-3 col-lg-2 mb-4">
+                <div class="">
+                    <h4 class="heading">Car Parts</h4>
+                    <img src="{{ url_for('static', filename='img/toolsAndMerch.jpg') }}"
+                         class="d-block w-100 rounded-circle" width="100" height="100" >
+                    <p class="text-center">Find high-quality car parts for repairs and upgrades.</p>
+                    <a class="btn btn-primary" href="{{ url_for('home_bp.carParts') }}">Explore Car Parts</a>
+                </div>
+            </div>
 
-                    <!-- car parts Jumbotron -->
-                    <div class="jumbotron jumbotron-fluid col-2">
-                        <div class=" ">
-                            <h4 class="heading">Computers</h4>
-                            <img src="{{ url_for('static', filename='img/computers.jpg') }}"
-                            class="d-block w-100"  width="100" height="100" >
-                            <p class="text-center">Browse through a variety of high-performance computers and accessories.</p>
-                            <a class="btn btn-primary" href="{{ url_for('home_bp.computers') }}">Explore Computers</a>
-                            
-                        </div>
-                    </div>
-
-                                                                                
-        
+            <!-- Computers Jumbotron -->
+            <div class="jumbotron jumbotron-fluid col-12 col-sm-4 col-md-3 col-lg-2 mb-4">
+                <div class="">
+                    <h4 class="heading">Computers</h4>
+                    <img src="{{ url_for('static', filename='img/computers.jpg') }}"
+                         class="d-block w-100" width="100" height="100" >
+                    <p class="text-center">Browse through a variety of high-performance computers and accessories.</p>
+                    <a class="btn btn-primary" href="{{ url_for('home_bp.computers') }}">Explore Computers</a>
+                </div>
+            </div>
 
         </div>
-
-
     </div>
 
     <div class="row">
-        <div class="col-12 text-center mt-3">
-            <h2 class="heading">Our Brands</h2>
+        <div class="col-12 text-center mt-3 bg-light shadow">
+            <h2 class="heading mt-3">Our Brands</h2>
             {% if brands %}
             <div class="row">
                 {% for brand in brands %}
-                    <div class="col-12 col-md-2 mb-4">
+                    <div class="col-12 col-md-2 mb-4 jumbotron">
                         <div class="d-flex justify-content-center">
                             <a href="{{ url_for('brand_bp.read_brand', brand_id=brand.id) }} ">
                                 <img src="{{ url_for('uploaded_file', folder='brands', filename=brand.brand_logo) }}" 
-                                    class="d-block w-100" alt="{{ brand.name }}" width="100" height="100"> 
+                                     class="d-block w-100" alt="{{ brand.name }}" width="100" height="100"> 
                             </a>
                         </div>
                     </div>
@@ -128,201 +119,47 @@ Home Page
                     {% endif %}
                 {% endfor %}
             </div>
-        {% else %}
-            <p>No brands available at the moment.</p>
-        {% endif %}
+            {% else %}
+                <p>No brands available at the moment.</p>
+            {% endif %}
         </div>
     </div>
 
 </div>
 
-<div class="container ">
-    <div class="row">
 
-        <!-- Updated Filter Form -->
-        <div class="container mt-3 d-none">
-            <h3 class="text-center">Filter Cars</h3>
-            <form id="car-filter-form" method="GET" action="{{ url_for('home_bp.index') }}">
-                <div class="row">
-                    <!-- Year Filter -->
-                    <div class="col-sm-3">
-                        <label for="year">Year</label>
-                        <select class="form-control" id="year" name="year">
-                            <option value="">Any Year</option>
-                            {% for year in range(2000, 2025) %}
-                                <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
+<div class="container">
+    <h1 class="text-center heading mt-5 mb-5">Featured Items</h1>
 
-                    <!-- Brand Filter -->
-                    <div class="col-sm-3">
-                        <label for="brand">Brand</label>
-                        <input type="text" class="form-control" id="brand" name="brand" placeholder="Brand" value="{{ selected_brand }}">
-                    </div>
+    <!-- Cars Section -->
+    <div class="row mb-5 bg-light Demo shadow" id="cars-list ">
+        <h2 class="mb-3">Cars</h2>
+        {% include 'partials/cars_list.html' %}
+    </div>
 
-                    <!-- Category Filter -->
-                    <div class="col-sm-3">
-                        <label for="category">Category</label>
-                        <select class="form-control" id="category" name="category">
-                            <option value="">Any Category</option>
-                            {% for category in categories %}
-                                <option value="{{ category.id }}" {% if category.id == selected_category %}selected{% endif %}>{{ category.category_name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
+    <!-- Computers Section -->
+    <div class="row mb-5 bg-light Demo shadow" id="computers-list">
+        <h2 class="mb-3">Computers</h2>
+        {% include 'partials/computers_list.html' %}
+    </div>
 
-                    <!-- Price Filter -->
-                    <div class="col-sm-3">
-                        <label for="price-range">Price Range (USD)</label>
-                        <input type="range" class="form-range" id="price-range" name="price" min="1000" max="100000" step="1000" value="{{ selected_price or 10000 }}">
-                        <span id="price-value">${{ selected_price or 10000 }}</span>
-                    </div>
-                </div>
+    <!-- Tools Section -->
+    <div class="row mb-5 bg-light Demo shadow" id="tools-list">
+        <h2 class="mb-3">Tools and Machinery</h2>
+        {% include 'partials/tools_list.html' %}
+    </div>
 
-                <div class="text-center mt-3">
-                    <button type="submit" class="btn btn-primary">Apply Filters</button>
-                </div>
-            </form>
+    <!-- Household Items Section -->
+    <div class="row mb-5 bg-light Demo shadow" id="household-list">
+        <h2 class="mb-3">Household Items</h2>
+        {% include 'partials/household_list.html' %}
+    </div>
+        <!-- Household Items Section -->
+        <div class="row mb-5 bg-light Demo shadow" id="household-list">
+            <h2 class="mb-3">Car parts </h2>
+            {% include 'partials/carParts.html' %}
         </div>
-        
-    </div>
-
-    <div class="">
-
-            <h1 class="text-center heading mt-5 mb-5">Featured Cars</h1>
-
-            <div class="row">
-                {% for car in cars %}
-                <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
-                  <div class="card car-card" style="cursor: pointer;" onclick="location.href='{{ url_for('car.get_car', car_id=car.id) }}'">
-                    <div id="carousel-{{ car.id }}" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                            {% if car.car_images|length > 0 %}
-                                {% for image in car.car_images %}
-                                <div class="carousel-item {% if loop.first %}active{% endif %}">
-                                    <img class="d-block w-100 rounded" src="{{ url_for('uploaded_file', folder='cars', filename=image.image_path) }}" alt="Car Image" style="height: 200px; object-fit: cover;">
-                                </div>
-                                {% endfor %}
-                            {% else %}
-                            <div class="carousel-item active">
-                                <img src="path/to/default-image.jpg" class="d-block w-100" alt="Default Thumbnail" style="height: 200px; object-fit: cover;">
-                            </div>
-                            {% endif %}
-                        </div>
-                        {% if car.car_images|length > 1 %}
-                        <a class="carousel-control-prev" href="#carousel-{{ car.id }}" role="button" data-bs-slide="prev" onclick="event.stopPropagation();">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </a>
-                        <a class="carousel-control-next" href="#carousel-{{ car.id }}" role="button" data-bs-slide="next" onclick="event.stopPropagation();">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </a>
-                        {% endif %}
-                    </div>
-                    <div class="card-body text-uppercase" style="font-size: 0.8rem;">
-                        <!-- Car Information Section -->
-                        <div class="d-flex justify-content-between mb-2">
-                            <!-- Year and Mileage -->
-                            <p class="mb-0 mr-1">
-                                <i class="fa-solid fa-calendar" style="color: #74C0FC;"></i> 
-                                 {{ car.year }}
-                            </p>
-                            <p class="mb-0 mr-1">
-                                <i class="fa-solid fa-tachometer-alt" style="color: #74C0FC;"></i>
-                                {{ car.mileage }} miles
-                            </p>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <!-- Added At and Transmission -->
-                            <p class="mb-0 mr-1">
-                                <i class="fa-solid fa-calendar-day" style="color: #74C0FC;"></i> 
-                                {{ car.added_at.strftime('%b %d, %Y') }}
-                            </p>
-                            <p class="mb-0 mr-1">
-                                <i class="fa-solid fa-cogs" style="color: #74C0FC;"></i> 
-                                 {{ car.transmission }}
-                            </p>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <!-- Fuel Type and Status -->
-                            <p class="mb-0 ">
-                                <i class="fa-solid fa-gas-pump mr-1" style="color: #74C0FC;"></i> 
-                                 {{ car.fuel_type }}
-                            </p>
-                            <p class="mb-0 mr-1">
-                                <i class="fa-solid fa-circle" style="color: #74C0FC;"></i> 
-                                {{ car.status }}
-                            </p>
-                        </div>
-                        <div class="btmBorder mt-1"></div>
-                        <div class="d-flex justify-content-between align-items-center mt-2">
-                            <!-- Wishlist Button -->
-                            <div class="d-flex align-items-center">
-                                <i id="like-icon-{{ car.id }}" 
-                                class="fa-2xl {{ 'fa-solid fa-heart' if car.id in liked_cars else 'fa-regular fa-heart' }}" 
-                                style="color: #74C0FC;" 
-                                title="{{ 'Remove from Wishlist' if car.id in liked_cars else 'Add to Wishlist' }}" 
-                                onclick="event.stopPropagation(); toggleLike({{ car.id }}, '{{ 'unlike' if car.id in liked_cars else 'like' }}', this)">
-                                </i>
-                            </div>
-                            <!-- Price -->
-                            <p class="price mb-0" style="font-size: 1rem; text-align: right;"><strong><strong>{{ "{:,.2f}".format(car.price) }}</strong></strong></p>
-                        </div>
-                    </div>
-                </div>
-                </div>
-                {% endfor %}
-              </div>
-
-              <!-- Pagination -->
-            <div class="d-flex justify-content-center mt-4">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination">
-                        {% if pagination.has_prev %}
-                            <li class="page-item"><a class="page-link" href="{{ url_for('home_bp.index', page=pagination.prev_num) }}">&laquo; Prev</a></li>
-                        {% endif %}
-                        {% for page_num in pagination.iter_pages() %}
-                            {% if page_num %}
-                                <li class="page-item {% if page_num == pagination.page %}active{% endif %}">
-                                    <a class="page-link" href="{{ url_for('home_bp.index', page=page_num) }}">{{ page_num }}</a>
-                                </li>
-                            {% else %}
-                                <li class="page-item disabled"><span class="page-link">...</span></li>
-                            {% endif %}
-                        {% endfor %}
-                        {% if pagination.has_next %}
-                            <li class="page-item"><a class="page-link" href="{{ url_for('home_bp.index', page=pagination.next_num) }}">Next &raquo;</a></li>
-                        {% endif %}
-                    </ul>
-                </nav>
-            </div>
-
-
-    </div>
-
 </div>
 
-
-
-
-<script>
-    // Get the range slider and the text spans to display the value
-    const priceSlider = document.getElementById('price-range');
-    const priceValue = document.getElementById('price-value');
-    const priceMin = document.getElementById('price-min');
-    const priceMax = document.getElementById('price-max');
-
-    // Initialize price values
-    priceValue.textContent = `$${priceSlider.value.toLocaleString()}`;
-    priceMin.textContent = `$${priceSlider.min.toLocaleString()}`;
-    priceMax.textContent = `$${priceSlider.max.toLocaleString()}`;
-
-    // Update the price value as the slider moves
-    priceSlider.oninput = function() {
-        priceValue.textContent = `$${this.value.toLocaleString()}`;
-    };
-</script>
 {% endblock %}
 

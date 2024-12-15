@@ -1,12 +1,12 @@
 from flask import Blueprint, request, jsonify, session, redirect, url_for, flash, render_template
-from models import Review, User, Car
+from models import Review, User, Car, Product
 from app import db
 
 review_bp = Blueprint('review', __name__)
 
 # Add a new review
 @review_bp.route('/add_review/<int:car_id>', methods=['POST'])
-def add_review(car_id):
+def add_review():
     current_user = session.get('user')
     if not current_user:
         flash("You must be logged in to add a review.", "danger")
@@ -15,22 +15,32 @@ def add_review(car_id):
     data = request.form
     comment = data.get('comment')
     rating = data.get('rating')
+    car_id = request.form.get('car_id')  # For car review
+    product_id = request.form.get('product_id')  # For product review
 
-    if not comment or not rating:
-        flash("comment and rating are required.", "danger")
-        return redirect(url_for('car.get_car', car_id=car_id))
+    # If reviewing a car
+    if car_id:
+        car = Car.query.get(car_id)
+        if not car:
+            flash("Car not found", "danger")
+            return redirect(url_for('home.index'))
+        
+        new_review = Review(user_id=current_user['id'],rating=rating, comment=comment, car_id=car.id)
+    
+    # If reviewing a product
+    elif product_id:
+        product = Product.query.get(product_id)
+        if not product:
+            flash("Product not found", "danger")
+            return redirect(url_for('home.index'))
+        
+        new_review = Review(user_id=current_user['id'],rating=rating, comment=comment, product_id=product.id)
 
-    new_review = Review(
-        user_id=current_user['id'],
-        car_id=car_id,
-        comment=comment,
-        rating=rating
-    )
     db.session.add(new_review)
     db.session.commit()
     
     flash("Review added successfully!", "success")
-    return redirect(url_for('car.get_car', car_id=car_id))
+    return redirect(url_for('product.view_product', product_id=product.id) if product_id else url_for('car.view_car', car_id=car.id))
 
 # View all reviews for a car
 @review_bp.route('/reviews/<int:car_id>', methods=['GET'])

@@ -14,33 +14,61 @@
         </div>
     </div>
 
-    
-
 
 
     <div class="row">
-      <div class="col-lg-3 mb-4 rounded filter">
-        <h4>Filter</h4>
-        <div class="mb-3">
-          <label for="filter-year" class="form-label">Year</label>
-          <select id="filter-year" class="form-select">
-            <option value="">Select Year</option>
-            <!-- Add year options dynamically -->
-          </select>
-        </div>
-        <div class="mb-3">
-          <label for="filter-transmission" class="form-label">Transmission</label>
-          <select id="filter-transmission" class="form-select">
-            <option value="">Select Transmission</option>
-            <option value="Automatic">Automatic</option>
-            <option value="Manual">Manual</option>
-          </select>
-        </div>
-      </div>
+
+            <!-- Add Search Filters -->
+            <div class="col-lg-3 mb-4 rounded filter">
+                <h4>Filter</h4>
+                <form method="GET" action="{{ url_for('home_bp.cars') }}">
+                    <!-- Year Filter -->
+                    <div class="mb-3">
+                        <label for="filter-year" class="form-label">Year</label>
+                        <select id="filter-year" name="year" class="form-select">
+                            <option value="">Select Year</option>
+                            {% for year in years %}
+                                <option value="{{ year }}" {% if request.args.get('year') == year %}selected{% endif %}>{{ year }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Transmission Filter -->
+                    <div class="mb-3">
+                        <label for="filter-transmission" class="form-label">Transmission</label>
+                        <select id="filter-transmission" name="transmission" class="form-select">
+                            <option value="">Select Transmission</option>
+                            <option value="Automatic" {% if request.args.get('transmission') == 'Automatic' %}selected{% endif %}>Automatic</option>
+                            <option value="Manual" {% if request.args.get('transmission') == 'Manual' %}selected{% endif %}>Manual</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Price Range Filter -->
+                    <div class="mb-3">
+                        <label for="filter-price" class="form-label">Price Range</label>
+                        <input type="number" id="filter-price-min" name="price_min" class="form-control" placeholder="Min Price" value="{{ request.args.get('price_min') }}">
+                        <input type="number" id="filter-price-max" name="price_max" class="form-control mt-2" placeholder="Max Price" value="{{ request.args.get('price_max') }}">
+                    </div>
+
+                    <!-- Brand Filter -->
+                    <div class="mb-3">
+                        <label for="filter-brand" class="form-label">Brand</label>
+                        <select id="filter-brand" name="brand" class="form-select">
+                            <option value="">Select Brand</option>
+                            {% for brand in brands %}
+                                <option value="{{ brand.id }}" {% if request.args.get('brand') == brand.id %}selected{% endif %}>{{ brand.brand_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                </form>
+            </div>
+
   
       <div class="col-lg-8 m-3 carholder">
-        <h2>All Cars</h2>
-        <a href="{{ url_for('car.create_car') }}" class="btn btn-primary mb-3">Add New Car</a>
+        <h2>All Cars (all users)</h2>
   
         <div class="row">
           {% for car in cars %}
@@ -130,6 +158,7 @@
           {% endfor %}
         </div>
       </div>
+
     </div>
 </div>
 

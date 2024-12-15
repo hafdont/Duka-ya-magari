@@ -1,6 +1,6 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash, session, jsonify
 from werkzeug.utils import secure_filename
-from models import db, Product, ProductSpecification, CategoryType, StockStatus, User, Image, Category, Brand, Order, Item, OrderStatus
+from models import db, Product, ProductSpecification, CategoryType, StockStatus, User, Image, Category, Brand, Order, Item, OrderStatus, Review
 import os
 from .user_routes import admin_required
 from enum import Enum
@@ -116,6 +116,7 @@ def get_product(product_id):
     current_user = session.get('user', None)
     product = Product.query.get_or_404(product_id)
     specifications = ProductSpecification.query.filter_by(product_id=product.id).all()
+    reviews = Review.query.filter_by(product_id=product.id).all()
 
     category_type_enum = product.category  # Enum member, not value
     categories = Category.query.filter_by(category_type=category_type_enum.value).all()
@@ -151,6 +152,7 @@ def get_product(product_id):
         orders_with_product=orders_with_product,  # Include related orders for the product
         categories_for_dropdown=categories_for_dropdown,
         completed_orders_with_product=completed_orders_with_product,
+        reviews=reviews
     )
 
 @product_bp.route('/products/edit/<int:product_id>', methods=['GET', 'POST'])

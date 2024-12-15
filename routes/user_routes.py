@@ -288,21 +288,28 @@ def login_google():
 @user_bp.route('/auth/google/callback')
 def google_callback():
     token = google.authorize_access_token()
-    user_info = google.get('https://www.googleapis.com/oauth2/v1/userinfo').json()
-    
-    # Find or create user in your database
-    user = User.query.filter_by(email=user_info['email']).first()
+    user_info = google.get('https://www.googleapis.com/oauth2/v3/userinfo').json()
+
+    # Extract user info from the response
+    email = user_info.get('email')
+    first_name = user_info.get('given_name')
+    last_name = user_info.get('family_name')
+
+    # Check if the user already exists in the database
+    user = User.query.filter_by(email=email).first()
+
     if not user:
+        # If the user doesn't exist, create a new user
         user = User(
-            username=user_info['email'].split('@')[0],
-            firstname=user_info.get('given_name'),
-            lastname=user_info.get('family_name'),
-            email=user_info['email'],
-            role=UserRole.CUSTOMER  # Default role
+            email=email,
+            firstname=first_name,
+            lastname=last_name,
+            role=UserRole.CUSTOMER  # Default role for new users
         )
         db.session.add(user)
         db.session.commit()
-    
+
+    # Store user info in the session
     session['user'] = {
         'id': user.id,
         'username': user.username,
@@ -310,25 +317,7 @@ def google_callback():
         'lastname': user.lastname,
         'role': user.role.value,
     }
-    flash("Logged in with Google!", "success")
-    return redirect(url_for('home_bp.index'))
 
-@user_bp.route('/authorize/google')
-def authorize_google():
-    token = google.authorize_access_token()
-    user_info = google.get('https://www.googleapis.com/oauth2/v1/userinfo').json()
-    
-    if user_info:
-        session['user'] = {
-            'username': user_info['email'],
-            'firstname': user_info.get('given_name', ''),
-            'lastname': user_info.get('family_name', ''),
-            'email': user_info['email'],
-            'role': 'customer',  # Default role for Google sign-ins
-        }
-        flash("Login successful via Google!", "success")
-        return redirect(url_for('home_bp.index'))
-    
-    flash("Google login failed!", "danger")
-    return redirect(url_for('user.login'))
+    flash("Login successful!", "success")
+    return redirect(url_for('home_bp.index'))
 

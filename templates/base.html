@@ -16,7 +16,7 @@
     <nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="{{ url_for('home_bp.index') }}">
-                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="" width="30" height="24">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="" width="48" height="24">
             </a>
     
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,13 +56,18 @@
                             Computers
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href=" ">
+                            <i  tittle="Orders" class="fa-duotone fa-solid fa-cart-shopping" style="--fa-primary-color: #74C0FC; --fa-secondary-color: #0d5d9b;"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href=" ">
+                            <i tittle="Cart" class="fa-duotone fa-solid fa-bag-shopping " style="--fa-primary-color: #74C0FC; --fa-secondary-color: #0d5d9b;"></i>
+                        </a>
+                    </li>
                 </ul>
     
-                <!-- Buttons for Orders and Add to Cart -->
-                <div class="d-flex align-items-center">
-                    <a href=" " class="btn  me-2">Orders</a>
-                    <a href="" class="btn ">Add to Cart</a>
-                </div>
     
                 <!-- User Profile Dropdown -->
                 {% if user %}
@@ -78,7 +83,6 @@
                         <li><a class="dropdown-item" href="{{ url_for('user.edit_profile', user_id=user.id) }}">Update Profile</a></li>
                         <li><a class="dropdown-item" href="{{ url_for('user.view_profile', user_id=user.id) }}">View Profile</a></li>
                         <li><a class="dropdown-item" href="{{ url_for('user.logout') }}">Logout</a></li>
-                        <li><a class="dropdown-item" href=""><i class="fa-thin fa-cart-shopping" style="color: #74C0FC;"></i></a></li>
                     </ul>
                 </div>
                 {% else %}
@@ -122,22 +126,43 @@
                 <div class="col-lg-8 pe-xxl-10">
                     <div class="row gy-5">
                         <div class="col-6 col-lg-4">
-                            <h5 class="text-white footer-title-01">A propos</h5>
+                            <h5 class="text-white footer-title-01">NASIM GENERAL MERCHANTS</h5>
                             <ul class="list-unstyled footer-link-01 m-0">
-                                <li><a class="text-white text-opacity-75" href="#">About Us</a></li>
-                                <li><a class="text-white text-opacity-75" href="#">Blog</a></li>
-                                <li><a class="text-white text-opacity-75" href="#">Our ingredients</a></li>
-                                <li><a class="text-white text-opacity-75" href="#">Our resellers</a></li>
+                                <li><a class="text-white text-opacity-75" href="#">Cars</a></li>
+                                <li><a class="text-white text-opacity-75" href="#">Car Parts</a></li>
+                                <li><a class="text-white text-opacity-75" href="#">Household Items</a></li>
+                                <li><a class="text-white text-opacity-75" href="#">Computers</a></li>
                             </ul>
                         </div>
                         <div class="col-6 col-lg-4">
-                            <h5 class="text-white footer-title-01">About</h5>
+                            <h5 class="text-white footer-title-01">Find us online</h5>
                             <ul class="list-unstyled footer-link-01 m-0">
-                                <li><a class="text-white text-opacity-75" href="#">Customer Service</a></li>
-                                <li><a class="text-white text-opacity-75" href="#">Privacy Policy</a></li>
-                                <li><a class="text-white text-opacity-75" href="#">Cookie Policy</a></li>
-                                <li><a class="text-white text-opacity-75" href="#">Terms &amp; Conditions</a></li>
-                                <li><a class="text-white text-opacity-75" href="#">Terms of Use</a></li>
+                                <li>
+                                    <a class="text-white text-opacity-75" href="https://www.facebook.com/aselcars.cars?mibextid=kFxxJD" target="_blank">
+                                        <i class="fa-brands fa-facebook"></i> Facebook
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="text-white text-opacity-75" href="https://www.tiktok.com/yourprofile" target="_blank">
+                                        <i class="fa-brands fa-tiktok"></i> TikTok
+                                    </a>
+
+                                </li>
+                                <li>
+                                    <a class="text-white text-opacity-75" href="https://www.youtube.com/yourchannel" target="_blank">
+                                        <i class="fa-brands fa-youtube"></i> YouTube
+                                    </a>
+
+                                </li>
+                                <li>
+                                    <a class="text-white text-opacity-75" href="https://x.com/FrankOyoo" target="_blank">
+                                        <i class="fa-brands fa-x-twitter"></i> Twitter
+                                    </a>
+
+                                </li>
+                                <li>
+
+                                </li>
                             </ul>
                         </div>
                         <div class="col-6 col-lg-4">
@@ -204,31 +229,42 @@
     });
 
 
-    function toggleLike(carId, action, element) {
-    fetch('/likes', {
+    function toggleLike(itemId, itemType, action, element) {
+    fetch('/like', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ car_id: carId, target_type: 'car', action: action }),
+        body: JSON.stringify({ item_id: itemId, item_type: itemType, action: action }),
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             // Update the icon class based on the action
             if (action === 'like') {
-                element.classList.remove('fa-thin');
+                element.classList.remove('fa-regular');
                 element.classList.add('fa-solid');
+                element.setAttribute('title', 'Remove from Wishlist');
+                element.setAttribute('onclick', `event.stopPropagation(); toggleLike(${itemId}, '${itemType}', 'unlike', this)`);
             } else {
                 element.classList.remove('fa-solid');
-                element.classList.add('fa-thin');
+                element.classList.add('fa-regular');
+                element.setAttribute('title', 'Add to Wishlist');
+                element.setAttribute('onclick', `event.stopPropagation(); toggleLike(${itemId}, '${itemType}', 'like', this)`);
             }
-        } else if (data.message) {
-            alert(data.message); // Handle errors appropriately
+        } else if (data.error) {
+            alert(data.error);
         }
     })
     .catch(error => console.error('Error:', error));
 }
+
+
 </script>
 
 
