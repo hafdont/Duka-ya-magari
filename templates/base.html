@@ -38,6 +38,11 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{ url_for('admin_bp.about') if (session.get('user') and session['user']['role'] == 'admin') else url_for('home_bp.index') }}">
+                            About
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="{{ url_for('home_bp.cars') }}">
                             Cars
                         </a>
@@ -60,6 +65,11 @@
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="{{ url_for('home_bp.computers') }}">
                             Computers
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{ url_for('blogs.get_blogs') }}">
+                            Blogs
                         </a>
                     </li>
                     <li class="nav-item">
@@ -102,26 +112,26 @@
     
     
 
-{% with messages = get_flashed_messages(with_categories=True) %}
-    {% if messages %}
-        <div id="flash-messages">
-            <ul class="flashes list-unstyled">
-                {% for category, message in messages %}
-                    <li class="alert alert-{{ category }}">{{ message }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-    {% endif %}
-{% endwith %}
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            <div id="flash-messages">
+                <ul class="flashes list-unstyled">
+                    {% for category, message in messages %}
+                        <li class="alert alert-{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    {% endwith %}
 
-{% block content %}
-{% endblock %}
+    {% block content %}
+    {% endblock %}
 
-<div class="whatsapp-button">    
-    <a href="https://wa.me/+254722295419?text=Hello%20,%20I%20m%20interested%20in..." target="_blank">
-        <img src="{{ url_for('static', filename='img/whatsapp.png') }}" alt="WhatsApp" width="80" height="80">
-    </a>
-</div>
+    <div class="whatsapp-button">    
+        <a href="https://wa.me/+254722295419?text=Hello%20,%20I%20m%20interested%20in..." target="_blank">
+            <img src="{{ url_for('static', filename='img/whatsapp.png') }}" alt="WhatsApp" width="80" height="80">
+        </a>
+    </div>
 
 
 

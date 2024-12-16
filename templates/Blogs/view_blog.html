@@ -2,70 +2,204 @@
 
 {% block content %}
 
-<div class="container mt-4">
-    <!-- First section with background color -->
-    <div class="row">
-        <div class="col-lg-12" style="background-color: #f8f9fa; height: 150px;">
-            <!-- This section is just for background color and height -->
+<div class="container-fluid mt-0">
+    <!-- First section with background color and centered text -->
+    <div class="row d-flex justify-content-center align-items-center" style="background-color: #337ab7; height: 400px;">
+        <div class="col-lg-12 text-center">
+            <h1 class="heading text-white">Captivating Stories to Blow Your Mind</h1>
         </div>
     </div>
 
-    <!-- Second section with 2 columns: Title on left, Image on right -->
-    <div class="row mt-3">
-        <div class="col-lg-10 offset-lg-1">
-            <div class="row">
-                <!-- Left: Blog Title -->
-                <div class="col-md-8">
-                    <h1>{{ blog.title }}</h1>
-                    <p><strong>Author:</strong> {{ blog.author }}</p>
-                    <p><small class="text-muted">Published on: {{ blog.created_at.strftime('%B %d, %Y') }}</small></p>
+    <!-- Adjust the position of this section -->
+    <div class="row col-lg-10 offset-1 justify-content-center align-items-center bg-light rounded" style="position: relative; top: 60px; margin-top: -100px;">
+        <div class="col-lg-6">
+
+            <h2 class="heading">{{ blog.title }}</h2>
+            <p><strong>Author:</strong> {{ blog.user.username }}</p>  <!-- Display the username of the author -->
+        </div>
+
+        <div class="col-lg-6 mt-3 mb-3 p-3">
+            <div id="carousel-{{ blog.id }}" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    {% if blog.images|length > 0 %}
+                        {% for image in blog.images %}
+                        <div class="carousel-item {% if loop.first %}active{% endif %}">
+                            <img class="d-block w-100 rounded" src="{{ url_for('uploaded_file', folder='blogs', filename=image.image_path) }}" alt="Blog Image" style="height: 200px; object-fit: cover;">
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                    <!-- Default Image when no blog image -->
+                    <div class="carousel-item active">
+                        <img src="{{ url_for('static', filename='path/to/default-image.jpg') }}" class="d-block w-100" alt="Default Thumbnail" style="height: 200px; object-fit: cover;">
+                    </div>
+                    {% endif %}
                 </div>
 
-                <!-- Right: Blog Image -->
-                <div class="col-md-4">
-                    <div id="carousel-{{ blog.id }}" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                            {% if blog.images|length > 0 %}
-                                {% for image in blog.images %}
-                                    <div class="carousel-item {% if loop.first %}active{% endif %}">
-                                        <img class="d-block w-100 rounded" src="{{ url_for('uploaded_file', folder='blogs', filename=image.image_path) }}" alt="Blog Image" style="height: 300px; object-fit: cover;">
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                <!-- Default Image when no blog images -->
-                                <div class="carousel-item active">
-                                    <img src="{{ url_for('static', filename='path/to/default-image.jpg') }}" class="d-block w-100" alt="Default Thumbnail" style="height: 300px; object-fit: cover;">
-                                </div>
-                            {% endif %}
+                {% if blog.images|length > 1 %}
+                <!-- Carousel Controls -->
+                <a class="carousel-control-prev" href="#carousel-{{ blog.id }}" role="button" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#carousel-{{ blog.id }}" role="button" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </a>
+                {% endif %}
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- Main content section -->
+<div class="container" style="margin-top: 100px;">  <!-- Adjust margin-top here to avoid overlap -->
+
+    <div class="row">
+        <div class="col-lg-10 offset-lg-1" style="margin-top: 10px;">
+            <div class="card">
+                <div class="card-body" style="padding: 20px; font-size: .9rem">
+                    <p>{{ blog.content|safe }}</p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Social Media Share Buttons -->
+        <div class="mt-0 col-lg-1">
+            <h5>Share:</h5>
+                <div>
+                    <a href="https://wa.me/?text={{ url_for('blogs.view_blog', blog_id=blog.id, _external=True) }}" target="_blank" class="me-3 mt-1  mb-2">
+                        <i class="fab fa-whatsapp fa-2x"></i>
+                    </a>
+                    <!-- X (Twitter) Share Icon -->
+                    <a href="https://twitter.com/intent/tweet?url={{ url_for('blogs.view_blog', blog_id=blog.id, _external=True) }}&text={{ blog.title }}" target="_blank" class="me-3 mb-2">
+                        <i class="fab fa-twitter fa-2x"></i>
+                    </a>
+                    <!-- Facebook Share Icon -->
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ url_for('blogs.view_blog', blog_id=blog.id, _external=True) }}" target="_blank" class="me-3 mb-2">
+                        <i class="fab fa-facebook fa-2x"></i>
+                    </a>
+                    <!-- Instagram Icon (No Sharing URL) -->
+                    <a href="https://www.instagram.com" target="_blank" class="me-3 mb-2">
+                        <i class="fab fa-instagram fa-2x"></i>
+                    </a>
+                </div>
+
+                {% if session.user and session.user.role == 'admin' %}
+                    <div class="">
+                        <a href="{{ url_for('blogs.edit_blog', blog_id=blog.id) }}" class="btn btn-warning mb-2">Edit Blog</a>
+                        <a href=" " class="btn btn-danger">Delete Blog</a>
+                    </div>
+                {% endif %}
+        </div>
+    </div>
+
+                        
+<!-- Comment Section -->
+<div id="comments-section" class="row offset-1 col-lg-10 bg-light">
+    <!-- Like and Comment Icons with Counts -->
+    <div class="mt-1 col-lg-12 offset-1">
+        <div class="d-flex align-items-center">
+
+            <!-- Like Icon -->
+            <a href="#" class="me-3">
+                <i 
+                    id="like-icon-{{ blog.id }}" 
+                    class="fa-xl {{ 'fa-solid fa-heart' if blog.id in liked_items['blog'] else 'fa-regular fa-heart' }}" 
+                    style="color: #74C0FC;" 
+                    title="{{ 'Remove from Wishlist' if blog.id in liked_items['blog'] else 'Add to Wishlist' }}"
+                    onclick="event.stopPropagation(); toggleLike({{ blog.id }}, 'blog', '{{ 'unlike' if blog.id in liked_items['blog'] else 'like' }}', this)">
+                </i>
+            </a>
+            <span> {{ blog.likes_count }} likes</small>
+          
+            <span> <i class="fa-solid fa-comment" style="color: #74C0FC;"></i> {{ blog.comments_count }} Comments </span>
+        </div>
+    </div>
+
+    <h5 class="col-lg-12">Leave a Comment:</h5>
+
+    <!-- User Profile Picture and Comment Text Area -->
+    <div class="d-flex align-items-center mb-3">
+
+            {% if user.profile_picture %}
+            <img src="{{ url_for('uploaded_file', folder='users', filename=user.profile_picture) }}" alt="" width="32" height="32" class="rounded-circle me-2">
+            {% else %}
+            <img src="{{ url_for('uploaded_file', folder='users', filename='defaultuser.jpg') }}" alt="" width="32" height="32" class="rounded-circle me-2">
+            {% endif %}
+        
+        <!-- Comment Form -->
+        <form method="POST" class="col-lg-10" action="{{ url_for('blogs.view_blog', blog_id=blog.id) }}" onsubmit="return validateComment()">
+            <div class="d-flex">
+                <input type="text" class="d-none" value="user.id" name="user.id">
+                <textarea class="form-control ms-3 col-lg-11" rows="2" placeholder="Write your comment..." name="comment" id="comment"></textarea>
+                <!-- Submit Button (Icon) -->
+                <button class="btn btn-primary ms-3 col-lg-1" type="submit">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Display Existing Comments -->
+    <div class="bg-light rounded">
+        {% if blog.comments %}
+            {% for comment in blog.comments %}
+                <div class="d-flex align-items-start mb-3">
+                    <!-- User Profile Picture -->
+
+                    {% if comment.user.profile_picture %}
+                        <img src="{{ url_for('uploaded_file', folder='users', filename=comment.user.profile_picture) }}" alt="" width="32" height="32" class="rounded-circle me-2">
+                    {% else %}
+                        <img src="{{ url_for('uploaded_file', folder='users', filename='defaultuser.jpg') }}" alt="Default Icon" width="32" height="32" class="rounded-circle me-2">
+                    {% endif %}
+
+                    <!-- Comment Content -->
+                    <div class="ms-3">
+                        <a href="{{ url_for('user.view_profile', user_id=comment.user.id) }}" class="fw-bold">{{ comment.user.username }}</a>
+                        <p>{{ comment.content }}</p>
+                        <div class="d-flex align-items-center">
+                            <!-- Like Icon for Comment -->
+                            <a href="#" class="me-2">
+                                <i 
+                                    id="like-icon-{{ comment.id }}" 
+                                    class="fa-xs {{ 'fa-solid fa-heart' if comment.id in liked_items['comment'] else 'fa-regular fa-heart' }}" 
+                                    style="color: #74C0FC;" 
+                                    title="{{ 'Remove from Wishlist' if comment.id in liked_items['comment'] else 'Add to Wishlist' }}"
+                                    onclick="event.stopPropagation(); toggleLike({{ comment.id }}, 'comment', '{{ 'unlike' if comment.id in liked_items['comment'] else 'like' }}', this)">
+                                </i>
+
+                            </a>
+                            <span>{{ comments_likes_count[comment.id] }} Likes</span>
                         </div>
-                        {% if blog.images|length > 1 %}
-                        <!-- Carousel Controls -->
-                        <a class="carousel-control-prev" href="#carousel-{{ blog.id }}" role="button" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </a>
-                        <a class="carousel-control-next" href="#carousel-{{ blog.id }}" role="button" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </a>
-                        {% endif %}
                     </div>
                 </div>
-            </div>
-        </div>
+            {% endfor %}
+        {% else %}
+            <!-- If no comments exist, display this message -->
+            <p>Be the first to comment!</p>
+        {% endif %}
     </div>
 
-    <!-- Main Content Section -->
-    <div class="row mt-4">
-        <div class="col-lg-10 offset-lg-1">
-            <div class="card">
-                <div class="card-body">
-                    <p>{{ blog.content }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
+</div>
+
+<!-- JavaScript for Comment Validation -->
+<script>
+    function validateComment() {
+        var comment = document.getElementById("comment").value.trim();
+        if (comment === "") {
+            alert("Comment cannot be empty.");
+            return false;
+        }
+        return true;
+    }
+</script>
+
 </div>
 
 
 {% endblock %}
+
+

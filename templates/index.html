@@ -9,31 +9,33 @@ Home Page
 <div class="container-fluid landingD d-none d-sm-block">
     <div class="row">
 
-        <div class="justify-content-center text-center m-0">
-            <img src="{{ url_for('static', filename='img/landing.jpg') }}" alt="" class="w-100 m-0 landing rounded">
 
-            <div class="" style="top: 40%; position: absolute;">
-                <h1 class="heading text-center" >Thinks am selling rocks</h1>
-                <span class="btn btn-warning"> Get Started</span>
-
+        <div id="carouselExampleFade" class="carousel slide carousel-fade" data-bs-ride="carousel">
+            <div class="carousel-inner">
+              <div class="carousel-item active">
+                <img src="" class="d-block w-100" alt="...">
+              </div>
+              <div class="carousel-item">
+                <img src="..." class="d-block w-100" alt="...">
+              </div>
+              <div class="carousel-item">
+                <img src="..." class="d-block w-100" alt="...">
+              </div>
             </div>
-
-        </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
     </div>
 </div>
 
 
 <div class="container-fluid mt-5">
-
-    <div class="row col-12 mb-3 bg-light shadow m-2">
-        <div class="text-center ">
-            <h2 class="heading mt-3 m-4 p-4">Nasim General Merchants </h2>
-            <p>
-                We are a leading seller of high-quality products ranging from cars to household items.
-                Our aim is to provide top-notch goods at affordable prices, ensuring a seamless shopping experience for our customers.
-            </p>
-        </div>
-    </div>
 
     <div class="row justify-content-center bg-light shadow">
         <div class="col-12 text-center">
@@ -134,31 +136,369 @@ Home Page
     <!-- Cars Section -->
     <div class="row mb-5 bg-light Demo shadow" id="cars-list ">
         <h2 class="mb-3">Cars</h2>
-        {% include 'partials/cars_list.html' %}
+        {% for car in cars %}
+            <div class="col-lg-3 col-md-6 col-sm-6 mb-4 cars-row">
+                <div class="card car-card" style="cursor: pointer;" onclick="location.href='{{ url_for('car.get_car', car_id=car.id) }}'">
+                    <div id="carousel-{{ car.id }}" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            {% if car.car_images|length > 0 %}
+                                {% for image in car.car_images %}
+                                <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                    <img class="d-block w-100 rounded" src="{{ url_for('uploaded_file', folder='cars', filename=image.image_path) }}" alt="Car Image" style="height: 200px; object-fit: cover;">
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                            <div class="carousel-item active">
+                                <img src="path/to/default-image.jpg" class="d-block w-100" alt="Default Thumbnail" style="height: 200px; object-fit: cover;">
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% if car.car_images|length > 1 %}
+                        <a class="carousel-control-prev" href="#carousel-{{ car.id }}" role="button" data-bs-slide="prev" onclick="event.stopPropagation();">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carousel-{{ car.id }}" role="button" data-bs-slide="next" onclick="event.stopPropagation();">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </a>
+                        {% endif %}
+                    </div>
+                    <div class="card-body text-uppercase" style="font-size: 0.8rem;">
+                        <!-- Car Information Section -->
+                        <div class="d-flex justify-content-between mb-2">
+                            <!-- Year and Mileage -->
+                            <p class="mb-0 mr-1">
+                                <i class="fa-solid fa-calendar" style="color: #74C0FC;"></i> 
+                                {{ car.year }}
+                            </p>
+                            <p class="mb-0 mr-1">
+                                <i class="fa-solid fa-tachometer-alt" style="color: #74C0FC;"></i>
+                                {{ car.mileage }} miles
+                            </p>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <!-- Added At and Transmission -->
+                            <p class="mb-0 mr-1">
+                                <i class="fa-solid fa-calendar-day" style="color: #74C0FC;"></i> 
+                                {{ car.added_at.strftime('%b %d, %Y') }}
+                            </p>
+                            <p class="mb-0 mr-1">
+                                <i class="fa-solid fa-cogs" style="color: #74C0FC;"></i> 
+                                {{ car.transmission }}
+                            </p>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <!-- Fuel Type and Status -->
+                            <p class="mb-0 ">
+                                <i class="fa-solid fa-gas-pump mr-1" style="color: #74C0FC;"></i> 
+                                {{ car.fuel_type }}
+                            </p>
+                            <p class="mb-0 mr-1">
+                                <i class="fa-solid fa-circle" style="color: #74C0FC;"></i> 
+                                {{ car.status }}
+                            </p>
+                        </div>
+                        <div class="btmBorder mt-1"></div>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <!-- Wishlist Button -->
+                            <div class="d-flex align-items-center">
+                                <i id="like-icon-{{ car.id }}" 
+                                class="fa-2xl {{ 'fa-solid fa-heart' if car.id in liked_items['cars'] else 'fa-regular fa-heart' }}" 
+                                style="color: #74C0FC;" 
+                                title="{{ 'Remove from Wishlist' if car.id in liked_items['cars'] else 'Add to Wishlist' }}"
+                                onclick="event.stopPropagation(); toggleLike({{ car.id }}, 'car', '{{ 'unlike' if car.id in liked_items['cars'] else 'like' }}', this)">
+                            </i>
+
+                            </div>                            
+                            <!-- Price -->
+                            <p class="price mb-0" style="font-size: 1rem; text-align: right;"><strong><strong>{{ "{:,.2f}".format(car.price) }}</strong></strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
     </div>
 
     <!-- Computers Section -->
     <div class="row mb-5 bg-light Demo shadow" id="computers-list">
         <h2 class="mb-3">Computers</h2>
-        {% include 'partials/computers_list.html' %}
+        {% for computer in computers %}
+            <div class="col-lg-3 col-md-6 col-sm-6 mb-4 ">
+                <div class="card car-card" style="cursor: pointer;" onclick="location.href='{{ url_for('product.get_product', product_id=computer.id) }}'"></div>
+                    <!-- Carousel Section -->
+                    <!-- Carousel Section for Computers -->
+                    <div id="carousel-{{ computer.id }}" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            {% if computer.product_images|length > 0 %}
+                                {% for image in computer.product_images %}
+                                <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                    <img class="d-block w-100 rounded" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" alt="Product Image" style="height: 200px; object-fit: cover;">
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="carousel-item active">
+                                    <img src="path/to/default-image.jpg" class="d-block w-100 rounded" alt="Default Thumbnail" style="height: 200px; object-fit: cover;">
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        {% if computer.product_images|length > 1 %}
+                        <a class="carousel-control-prev" href="#carousel-{{ computer.id }}" role="button" data-bs-slide="prev" onclick="event.stopPropagation();">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carousel-{{ computer.id }}" role="button" data-bs-slide="next" onclick="event.stopPropagation();">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </a>
+                        {% endif %}
+                    </div>
+                    <!-- Product Information Section -->
+                    <div class="card-body text-uppercase" style="font-size: 0.8rem;">
+                        <h5 class="card-title">{{ computer.name }}</h5>
+                        <p class="mb-1">
+                            <strong>Description:</strong> {{ computer.description }}
+                        </p>
+                        <p class="mb-1">
+                            <i class="fa-solid fa-circle" style="color: #74C0FC;"></i> 
+                            <strong>Status:</strong> {{ computer.StockStatus.value }}
+                        </p>
+                        <div class="btmBorder mt-2"></div>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <!-- Like Button -->
+                            <div class="d-flex align-items-center">
+                                <i 
+                                id="like-icon-{{ computer.id }}" 
+                                class="fa-2xl {{ 'fa-solid fa-heart' if computer.id in liked_items['products'] else 'fa-regular fa-heart' }}" 
+                                style="color: #74C0FC;" 
+                                title="{{ 'Remove from Wishlist' if computer.id in liked_items['products'] else 'Add to Wishlist' }}"
+                                onclick="event.stopPropagation(); toggleLike({{ computer.id }}, 'product', '{{ 'unlike' if computer.id in liked_items['products'] else 'like' }}', this)">
+                            </i>
+                            
+                            </div>
+
+                            <!-- Price -->
+                            <p class="price mb-0" style="font-size: 1rem; text-align: right;">
+                                <strong>${{ "{:,.2f}".format(computer.price) }}</strong>
+                            </p>
+                        </div>
+                    </div>
+            </div>
+        {% endfor %}
     </div>
 
     <!-- Tools Section -->
     <div class="row mb-5 bg-light Demo shadow" id="tools-list">
         <h2 class="mb-3">Tools and Machinery</h2>
-        {% include 'partials/tools_list.html' %}
+        {% for tool in tools %}
+            <div class="col-lg-3 col-md-6 col-sm-6 mb-4 product-row">
+                <div class="card car-card" style="cursor: pointer;" onclick="location.href='{{ url_for('product.get_product', product_id=tool.id) }}'">
+                    <!-- Carousel Section -->
+                    <div id="carousel-{{ tool.id }}" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            {% if tool.product_images|length > 0 %}
+                                {% for image in tool.product_images %}
+                                <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                    <img class="d-block w-100 rounded" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" 
+                                        alt="Product Image" style="height: 200px; object-fit: cover;">
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="carousel-item active">
+                                    <img src="path/to/default-image.jpg" class="d-block w-100 rounded" alt="Default Thumbnail" style="height: 200px; object-fit: cover;">
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        {% if tool.product_images|length > 1 %}
+                        <a class="carousel-control-prev" href="#carousel-{{ tool.id }}" role="button" data-bs-slide="prev" onclick="event.stopPropagation();">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carousel-{{ tool.id }}" role="button" data-bs-slide="next" onclick="event.stopPropagation();">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <!-- Product Information Section -->
+                    <div class="card-body text-uppercase" style="font-size: 0.8rem;">
+                        <h5 class="card-title">{{ tool.name }}</h5>
+                        <p class="mb-1">
+                            <strong>Description:</strong> {{ tool.description }}
+                        </p>
+                        <p class="mb-1">
+                            <i class="fa-solid fa-circle" style="color: #74C0FC;"></i> 
+                            <strong>Status:</strong> {{ tool.StockStatus.value }}
+                        </p>
+                        <div class="btmBorder mt-2"></div>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <!-- Like Button -->
+                            <div class="d-flex align-items-center">
+                                <i 
+                                id="like-icon-{{ tool.id }}" 
+                                class="fa-2xl {{ 'fa-solid fa-heart' if tool.id in liked_items['products'] else 'fa-regular fa-heart' }}" 
+                                style="color: #74C0FC;" 
+                                title="{{ 'Remove from Wishlist' if tool.id in liked_items['products'] else 'Add to Wishlist' }}"
+                                onclick="event.stopPropagation(); toggleLike({{ tool.id }}, 'product', '{{ 'unlike' if tool.id in liked_items['products'] else 'like' }}', this)">
+                            </i>
+                            </div>
+
+                            <!-- Price -->
+                            <p class="price mb-0" style="font-size: 1rem; text-align: right;">
+                                <strong>${{ "{:,.2f}".format(tool.price) }}</strong>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
     </div>
 
     <!-- Household Items Section -->
     <div class="row mb-5 bg-light Demo shadow" id="household-list">
         <h2 class="mb-3">Household Items</h2>
-        {% include 'partials/household_list.html' %}
+        {% for household in household %}
+            <div class="col-lg-3 col-md-6 col-sm-6 mb-4 product-row">
+                <div class="card car-card" style="cursor: pointer;" onclick="location.href='{{ url_for('product.get_product', product_id=household.id) }}'">
+                    <!-- Carousel Section -->
+                    <div id="carousel-{{ household.id }}" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            {% if household.product_images|length > 0 %}
+                                {% for image in household.product_images %}
+                                <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                    <img class="d-block w-100 rounded" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" alt="Product Image" style="height: 200px; object-fit: cover;">
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="carousel-item active">
+                                    <img src="path/to/default-image.jpg" class="d-block w-100 rounded" alt="Default Thumbnail" style="height: 200px; object-fit: cover;">
+                                </div>
+                            {% endif %}
+                        </div>
+            
+                        {% if household.product_images|length > 1 %}
+                        <a class="carousel-control-prev" href="#carousel-{{ household.id }}" role="button" data-bs-slide="prev" onclick="event.stopPropagation();">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carousel-{{ household.id }}" role="button" data-bs-slide="next" onclick="event.stopPropagation();">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </a>
+                        {% endif %}
+                    </div>
+            
+                    <!-- Product Information Section -->
+                    <div class="card-body text-uppercase" style="font-size: 0.8rem;">
+                        <h5 class="card-title">{{ household.name }}</h5>
+                        <p class="mb-1">
+                            <strong>Description:</strong> {{ household.description }}
+                        </p>
+                        <p class="mb-1">
+                            <i class="fa-solid fa-circle" style="color: #74C0FC;"></i> 
+                            <strong>Status:</strong> {{ household.StockStatus.value }}
+                        </p>
+                        <div class="btmBorder mt-2"></div>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <!-- Like Button -->
+                            <div class="d-flex align-items-center">
+                                <i 
+                                id="like-icon-{{ household.id }}" 
+                                class="fa-2xl {{ 'fa-solid fa-heart' if household.id in liked_items['products'] else 'fa-regular fa-heart' }}" 
+                                style="color: #74C0FC;" 
+                                title="{{ 'Remove from Wishlist' if household.id in liked_items['products'] else 'Add to Wishlist' }}"
+                                onclick="event.stopPropagation(); toggleLike({{ household.id }}, 'product', '{{ 'unlike' if household.id in liked_items['products'] else 'like' }}', this)">
+                                </i>
+                            </div>
+            
+                            <!-- Price -->
+                            <p class="price mb-0" style="font-size: 1rem; text-align: right;">
+                                <strong>${{ "{:,.2f}".format(household.price) }}</strong>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
     </div>
-        <!-- Household Items Section -->
-        <div class="row mb-5 bg-light Demo shadow" id="household-list">
-            <h2 class="mb-3">Car parts </h2>
-            {% include 'partials/carParts.html' %}
-        </div>
+
+    <!-- Car Parts Section -->
+    <div class="row mb-5 bg-light Demo shadow" id="carparts-list">
+        <h2 class="mb-3">Car Parts</h2>
+        {% for carPart in carParts %}
+            <div class="col-lg-3 col-md-6 col-sm-6 mb-4 product-row">
+                <div class="card car-card" style="cursor: pointer;" onclick="location.href='{{ url_for('product.get_product', product_id=carPart.id) }}'">
+                    <!-- Carousel Section -->
+                    <div id="carousel-{{ carPart.id }}" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            {% if carPart.product_images|length > 0 %}
+                                {% for image in carPart.product_images %}
+                                <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                    <img class="d-block w-100 rounded" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" alt="Product Image" style="height: 200px; object-fit: cover;">
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="carousel-item active">
+                                    <img src="path/to/default-image.jpg" class="d-block w-100 rounded" alt="Default Thumbnail" style="height: 200px; object-fit: cover;">
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        {% if carPart.product_images|length > 1 %}
+                        <a class="carousel-control-prev" href="#carousel-{{ carPart.id }}" role="button" data-bs-slide="prev" onclick="event.stopPropagation();">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carousel-{{ carPart.id }}" role="button" data-bs-slide="next" onclick="event.stopPropagation();">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <!-- Product Information Section -->
+                    <div class="card-body text-uppercase" style="font-size: 0.8rem;">
+                        <h5 class="card-title">{{ carPart.name }}</h5>
+                        <p class="mb-1">
+                            <strong>Description:</strong> {{ carPart.description }}
+                        </p>
+                        <p class="mb-1">
+                            <i class="fa-solid fa-circle" style="color: #74C0FC;"></i> 
+                            <strong>Status:</strong> {{ carPart.StockStatus.value }}
+                        </p>
+                        <div class="btmBorder mt-2"></div>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <!-- Like Button -->
+                            <div class="d-flex align-items-center">
+                                <i 
+                                id="like-icon-{{ carPart.id }}" 
+                                class="fa-2xl {{ 'fa-solid fa-heart' if carPart.id in liked_items['products'] else 'fa-regular fa-heart' }}" 
+                                style="color: #74C0FC;" 
+                                title="{{ 'Remove from Wishlist' if carPart.id in liked_items['products'] else 'Add to Wishlist' }}"
+                                onclick="event.stopPropagation(); toggleLike({{ carPart.id }}, 'product', '{{ 'unlike' if carPart.id in liked_items['products'] else 'like' }}', this)">
+                            </i>
+                            </div>
+
+                            <!-- Price -->
+                            <p class="price mb-0" style="font-size: 1rem; text-align: right;">
+                                <strong>${{ "{:,.2f}".format(carPart.price) }}</strong>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+
+
 </div>
 
 {% endblock %}

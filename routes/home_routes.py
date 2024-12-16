@@ -22,7 +22,7 @@ def index():
     if current_user:
         user_id = current_user.get('id')
         liked_items['cars'] = [like.car_id for like in Like.query.filter_by(user_id=user_id, target_type='car').all()]
-        liked_items['products'] = [like.target_id for like in Like.query.filter_by(user_id=user_id, target_type='product').all()]
+        liked_items['products'] = [like.product_id for like in Like.query.filter_by(user_id=user_id, target_type='product').all()]
 
     return render_template(
         'index.html',
@@ -34,33 +34,12 @@ def index():
         user=current_user,
         categories=categories,
         brands=brands,
-        carParts= carParts
+        carParts= carParts,
+
     )
 
-# Additional route to handle AJAX pagination requests
-@home_bp.route('/paginate/<category>')
-def paginate_category(category):
-    page = request.args.get('page', 1, type=int)
-    
-    category_queries = {
-        'cars': Car.query.order_by(Car.added_at.desc()),
-        'computers': Product.query.filter_by(category='Computers').order_by(Product.added_at.desc()),
-        'tools': Product.query.filter_by(category='Tools_and_Machinery').order_by(Product.added_at.desc()),
-        'household': Product.query.filter_by(category='Household_Items').order_by(Product.added_at.desc()),
-    }
-    
-    if category not in category_queries:
-        return jsonify({'error': 'Invalid category'}), 400
-    
-    paginated_items = category_queries[category].paginate(page=page, per_page=8)
-    return render_template(f'partials/{category}_list.html', paginated_items=paginated_items)
 
-
-
-
-
-
-@home_bp.route('/cars', methods=['GET'])
+@home_bp.route('/home_cars', methods=['GET'])
 def cars():
     current_user = session.get('user')
     
@@ -127,3 +106,8 @@ def computers():
     current_user = session.get('user')  
     products = Product.query.filter_by(category='Computers').all()
     return render_template('computers.html',  user=current_user, products=products )
+
+@home_bp.route('/about')
+def about():
+    current_user = session.get('user')  
+    return render_template('about.html',  user=current_user )

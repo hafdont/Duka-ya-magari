@@ -66,11 +66,11 @@
                 <!-- Wishlist Button -->
                 <div class="d-flex align-items-center">
                     <i id="like-icon-{{ car.id }}" 
-                    class="fa-2xl {{ 'fa-solid fa-heart' if car.id in liked_items['cars'] else 'fa-regular fa-heart' }}" 
-                    style="color: #74C0FC;" 
-                    title="{{ 'Remove from Wishlist' if car.id in liked_items['cars'] else 'Add to Wishlist' }}"
-                    onclick="event.stopPropagation(); toggleLike({{ car.id }}, 'car', '{{ 'unlike' if car.id in liked_items['cars'] else 'like' }}', this)">
-                </i>
+                        class="fa-2xl {{ 'fa-solid fa-heart' if car.id in liked_items['cars'] else 'fa-regular fa-heart' }}" 
+                        style="color: #74C0FC;" 
+                        title="{{ 'Remove from Wishlist' if car.id in liked_items['cars'] else 'Add to Wishlist' }}"
+                        onclick="event.stopPropagation(); toggleLike({{ car.id }}, 'car', '{{ 'unlike' if car.id in liked_items['cars'] else 'like' }}', this)">
+                    </i>
 
                 </div>                            
                 <!-- Price -->

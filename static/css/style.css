@@ -9,7 +9,7 @@
     --body-text-color: #34495E; /* Text color for body */
     --card-bg-color: #fdfdfd; /* Background color for cards, forms, and tables */
     --secondary-bg-color: #f1eeee;
-    --heading-color: #337ab7; /* Color for headings */
+    --heading-color: #3498DB; /* Color for headings */
     --icon-color: #7F8C8D; /* Color for icons */
     --primary-btn-color: #3498DB; /* Primary button color */
     --secondary-btn-color: #95A5A6; /* Secondary button color */
@@ -87,7 +87,7 @@ body {
   }
   
   .nav-link{
-    color:rgb(31, 27, 27)!important;
+    color: var(--heading-color);
   }
 
   .nav-link.active,
@@ -121,8 +121,6 @@ body {
     transform: translateY(-20px);
   }
 }
-
-
 
 .carholder, .filter, .car, .order, .reviews, .review, .brands, .brandview, .admin{
     background-color: var(--card-bg-color);
@@ -952,4 +950,36 @@ a {
 /* Active icon color */
 .active-icon {
     color: #74C0FC; /* Blue color for the active icon */
+}
+
+
+/* About Page */
+.bg-light-primary {
+  background-color: #f9fbff!important;
+}
+.pb-6, .py-6 {
+  padding-bottom: 3.75rem!important;
+}
+.pt-6, .py-6 {
+  padding-top: 3.75rem!important;
+}
+.hover-scale, .hover-scale:hover {
+  transition: transform .2s ease-in;
+}
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  border: 1px solid rgba(0,0,0,.125);
+  border-radius: .4rem;
+  box-shadow: 0 20px 27px 0 rgb(0 0 0 / 5%);
+}
+.card-body {
+  flex: 1 1 auto;
+  min-height: 1px;
+  padding: 1.25rem;
 }

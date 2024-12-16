@@ -90,7 +90,7 @@
                 </form>
             </div>
             {% else %}
-                <h4>INTERESTED IN THIS VEHICLE?</h4>
+                <h4>INTERESTED IN THIS PRODUCT?</h4>
                 <form action="{{ url_for('order.create_order') }}" method="POST">
                     <input type="hidden" name="product_id" value="{{ product.id }}" id="product_id">  <!-- Pass the product ID -->
                     <input type="hidden" name="total_price" value="{{ product.price }}" > <!-- Pass the total price -->

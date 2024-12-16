@@ -37,7 +37,7 @@ os.makedirs(CARS_UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(PRODUCTS_UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(BLOGS_UPLOAD_FOLDER, exist_ok=True)
 
-ALLOWED_FOLDERS = ['users', 'brands', 'cars', 'products']
+ALLOWED_FOLDERS = ['users', 'brands', 'cars', 'products', 'blogs']
 
 # Configure JWT
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'default_secret_key')
