@@ -38,7 +38,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{{ url_for('admin_bp.about') if (session.get('user') and session['user']['role'] == 'admin') else url_for('home_bp.index') }}">
+                        <a class="nav-link active" aria-current="page" href="{{ url_for('home_bp.about') }}">
                             About
                         </a>
                     </li>

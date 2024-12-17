@@ -330,12 +330,15 @@ class Cart(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     car_id = db.Column(db.Integer, db.ForeignKey('cars.id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
     quantity = db.Column(db.Integer, default=1)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    target_type = db.Column(db.String(50), nullable=False)  # e.g., 'car', 'product', 'blog', 'review', 'comment'
 
     # Relationships
     user = db.relationship('User', backref=db.backref('carts', lazy=True))
     car = db.relationship('Car', backref=db.backref('carts', lazy=True))
+    product = db.relationship('Product', backref=db.backref('carts', lazy=True))
 
     def __repr__(self):
         return f"<Cart {self.id} for User {self.user.username}>"

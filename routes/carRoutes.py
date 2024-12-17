@@ -105,14 +105,53 @@ def create_car():
 @admin_required
 def get_cars():
     current_user = session.get('user', None)
-    cars = Car.query.all()
     users = User.query.all()
 
-    liked_cars = []
-    if current_user:
-        liked_cars = [like.target_id for like in Like.query.filter_by(user_id=current_user['id'], target_type='car').all()]
+    # Get the filter parameters from the URL query string
+    year = request.args.get('year')
+    transmission = request.args.get('transmission')
+    price_min = request.args.get('price_min')
+    price_max = request.args.get('price_max')
+    brand = request.args.get('brand')
 
-    return render_template('cars/carList.html', cars=cars, user=current_user, liked_cars=liked_cars, users=users)
+
+    # Build the query based on the filters
+    query = Car.query
+
+    if year:
+        query = query.filter(Car.year == year)
+    
+    if transmission:
+        query = query.filter(Car.transmission == transmission)
+    
+    if price_min:
+        query = query.filter(Car.price >= price_min)
+    
+    if price_max:
+        query = query.filter(Car.price <= price_max)
+    
+    if brand:
+        query = query.filter(Car.brand_id == brand)
+
+
+    # Execute the query to get the filtered cars
+    cars = query.all()
+
+    # Get distinct years and brands for the filter options
+    years = db.session.query(Car.year).distinct().all()
+    brands = Brand.query.filter_by(category='Cars').all()
+
+    liked_items = {}
+    if current_user:
+        user_id = current_user.get('id')
+        liked_items['cars'] = [like.car_id for like in Like.query.filter_by(user_id=user_id, target_type='car').all()]
+        liked_items['products'] = [like.product_id for like in Like.query.filter_by(user_id=user_id, target_type='product').all()]
+
+    return render_template('cars/carList.html', 
+                           cars=cars, user=current_user, 
+                           users=users, years=[year[0] for year in years],
+                           brands=brands, 
+                           liked_items=liked_items)
 
 @car_bp.route('/cars/<int:car_id>', methods=['GET'])
 def get_car(car_id):
@@ -192,4 +231,3 @@ def delete_car(car_id):
     db.session.delete(car)
     db.session.commit()
     return redirect(url_for('get_cars'))
-

@@ -50,6 +50,12 @@ def cars():
     price_max = request.args.get('price_max')
     brand = request.args.get('brand')
 
+    liked_items = {}
+    if current_user:
+        user_id = current_user.get('id')
+        liked_items['cars'] = [like.car_id for like in Like.query.filter_by(user_id=user_id, target_type='car').all()]
+        liked_items['products'] = [like.product_id for like in Like.query.filter_by(user_id=user_id, target_type='product').all()]
+
     # Build the query based on the filters
     query = Car.query
 
@@ -79,8 +85,8 @@ def cars():
                            cars=cars, 
                            user=current_user, 
                            years=[year[0] for year in years], 
-                           brands=brands)
-
+                           brands=brands, 
+                           liked_items=liked_items)
 
 @home_bp.route('/carParts')
 def carParts():
