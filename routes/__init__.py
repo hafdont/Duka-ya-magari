@@ -12,6 +12,7 @@ from .oderRoutes import order_bp
 from .productsRoutes import product_bp
 from .blogsRoutes import blog_bp
 from .likesroutes import like_bp
+from .cartRoutes import cart_bp
 
 
 def register_routes(app: Flask):
@@ -27,5 +28,6 @@ def register_routes(app: Flask):
     app.register_blueprint(product_bp)
     app.register_blueprint(blog_bp)
     app.register_blueprint(like_bp)
+    app.register_blueprint(cart_bp)
     
 

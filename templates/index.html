@@ -204,13 +204,27 @@ Home Page
                             <!-- Wishlist Button -->
                             <div class="d-flex align-items-center">
                                 <i id="like-icon-{{ car.id }}" 
-                                class="fa-2xl {{ 'fa-solid fa-heart' if car.id in liked_items['cars'] else 'fa-regular fa-heart' }}" 
-                                style="color: #74C0FC;" 
-                                title="{{ 'Remove from Wishlist' if car.id in liked_items['cars'] else 'Add to Wishlist' }}"
-                                onclick="event.stopPropagation(); toggleLike({{ car.id }}, 'car', '{{ 'unlike' if car.id in liked_items['cars'] else 'like' }}', this)">
-                            </i>
+                                    class="fa-2xl {{ 'fa-solid fa-heart' if car.id in liked_items['cars'] else 'fa-regular fa-heart' }}" 
+                                    style="color: #74C0FC;" 
+                                    title="{{ 'Remove from Wishlist' if car.id in liked_items['cars'] else 'Add to Wishlist' }}"
+                                    onclick="event.stopPropagation(); toggleLike({{ car.id }}, 'car', '{{ 'unlike' if car.id in liked_items['cars'] else 'like' }}', this)">
+                                </i>
 
-                            </div>                            
+                            </div> 
+
+                            <!-- Add to Cart Icon -->
+                            <div class="d-flex align-items-center">
+                                <i 
+                                    id="add-to-cart-icon-{{ cars.id }}" 
+                                    class="fa-duotone fa-outline fa-cart-shopping"  
+                                    style="color: #74C0FC;" 
+                                    title="Add to Cart"
+                                    onclick="event.stopPropagation(); addToCart({{ car.id }}, 'product')">
+                                </i>
+                            </div>
+                            
+                            
+                                                           
                             <!-- Price -->
                             <p class="price mb-0" style="font-size: 1rem; text-align: right;"><strong><strong>{{ "{:,.2f}".format(car.price) }}</strong></strong></p>
                         </div>
@@ -279,9 +293,20 @@ Home Page
                             
                             </div>
 
+                                <!-- Add to Cart Icon -->
+                                <div class="d-flex align-items-center">
+                                    <i 
+                                        id="add-to-cart-icon-{{ computer.id }}" 
+                                        class="fa-2xl fa-duotone fa-solid fa-cart-shopping" 
+                                        style="color: #74C0FC;" 
+                                        title="Add to Cart"
+                                        onclick="event.stopPropagation(); addToCart({{ computer.id }}, 'product')">
+                                    </i>
+                                </div>
+
                             <!-- Price -->
                             <p class="price mb-0" style="font-size: 1rem; text-align: right;">
-                                <strong>${{ "{:,.2f}".format(computer.price) }}</strong>
+                                <h5 class="heading">${{ "{:,.2f}".format(computer.price) }}</h5>
                             </p>
                         </div>
                     </div>
@@ -347,6 +372,17 @@ Home Page
                                 onclick="event.stopPropagation(); toggleLike({{ tool.id }}, 'product', '{{ 'unlike' if tool.id in liked_items['products'] else 'like' }}', this)">
                             </i>
                             </div>
+
+                                <!-- Add to Cart Icon -->
+                                <div class="d-flex align-items-center">
+                                    <i 
+                                        id="add-to-cart-icon-{{ tool.id }}" 
+                                        class="fa-2xl fa-cart-plus" 
+                                        style="color: #74C0FC;" 
+                                        title="Add to Cart"
+                                        onclick="event.stopPropagation(); addToCart({{ tool.id }}, 'product')">
+                                    </i>
+                                </div>
 
                             <!-- Price -->
                             <p class="price mb-0" style="font-size: 1rem; text-align: right;">
@@ -416,6 +452,19 @@ Home Page
                                 onclick="event.stopPropagation(); toggleLike({{ household.id }}, 'product', '{{ 'unlike' if household.id in liked_items['products'] else 'like' }}', this)">
                                 </i>
                             </div>
+
+                            <!-- Add to Cart Icon -->
+                            <div class="d-flex align-items-center">
+                                <i 
+                                    id="add-to-cart-icon-{{ household.id }}" 
+                                    class="fa-2xl fa-cart-plus" 
+                                    style="color: #74C0FC;" 
+                                    title="Add to Cart"
+                                    onclick="event.stopPropagation(); addToCart({{ household.id }}, 'product')">
+                                </i>
+                            </div>
+
+                                                            
             
                             <!-- Price -->
                             <p class="price mb-0" style="font-size: 1rem; text-align: right;">
@@ -486,6 +535,20 @@ Home Page
                             </i>
                             </div>
 
+                            <!-- Add to Cart Icon -->
+                            <div class="d-flex align-items-center">
+                                <i 
+                                    id="add-to-cart-icon-{{ carPart.id }}" 
+                                    class="fa-2xl fa-cart-plus" 
+                                    style="color: #74C0FC;" 
+                                    title="Add to Cart"
+                                    onclick="event.stopPropagation(); addToCart({{ carPart.id }}, 'product')">
+                                </i>
+                            </div>
+
+
+                                                        
+
                             <!-- Price -->
                             <p class="price mb-0" style="font-size: 1rem; text-align: right;">
                                 <strong>${{ "{:,.2f}".format(carPart.price) }}</strong>
@@ -497,9 +560,32 @@ Home Page
         {% endfor %}
     </div>
 
-
-
 </div>
+
+
+<script>
+    function addToCart(itemId, targetType) {
+        $.ajax({
+            url: "{{ url_for('cart.add_to_cart') }}",
+            method: "POST",
+            data: {
+                item_id: itemId,
+                target_type: targetType,
+                quantity: 1  // You can dynamically change this if needed
+            },
+            success: function(response) {
+                if (response.status === "success") {
+                    alert(response.message);  // Notify user
+                } else {
+                    alert(response.message);  // Notify user about error
+                }
+            },
+            error: function() {
+                alert("An error occurred while adding the item to the cart.");
+            }
+        });
+    }
+</script>
 
 {% endblock %}
 

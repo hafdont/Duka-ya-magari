@@ -73,10 +73,13 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href=" ">
-                            <i  tittle="Orders" class="fa-duotone fa-solid fa-cart-shopping" style="--fa-primary-color: #74C0FC; --fa-secondary-color: #0d5d9b;"></i>
-                        </a>
+                        <button class="nav-link active" id="cart-icon" type="button">
+                            <i title="Orders" class="fa-duotone fa-solid fa-cart-shopping" style="--fa-primary-color: #74C0FC; --fa-secondary-color: #0d5d9b;"></i>
+                        </button>
+                    
                     </li>
+                    
+                
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href=" ">
                             <i tittle="Cart" class="fa-duotone fa-solid fa-bag-shopping " style="--fa-primary-color: #74C0FC; --fa-secondary-color: #0d5d9b;"></i>
@@ -109,8 +112,30 @@
             </div>
         </div>
     </nav>
-    
-    
+
+    <!-- Cart Modal -->
+    <div class="modal fade modal-dialog modal-dialog-scrollable" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cartModalLabel">Your Cart</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="list-group" id="cart-items-list">
+                        <!-- Cart items will be dynamically injected here -->
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <!-- Continue Shopping Button -->
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Continue Shopping</button>
+                    <!-- Clear Cart Button -->
+                    <button type="button" class="btn btn-danger" id="clear-cart-btn">Clear Cart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     {% with messages = get_flashed_messages(with_categories=True) %}
         {% if messages %}
@@ -228,28 +253,29 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
 <script>
-    AOS.init({
-    duration: 1000, // Time duration of the animation
-    easing: 'ease-in-out', // Easing type
-    once: true // Whether the animation happens only once or every time
+    // Initialize AOS (if necessary)
+AOS.init({
+    duration: 1000,
+    easing: 'ease-in-out',
+    once: true,
 });
 
-    // JavaScript to fade out flash messages after 3 seconds
-    document.addEventListener("DOMContentLoaded", function() {
-        const flashMessages = document.getElementById("flash-messages");
-        if (flashMessages) {
+// JavaScript to fade out flash messages after 3 seconds
+document.addEventListener("DOMContentLoaded", function() {
+    const flashMessages = document.getElementById("flash-messages");
+    if (flashMessages) {
+        setTimeout(function() {
+            flashMessages.style.transition = "opacity 0.5s ease-out";
+            flashMessages.style.opacity = 0;
             setTimeout(function() {
-                flashMessages.style.transition = "opacity 0.5s ease-out";
-                flashMessages.style.opacity = 0;
-                setTimeout(function() {
-                    flashMessages.remove(); // Remove the element from the DOM
-                }, 500); // Wait for the fade-out transition to finish before removing
-            }, 3000); // Display for 3 seconds
-        }
-    });
+                flashMessages.remove(); // Remove the element from the DOM
+            }, 500); // Wait for the fade-out transition to finish before removing
+        }, 3000); // Display for 3 seconds
+    }
+});
 
-
-    function toggleLike(itemId, itemType, action, element) {
+// Function to toggle "like" status
+function toggleLike(itemId, itemType, action, element) {
     fetch('/like', {
         method: 'POST',
         headers: {
@@ -257,15 +283,9 @@
         },
         body: JSON.stringify({ item_id: itemId, item_type: itemType, action: action }),
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Update the icon class based on the action
             if (action === 'like') {
                 element.classList.remove('fa-regular');
                 element.classList.add('fa-solid');
@@ -282,6 +302,133 @@
         }
     })
     .catch(error => console.error('Error:', error));
+}
+
+// Open the Cart Modal when the cart icon is clicked
+const cartIcon = document.getElementById('cart-icon');
+const cartModal = document.getElementById('cartModal');
+const modalInstance = new bootstrap.Modal(cartModal);  // Initialize Bootstrap Modal instance
+
+cartIcon.addEventListener('click', function(event) {
+    event.preventDefault();  // Prevent page reload
+    modalInstance.show();  // Open the modal using Bootstrap's Modal instance
+});
+
+// Fetch cart data when the modal is about to be shown
+cartModal.addEventListener('show.bs.modal', function () {
+    fetch('/view_cart')
+        .then(response => response.json())
+        .then(data => {
+            const cartItemsList = document.getElementById('cart-items-list');
+            cartItemsList.innerHTML = '';  // Clear any previous items
+            
+            let totalPrice = 0;  // Track the total price
+            
+            data.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('list-group-item', 'cart-item');
+                
+                // Create the product image
+                const productImage = `<img src="${item.image}" alt="${item.name}" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;">`;
+                
+                // Create the quantity input with + and - buttons
+                const quantityInput = `
+                    <div class="quantity-container">
+                        <button class="quantity-decrease" data-id="${item.id}">-</button>
+                        <input type="number" value="${item.quantity}" class="quantity-input" data-id="${item.id}" min="1" max="99">
+                        <button class="quantity-increase" data-id="${item.id}">+</button>
+                    </div>
+                `;
+                
+                // Create the item details
+                const itemDetails = `
+                    <div class="cart-item-info ms-3 d-flex flex-grow-1 justify-content-between">
+                        <div class="cart-item-name"><strong>${item.name}</strong></div>
+                        <div class="cart-item-quantity">${quantityInput}</div>
+                        <div class="cart-item-price">$${item.price}</div>
+                        <button class="remove-item btn btn-sm btn-danger" data-id="${item.id}">X</button>
+                    </div>
+                `;
+                
+                // Combine all parts
+                listItem.innerHTML = `${productImage} ${itemDetails}`;
+                
+                // Add the item to the cart list
+                cartItemsList.appendChild(listItem);
+                
+                totalPrice += item.total;  // Add to total price
+            });
+            
+            // Show subtotal at the bottom
+            const subtotalContainer = document.createElement('div');
+            subtotalContainer.id = 'subtotal-container';
+            subtotalContainer.innerHTML = `Subtotal: $${totalPrice.toFixed(2)}`;
+            cartItemsList.appendChild(subtotalContainer);
+        })
+        .catch(error => {
+            console.error('Error fetching cart items:', error);
+        });
+});
+
+// Event listener for increasing the quantity
+document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('quantity-increase')) {
+        const itemId = event.target.getAttribute('data-id');
+        const inputField = document.querySelector(`.quantity-input[data-id="${itemId}"]`);
+        let quantity = parseInt(inputField.value);
+        quantity++;
+        inputField.value = quantity;  // Update the quantity
+    }
+});
+
+// Event listener for decreasing the quantity
+document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('quantity-decrease')) {
+        const itemId = event.target.getAttribute('data-id');
+        const inputField = document.querySelector(`.quantity-input[data-id="${itemId}"]`);
+        let quantity = parseInt(inputField.value);
+        if (quantity > 1) {
+            quantity--;
+            inputField.value = quantity;  // Update the quantity
+        }
+    }
+});
+
+// Close Modal: Ensure that closing the modal works automatically
+const closeButton = document.querySelectorAll('[data-bs-dismiss="modal"]');
+closeButton.forEach(button => {
+    button.addEventListener('click', () => {
+        modalInstance.hide();  // Hide the modal using Bootstrap's Modal instance
+    });
+});
+
+// Event listener for removing items from the cart (use event delegation)
+document.getElementById('cart-items-list').addEventListener('click', function(event) {
+    if (event.target.classList.contains('remove-item')) {
+        const itemId = event.target.getAttribute('data-id');
+        removeCartItem(itemId);
+    }
+});
+
+function removeCartItem(itemId) {
+    fetch('/remove_cart_item', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ item_id: itemId }),  // Send the item_id to the backend
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            // Remove the item from the DOM
+            document.querySelector(`.cart-item[data-id="${itemId}"]`).remove();
+        } else {
+            // Handle error (optional)
+            alert(data.message || 'Error removing item.');
+        }
+    })
+    .catch(error => console.error('Error removing item:', error));
 }
 
 

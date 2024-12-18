@@ -983,3 +983,61 @@ a {
   min-height: 1px;
   padding: 1.25rem;
 }
+
+/* Style the cart items */
+.cart-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.cart-item img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  margin-right: 1rem;
+}
+
+.cart-item-details {
+  flex-grow: 1;
+}
+
+.cart-item .quantity-container {
+  display: flex;
+  align-items: center;
+  margin-right: 1rem;
+}
+
+.cart-item .quantity-container button {
+  padding: 5px 10px;
+  background-color: #f8f9fa;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.cart-item .quantity-container input {
+  width: 50px;
+  text-align: center;
+  margin: 0 5px;
+}
+
+.cart-item-price {
+  font-weight: bold;
+}
+
+/* Subtotal container */
+#subtotal-container {
+  margin-top: 1rem;
+  font-weight: bold;
+  text-align: right;
+  padding-top: 1rem;
+}
+
+/* Make the modal body scrollable */
+.modal-body {
+  max-height: 400px; /* Adjust the height as needed */
+  overflow-y: auto;
+}
+
+
+
