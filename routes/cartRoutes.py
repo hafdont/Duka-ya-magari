@@ -163,7 +163,8 @@ def checkout_cart():
     user_id = session.get('user', {}).get('id')
     data = request.get_json()
     cart_items = data.get('items', [])
-    print(cart_items)
+    
+    print("Received cart items:", cart_items)  # Debugging: print received cart items
 
     if not cart_items:
         return jsonify({"status": "error", "message": "Your cart is empty."}), 400
@@ -175,33 +176,47 @@ def checkout_cart():
         quantity = item['quantity']
         total_price += item_price * quantity
 
+        # Handle item type (product or car)
+        if item['type'] == 'product':
+            product = Product.query.get(item['id'])
+            if not product:
+                return jsonify({"status": "error", "message": "Invalid product item."}), 400
+        elif item['type'] == 'car':
+            car = Car.query.get(item['id'])
+            if not car:
+                return jsonify({"status": "error", "message": "Invalid car item."}), 400
+        else:
+            return jsonify({"status": "error", "message": "Invalid cart item."}), 400
+
     # Create a new order
     if 'user' in session:
-        # Logged-in user scenario
         current_user = session['user']
-        new_order = Order(user_id=current_user['id'], total_price=total_price, message=item.get('message'))
-
+        new_order = Order(user_id=user_id, total_price=total_price, message=data.get('message'))
+        print(f"Created new order with ID: {new_order.id}")  # Debugging: print order ID
 
     # Add the order to the database
     db.session.add(new_order)
     db.session.flush()  # Get the order ID before creating items
 
+    # Debugging: print the flushed order ID
+    print(f"Flushed order ID: {new_order.id}")
+    
     # Add each item (product or car) to the order
     for cart_item in cart_items:
         total_item_price = float(cart_item['price']) * cart_item['quantity']
         
-        if cart_item.get('car_id'):
+        if cart_item['type'] == 'car':
             new_item = Item(
                 order_id=new_order.id,
-                car_id=cart_item['car_id'],
+                car_id=cart_item['id'],  # Use 'id' directly for car
                 quantity=cart_item['quantity'],
                 price=cart_item['price'],
                 total_price=total_item_price
             )
-        elif cart_item.get('product_id'):
+        elif cart_item['type'] == 'product':
             new_item = Item(
                 order_id=new_order.id,
-                product_id=cart_item['product_id'],
+                product_id=cart_item['id'],  # Use 'id' directly for product
                 quantity=cart_item['quantity'],
                 price=cart_item['price'],
                 total_price=total_item_price
@@ -212,9 +227,23 @@ def checkout_cart():
 
         # Add the item to the database
         db.session.add(new_item)
+        print(f"Added item to order {new_order.id} with ID: {new_item.id}")  # Debugging: item ID
 
     # Commit all changes (create the order and all items)
     db.session.commit()
 
-    # Return a success response
-    return jsonify({"status": "success", "message": "Your order has been placed successfully!"})
+    # Debugging: confirm that the commit was successful
+    print(f"Committed order {new_order.id} and all items.")
+
+    # Clear the cart after the order is placed
+    Cart.query.filter_by(user_id=user_id).delete()  # Clear cart items from the database
+    db.session.commit()  # Commit changes to database
+    print("Cleared the cart for user:", user_id)  # Debugging: confirm cart clearance
+
+    # Return a success response with order ID
+    return jsonify({
+        "status": "success",
+        "message": "Your order has been placed successfully!",
+        "order_id": new_order.id  # Send order ID for use in the frontend
+    })
+

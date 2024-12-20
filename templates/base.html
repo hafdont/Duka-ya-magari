@@ -118,7 +118,7 @@
     </nav>
 
     <!-- Cart Modal -->
-    <div class="modal fade modal-dialog modal-dialog-scrollable ol-lg-7" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+    <div class="modal fade modal-dialog modal-dialog-scrollable col-lg-7" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -132,7 +132,7 @@
                 </div>
                 <div class="modal-footer">
                     <!-- Continue Shopping Button -->
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Continue Shopping</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
                     <!-- Clear Cart Button -->
                     <button type="button" class="btn btn-danger" id="clear-cart-btn">Clear Cart</button>
                     <!-- Check out button-->
@@ -323,59 +323,69 @@ cartIcon.addEventListener('click', function(event) {
 });
 
 // Fetch cart data when the modal is about to be shown
-cartModal.addEventListener('show.bs.modal', function () {
-    fetch('/view_cart')
-        .then(response => response.json())
-        .then(data => {
-            const cartItemsList = document.getElementById('cart-items-list');
-            cartItemsList.innerHTML = '';  // Clear any previous items
+cartModal.addEventListener('show.bs.modal', async function () {
+    try {
+        // Wait for the fetch call to complete asynchronously
+        const response = await fetch('/view_cart');
+        
+        // Parse the response to JSON
+        const data = await response.json();
+        
+        const cartItemsList = document.getElementById('cart-items-list');
+        cartItemsList.innerHTML = '';  // Clear any previous items
+
+        let totalPrice = 0;  // Track the total price
+
+        // Iterate over each item in the cart data
+        data.forEach(item => {
+            const listItem = document.createElement('li');
+            listItem.classList.add('list-group-item', 'cart-item');
             
-            let totalPrice = 0;  // Track the total price
+            // Create the product image
+            const productImage = `<img src="${item.image}" alt="${item.name}" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;">`;
+
+            // Create the quantity input with + and - buttons
+            const quantityInput = `
+                <div class="quantity-container">
+                    <button class="quantity-decrease" data-id="${item.id}">-</button>
+                    <input type="number" value="${item.quantity}" class="quantity-input" data-id="${item.id}" min="1" max="99">
+                    <button class="quantity-increase" data-id="${item.id}">+</button>
+                </div>
+            `;
             
-            data.forEach(item => {
-                const listItem = document.createElement('li');
-                listItem.classList.add('list-group-item', 'cart-item');
-                
-                // Create the product image
-                const productImage = `<img src="${item.image}" alt="${item.name}" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;">`;
-                
-                // Create the quantity input with + and - buttons
-                const quantityInput = `
-                    <div class="quantity-container">
-                        <button class="quantity-decrease" data-id="${item.id}">-</button>
-                        <input type="number" value="${item.quantity}" class="quantity-input" data-id="${item.id}" min="1" max="99">
-                        <button class="quantity-increase" data-id="${item.id}">+</button>
-                    </div>
-                `;
-                
-                // Create the item details
-                const itemDetails = `
-                    <div class="cart-item-info ms-3 d-flex flex-grow-1 justify-content-between">
-                        <div class="cart-item-name">${item.name}</div>
-                        <div class="cart-item-quantity">${quantityInput}</div>
-                        <div class="cart-item-price">$${item.price}</div>
-                        <i class="remove-item fas fa-times" data-id="${item.id}"></i>
-                    </div>
-                `;
-                
-                // Combine all parts
-                listItem.innerHTML = `${productImage} ${itemDetails}`;
-                
-                // Add the item to the cart list
-                cartItemsList.appendChild(listItem);
-                
-                totalPrice += item.total;  // Add to total price
-            });
+            // Create the item details
+            const itemDetails = `
+                <div class="cart-item-info ms-3 d-flex flex-grow-1 justify-content-between">
+                    <div class="cart-item-name">${item.name}</div>
+                    <div class="cart-item-quantity">${quantityInput}</div>
+                    <div class="cart-item-price">${item.price}</div>
+                    <div class="cart-item-type">${item.type}</div>
+                    <i class="remove-item fas fa-times" data-id="${item.id},${item.type}"></i>
+                </div>
+            `;
             
-            // Show subtotal at the bottom
-            const subtotalContainer = document.createElement('div');
-            subtotalContainer.id = 'subtotal-container';
-            subtotalContainer.innerHTML = `Subtotal: $${totalPrice.toFixed(2)}`;
-            cartItemsList.appendChild(subtotalContainer);
-        })
-        .catch(error => {
-            console.error('Error fetching cart items:', error);
+
+            // Set the `data-id` for the entire list item
+            listItem.setAttribute('data-id', item.id);  // Ensure the correct item ID is here
+
+            // Combine all parts
+            listItem.innerHTML = `${productImage} ${itemDetails}`;
+            
+            // Add the item to the cart list
+            cartItemsList.appendChild(listItem);
+            
+            totalPrice += item.total;  // Add to total price
         });
+
+        // Show subtotal at the bottom
+        const subtotalContainer = document.createElement('div');
+        subtotalContainer.id = 'subtotal-container';
+        subtotalContainer.innerHTML = `Subtotal: $${totalPrice.toFixed(2)}`;
+        cartItemsList.appendChild(subtotalContainer);
+
+    } catch (error) {
+        console.error('Error fetching cart items:', error);
+    }
 });
 
 // Event listener for increasing the quantity
@@ -410,62 +420,66 @@ closeButton.forEach(button => {
     });
 });
 
-// Event listener for removing items from the cart (use event delegation)
-document.getElementById('cart-items-list').addEventListener('click', function(event) {
-    if (event.target.classList.contains('remove-item')) {
-        const itemId = event.target.getAttribute('data-id');
-        removeCartItem(itemId); // Pass only the itemId
+// Function to collect cart items from the modal or elsewhere
+function getCartItems() {
+    const cartItems = [];
+    const cartItemElements = document.querySelectorAll('.cart-item');
+
+    cartItemElements.forEach(itemElement => {
+        const item = {
+            quantity: parseInt(itemElement.querySelector('.quantity-input').value),
+            price: parseFloat(itemElement.querySelector('.cart-item-price').textContent.replace('$', '')),
+            message: itemElement.querySelector('.cart-item-message') ? itemElement.querySelector('.cart-item-message').value : '',
+            type: itemElement.querySelector('.cart-item-type').textContent.trim(),  // Read type from the element
+            id: itemElement.getAttribute('data-id') // Directly get the ID from data-id
+        };
+
+        // No need to manually check for car or product ID
+        cartItems.push(item);
+    });
+
+    return cartItems;
+}
+
+// Checkout button click handler
+document.getElementById('checkout-cart-btn').addEventListener('click', function () {
+    if (confirm('Are you sure you want to checkout?')) {
+        // Get cart items data to pass to backend
+        const cartItems = getCartItems();
+
+        console.log('Cart Items:', cartItems);  // Debugging: Check what is being sent
+
+        if (cartItems.length === 0) {
+            alert('Your cart is empty. Add items before checking out.');
+            return;
+        }
+
+        fetch('/checkout_cart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ items: cartItems })
+        })
+        .then(response => {
+            console.log('Response:', response);  // Debugging: Check the response from the server
+            return response.json();
+        })
+        .then(data => {
+            console.log('Data:', data);  // Debugging: Check the data returned
+            if (data.status === 'success') {
+                alert('Your order has been placed successfully!');
+                window.location.href = '/order_success';  // Redirect to success page
+            } else {
+                alert('Failed to checkout. Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Error during checkout:', error);
+            alert('An error occurred during checkout.');
+        });
     }
 });
-
-
-// Function to remove an item from the cart
-function removeCartItem(itemId) {
-    // Prepare the data to send
-    const data = {
-        item_id: itemId,
-        target_type: 'product'  // Assuming it's a product. Adjust accordingly.
-    };
-
-    // Send a POST request to remove the item
-    fetch('/remove_cart_item', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)  // Convert the data object to JSON
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'success') {
-            // If successful, remove the item from the cart display
-            const itemElement = document.querySelector(`.cart-item[data-id="${itemId}"]`);
-            if (itemElement) {
-                // Add fade-out animation with AOS before removal
-                itemElement.setAttribute('data-aos', 'fade-out');
-                itemElement.setAttribute('data-aos-duration', '500');  // Adjust duration as needed
-                itemElement.setAttribute('data-aos-easing', 'ease-in-out');
-                
-                // Trigger AOS animation
-                AOS.init();
-                
-                // Remove the item after the animation
-                setTimeout(() => {
-                    itemElement.remove();
-                    updateSubtotal(); // Optionally, update the subtotal after item removal
-                }, 500);  // Match this timeout with AOS duration
-            }
-
-            alert(data.message);  // Display success message
-        } else {
-            alert(data.message);  // Display error message
-        }
-    })
-    .catch(error => {
-        console.error('Error removing item:', error);
-        alert('An error occurred while removing the item from the cart.');
-    });
-}
 
 // Function to update the subtotal after an item is removed
 function updateSubtotal() {
@@ -482,35 +496,6 @@ function updateSubtotal() {
         subtotalContainer.innerHTML = `Subtotal: $${totalPrice.toFixed(2)}`;
     }
 }
-
-// Handle Clear Cart Button Click
-document.getElementById('checkout-cart-btn').addEventListener('click', function () {
-    if (confirm('Are you sure you want to checkout?')) {
-        // Get cart items data to pass to backend
-        const cartItems = getCartItems(); // Assuming this is a function that fetches cart items in the format [{car_id, product_id, quantity}]
-        fetch('/checkout_cart', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ items: cartItems })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                alert('Your order has been placed successfully!');
-                window.location.href = '/order_success';  // Redirect to success page
-            } else {
-                alert('Failed to checkout. Please try again.');
-            }
-        })
-        .catch(error => {
-            console.error('Error during checkout:', error);
-            alert('An error occurred during checkout.');
-        });
-    }
-});
-
 
 </script>
 
