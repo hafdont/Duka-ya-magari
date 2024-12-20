@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, session, flash, redirect, render_template, url_for, session
 from app import db
-from models import  Car, Product, Cart, User,Image
+from models import  Car, Product, Cart, Order, Item
 
 cart_bp = Blueprint('cart', __name__)
 
@@ -79,7 +79,7 @@ def view_cart():
             cart_item['id'] = item.product.id
             # Get the first image for the product
             if item.product.product_images:
-                cart_item['image'] = item.product.product_images[0].image_path
+                cart_item['image'] = url_for('uploaded_file', folder='products', filename=item.product.product_images[0].image_path)
             else:
                 cart_item['image'] = '/static/img/default_image_path.jpg'  # Path to the default image
 
@@ -91,8 +91,8 @@ def view_cart():
             cart_item['total'] = item.quantity * item.car.price
             cart_item['id'] = item.car.id
             # Get the first image for the car
-            if item.product.product_images:
-                cart_item['image'] = item.car.car_images[0].image_path
+            if item.car.car_images:
+                cart_item['image'] = url_for('uploaded_file', folder='cars', filename=item.car.car_images[0].image_path) 
             else:
                 cart_item['image'] = '/static/img/default_image_path.jpg'  # Path to the default image
 
@@ -100,22 +100,121 @@ def view_cart():
         cart_data.append(cart_item)
     return jsonify(cart_data)
 
+
 @cart_bp.route('/remove_cart_item', methods=['POST'])
 def remove_cart_item():
     user_id = session['user']['id'] if 'user' in session else None  # Get user ID from session
+    data = request.get_json()  # Parse JSON data from the request
+    item_id = data.get('item_id')  # Get item_id from the JSON body
+    target_type = data.get('target_type')  # 'car' or 'product'
+
+    print(f"Received data: {data}")
+    print(f"User ID: {user_id}, Target Type: {target_type}, Item ID: {item_id}")
 
     if user_id is None:
         return jsonify({"status": "error", "message": "You need to be logged in to remove items from the cart."}), 401
-    
-    item_data = request.get_json()
-    item_id = item_data.get('item_id')
-    
-    # Check if the item exists in the user's cart
-    cart_item = Cart.query.filter_by(user_id=user_id, id=item_id).first()
+
+    if target_type not in ['product', 'car']:
+        return jsonify({"status": "error", "message": "Invalid target type. Allowed values are 'product' and 'car'."}), 400
+
+    # Convert item_id to integer (if it's a string)
+    try:
+        item_id = int(item_id)
+    except ValueError:
+        return jsonify({"status": "error", "message": "Invalid item_id."}), 400
+
+    print(f"Looking for item_id {item_id} for user_id {user_id} with target_type {target_type}")
+
+    # Fetch the cart item based on user_id, target_type, and the correct id (car_id or product_id)
+    if target_type == 'car':
+        cart_item = Cart.query.filter_by(user_id=user_id, car_id=item_id).first()
+    elif target_type == 'product':
+        cart_item = Cart.query.filter_by(user_id=user_id, product_id=item_id).first()
+
     if cart_item:
+        print(f"Found cart_item: {cart_item}")
         db.session.delete(cart_item)  # Remove the item from the cart
         db.session.commit()
         return jsonify({"status": "success", "message": "Item removed from the cart."})
     else:
+        print("Item not found in the cart.")
         return jsonify({"status": "error", "message": "Item not found in the cart."}), 404
 
+
+@cart_bp.route('/clear_cart', methods=['POST'])
+def clear_cart():
+    # Ensure the user is logged in
+    user_id = session.get('user', {}).get('id')
+    if not user_id:
+        return jsonify({"status": "error", "message": "You need to be logged in to clear your cart."}), 401
+
+    # Clear the user's cart from the database
+    Cart.query.filter_by(user_id=user_id).delete()
+    db.session.commit()
+
+    # Optionally, clear the cart from session data if using session storage
+    # session.pop('cart', None)
+
+    return jsonify({"status": "success", "message": "Your cart has been cleared."})
+
+
+@cart_bp.route('/checkout_cart', methods=['POST'])
+def checkout_cart():
+    user_id = session.get('user', {}).get('id')
+    data = request.get_json()
+    cart_items = data.get('items', [])
+    print(cart_items)
+
+    if not cart_items:
+        return jsonify({"status": "error", "message": "Your cart is empty."}), 400
+
+    # Calculate the total price of the cart
+    total_price = 0
+    for item in cart_items:
+        item_price = float(item['price'])  # Price from the cart
+        quantity = item['quantity']
+        total_price += item_price * quantity
+
+    # Create a new order
+    if 'user' in session:
+        # Logged-in user scenario
+        current_user = session['user']
+        new_order = Order(user_id=current_user['id'], total_price=total_price, message=item.get('message'))
+
+
+    # Add the order to the database
+    db.session.add(new_order)
+    db.session.flush()  # Get the order ID before creating items
+
+    # Add each item (product or car) to the order
+    for cart_item in cart_items:
+        total_item_price = float(cart_item['price']) * cart_item['quantity']
+        
+        if cart_item.get('car_id'):
+            new_item = Item(
+                order_id=new_order.id,
+                car_id=cart_item['car_id'],
+                quantity=cart_item['quantity'],
+                price=cart_item['price'],
+                total_price=total_item_price
+            )
+        elif cart_item.get('product_id'):
+            new_item = Item(
+                order_id=new_order.id,
+                product_id=cart_item['product_id'],
+                quantity=cart_item['quantity'],
+                price=cart_item['price'],
+                total_price=total_item_price
+            )
+        else:
+            flash("Invalid cart item.", "error")
+            return redirect(url_for('cart_bp.view_cart'))
+
+        # Add the item to the database
+        db.session.add(new_item)
+
+    # Commit all changes (create the order and all items)
+    db.session.commit()
+
+    # Return a success response
+    return jsonify({"status": "success", "message": "Your order has been placed successfully!"})

@@ -72,20 +72,24 @@
                             Blogs
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <button class="nav-link active" id="cart-icon" type="button">
-                            <i title="Orders" class="fa-duotone fa-solid fa-cart-shopping" style="--fa-primary-color: #74C0FC; --fa-secondary-color: #0d5d9b;"></i>
-                        </button>
-                    
-                    </li>
-                    
-                
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href=" ">
-                            <i tittle="Cart" class="fa-duotone fa-solid fa-bag-shopping " style="--fa-primary-color: #74C0FC; --fa-secondary-color: #0d5d9b;"></i>
-                        </a>
-                    </li>
-                </ul>
+
+                    {% if user %}
+
+                            <li class="nav-item">
+                                <button class="nav-link active" id="cart-icon" type="button">
+                                    <i title="Orders" class="fa-duotone fa-solid fa-cart-shopping" style="--fa-primary-color: #74C0FC; --fa-secondary-color: #0d5d9b;"></i>
+                                </button>
+                            
+                            </li>
+                            
+                        
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href=" ">
+                                    <i tittle="Cart" class="fa-duotone fa-solid fa-bag-shopping " style="--fa-primary-color: #74C0FC; --fa-secondary-color: #0d5d9b;"></i>
+                                </a>
+                            </li>
+                    {% endif %}
+                </ul> 
     
     
                 <!-- User Profile Dropdown -->
@@ -114,7 +118,7 @@
     </nav>
 
     <!-- Cart Modal -->
-    <div class="modal fade modal-dialog modal-dialog-scrollable" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+    <div class="modal fade modal-dialog modal-dialog-scrollable ol-lg-7" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -131,6 +135,10 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Continue Shopping</button>
                     <!-- Clear Cart Button -->
                     <button type="button" class="btn btn-danger" id="clear-cart-btn">Clear Cart</button>
+                    <!-- Check out button-->
+                     <!-- Checkout Cart Button in Cart Modal or Cart Page -->
+                    <button type="button" class="btn btn-success" id="checkout-cart-btn">Checkout</button>
+
                 </div>
             </div>
         </div>
@@ -343,10 +351,10 @@ cartModal.addEventListener('show.bs.modal', function () {
                 // Create the item details
                 const itemDetails = `
                     <div class="cart-item-info ms-3 d-flex flex-grow-1 justify-content-between">
-                        <div class="cart-item-name"><strong>${item.name}</strong></div>
+                        <div class="cart-item-name">${item.name}</div>
                         <div class="cart-item-quantity">${quantityInput}</div>
                         <div class="cart-item-price">$${item.price}</div>
-                        <button class="remove-item btn btn-sm btn-danger" data-id="${item.id}">X</button>
+                        <i class="remove-item fas fa-times" data-id="${item.id}"></i>
                     </div>
                 `;
                 
@@ -406,42 +414,108 @@ closeButton.forEach(button => {
 document.getElementById('cart-items-list').addEventListener('click', function(event) {
     if (event.target.classList.contains('remove-item')) {
         const itemId = event.target.getAttribute('data-id');
-        removeCartItem(itemId);
+        removeCartItem(itemId); // Pass only the itemId
     }
 });
 
+
+// Function to remove an item from the cart
 function removeCartItem(itemId) {
+    // Prepare the data to send
+    const data = {
+        item_id: itemId,
+        target_type: 'product'  // Assuming it's a product. Adjust accordingly.
+    };
+
+    // Send a POST request to remove the item
     fetch('/remove_cart_item', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ item_id: itemId }),  // Send the item_id to the backend
+        body: JSON.stringify(data)  // Convert the data object to JSON
     })
     .then(response => response.json())
     .then(data => {
         if (data.status === 'success') {
-            // Remove the item from the DOM
-            document.querySelector(`.cart-item[data-id="${itemId}"]`).remove();
+            // If successful, remove the item from the cart display
+            const itemElement = document.querySelector(`.cart-item[data-id="${itemId}"]`);
+            if (itemElement) {
+                // Add fade-out animation with AOS before removal
+                itemElement.setAttribute('data-aos', 'fade-out');
+                itemElement.setAttribute('data-aos-duration', '500');  // Adjust duration as needed
+                itemElement.setAttribute('data-aos-easing', 'ease-in-out');
+                
+                // Trigger AOS animation
+                AOS.init();
+                
+                // Remove the item after the animation
+                setTimeout(() => {
+                    itemElement.remove();
+                    updateSubtotal(); // Optionally, update the subtotal after item removal
+                }, 500);  // Match this timeout with AOS duration
+            }
+
+            alert(data.message);  // Display success message
         } else {
-            // Handle error (optional)
-            alert(data.message || 'Error removing item.');
+            alert(data.message);  // Display error message
         }
     })
-    .catch(error => console.error('Error removing item:', error));
+    .catch(error => {
+        console.error('Error removing item:', error);
+        alert('An error occurred while removing the item from the cart.');
+    });
 }
+
+// Function to update the subtotal after an item is removed
+function updateSubtotal() {
+    const totalPrice = Array.from(document.querySelectorAll('.cart-item')).reduce((total, item) => {
+        const priceElement = item.querySelector('.cart-item-price');
+        const price = parseFloat(priceElement.textContent.replace('$', ''));
+        const quantityElement = item.querySelector('.quantity-input');
+        const quantity = parseInt(quantityElement.value);
+        return total + price * quantity;
+    }, 0);
+
+    const subtotalContainer = document.getElementById('subtotal-container');
+    if (subtotalContainer) {
+        subtotalContainer.innerHTML = `Subtotal: $${totalPrice.toFixed(2)}`;
+    }
+}
+
+// Handle Clear Cart Button Click
+document.getElementById('checkout-cart-btn').addEventListener('click', function () {
+    if (confirm('Are you sure you want to checkout?')) {
+        // Get cart items data to pass to backend
+        const cartItems = getCartItems(); // Assuming this is a function that fetches cart items in the format [{car_id, product_id, quantity}]
+        fetch('/checkout_cart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ items: cartItems })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert('Your order has been placed successfully!');
+                window.location.href = '/order_success';  // Redirect to success page
+            } else {
+                alert('Failed to checkout. Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Error during checkout:', error);
+            alert('An error occurred during checkout.');
+        });
+    }
+});
 
 
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
 
 
 
