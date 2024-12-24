@@ -13,7 +13,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- TinyMCE CDN with Your API Key -->
-<!-- Place the first <script> tag in your HTML's <head> -->
     <script src="https://cdn.tiny.cloud/1/{{ TINYMCE_API_KEY }}/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
     </script>
 </head>
@@ -33,62 +32,46 @@
                 <!-- Center the ul with ms-auto and use d-flex to control the layout -->
                 <ul class="navbar-nav mb-2 mb-lg-0 d-flex justify-content-center ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{{ url_for('admin_bp.home') if (session.get('user') and session['user']['role'] == 'admin') else url_for('home_bp.index') }}">
+                        <a class="nav-link " aria-current="page" href="{{ url_for('admin_bp.home') if (session.get('user') and session['user']['role'] == 'admin') else url_for('home_bp.index') }}">
                             Home
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{{ url_for('home_bp.about') }}">
+                        <a class="nav-link" aria-current="page" href="{{ url_for('home_bp.about') }}">
                             About
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{{ url_for('home_bp.cars') }}">
+                        <a class="nav-link" aria-current="page" href="{{ url_for('home_bp.cars') }}">
                             Cars
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{{ url_for('home_bp.carParts') }}">
+                        <a class="nav-link" aria-current="page" href="{{ url_for('home_bp.carParts') }}">
                             Car Parts
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{{ url_for('home_bp.tools') }}">
+                        <a class="nav-link " aria-current="page" href="{{ url_for('home_bp.tools') }}">
                             Tools
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{{ url_for('home_bp.househldItems') }}">
+                        <a class="nav-link" aria-current="page" href="{{ url_for('home_bp.househldItems') }}">
                             Household Items
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{{ url_for('home_bp.computers') }}">
+                        <a class="nav-link" aria-current="page" href="{{ url_for('home_bp.computers') }}">
                             Computers
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{{ url_for('blogs.get_blogs') }}">
+                        <a class="nav-link" aria-current="page" href="{{ url_for('blogs.get_blogs') }}">
                             Blogs
                         </a>
                     </li>
 
-                    {% if user %}
-
-                            <li class="nav-item">
-                                <button class="nav-link active" id="cart-icon" type="button">
-                                    <i title="Orders" class="fa-duotone fa-solid fa-cart-shopping" style="--fa-primary-color: #74C0FC; --fa-secondary-color: #0d5d9b;"></i>
-                                </button>
-                            
-                            </li>
-                            
-                        
-                            <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href=" ">
-                                    <i tittle="Cart" class="fa-duotone fa-solid fa-bag-shopping " style="--fa-primary-color: #74C0FC; --fa-secondary-color: #0d5d9b;"></i>
-                                </a>
-                            </li>
-                    {% endif %}
                 </ul> 
     
     
@@ -102,10 +85,23 @@
                         <img src="{{ url_for('uploaded_file', folder='users', filename='defaultuser.jpg') }}" alt="" width="32" height="32" class="rounded-circle me-2">
                         {% endif %}
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                        <li><a class="dropdown-item" href="{{ url_for('user.edit_profile', user_id=user.id) }}">Update Profile</a></li>
-                        <li><a class="dropdown-item" href="{{ url_for('user.view_profile', user_id=user.id) }}">View Profile</a></li>
-                        <li><a class="dropdown-item" href="{{ url_for('user.logout') }}">Logout</a></li>
+                    <ul class="dropdown-menu dropdown-menu-end nav-item" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item nav-link m-2" href="{{ url_for('user.edit_profile', user_id=user.id) }}">Update Profile</a></li>
+                        <li><a class="dropdown-item nav-link m-2" href="{{ url_for('user.view_profile', user_id=user.id) }}">View Profile</a></li>
+                        <li><a class="dropdown-item nav-link m-2" href="{{ url_for('user.logout') }}">Logout</a></li>
+                        <li class="nav-item">
+                            <button class="nav-link active m-2" id="cart-icon" type="button">
+                                <i title="Orders" class="fa-duotone fa-solid fa-cart-shopping" style="--fa-primary-color: #74C0FC; --fa-secondary-color: #0d5d9b;"></i>
+                            </button>
+                        
+                        </li>
+                        
+                    
+                        <li class="nav-item">
+                            <a class="nav-link active m-2" aria-current="page" href=" {{ url_for('order.user_orders') }}">
+                                <i tittle="Cart" class="fa-duotone fa-solid fa-bag-shopping " style="--fa-primary-color: #74C0FC; --fa-secondary-color: #0d5d9b;"></i>
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 {% else %}

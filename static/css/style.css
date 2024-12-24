@@ -1,5 +1,5 @@
 /* Import Poppins font from Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 /* Define CSS variables in :root */
 :root {
@@ -20,9 +20,11 @@
 
 /* Apply Poppins font to the body */
 body {
-  font-family: 'Poppins', sans-serif;
   margin: 0; /* Set body margin to 0 */
   background-color: var(--body-bg-color)!important;
+  font-family: "Montserrat", serif;
+  font-optical-sizing: auto;
+  font-style: normal;
 }
 .flashes {
   list-style-type: none;
@@ -67,6 +69,8 @@ body {
   padding: 10px;
   background: #99deea;
   border-radius: 5px;
+  color: white!important;
+  font-weight: 700;
 }
 
   /*============= NAVIGATION =============*/
@@ -150,13 +154,12 @@ body {
   .table {
     width: 100%;
     margin: 8px 0;
-    border-collapse: separate;
     border-spacing: 0 7px;
   }
 
   .table thead th {
     background-color: var(--tabele-bg-color);
-    color: var(--nav-text-color);
+    color: var(--nav-text-color)!important;
     padding: 5px;
     text-align: left;
     border: none; /* Remove borders from header cells */
@@ -172,8 +175,8 @@ body {
 
 /* Hover effect for rows */
 .table tbody tr:hover {
-  transform: scale(1.018); /* Slightly increase size on hover */ 
-  color: white!important; /* Change text color */
+  transform: scale(1.010); /* Slightly increase size on hover */ 
+  color: var(--nav-text-color)!important; /* Change text color */
   border: none;
   background: var(--tabele-bg-color);
 }
@@ -965,7 +968,7 @@ a {
 .hover-scale, .hover-scale:hover {
   transition: transform .2s ease-in;
 }
-.card {
+.about_card {
   position: relative;
   display: flex;
   flex-direction: column;

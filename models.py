@@ -19,6 +19,7 @@ class UserStatus(Enum):
 
 class OrderStatus(Enum):
     PENDING = "pending"
+    PROCESSING = "processign"
     APPROVED = "approved"
     REJECTED = "rejected"
     COMPLETED = "completed"
@@ -184,6 +185,7 @@ class Order(db.Model):
 
     # Relationships
     user = db.relationship('User', backref='user_orders', lazy=True)
+    items = db.relationship('Item', backref='order', lazy=True)
 
 
     def __repr__(self):

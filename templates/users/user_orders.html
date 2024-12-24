@@ -1,6 +1,6 @@
-{% extends 'admin_base.html' %}
+{% extends 'base.html' %}
 
-{% block main_content %}
+{% block content %}
 <div class="container mt-4">
     <h2 class="heading">Orders by Status</h2>
 
@@ -22,25 +22,25 @@
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
-                            <tr class="mt-1 mb-1" scope="col">
-                                <th class="mt-1 mb-1" scope="col">Order ID</th>
-                                <th class="mt-1 mb-1" scope="col">Guest/User Name</th>
-                                <th class="mt-1 mb-1" scope="col">Created At</th>
-                                <th class="mt-1 mb-1" scope="col">Total Price</th>
-                                <th class="mt-1 mb-1" scope="col">Status</th>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Guest/User Name</th>
+                                <th>Created At</th>
+                                <th>Total Price</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% set orders = orders_by_status[status] %}
                             {% if orders %}
                                 {% for order in orders %}
-                                    <tr class="order-row" onclick="location.href='{{ url_for('order.get_order', order_id=order.id) }}'" style="cursor: pointer;">
-                                        <td class="mt-1 mb-1">{{ order.id }}</td>
-                                        <td class="mt-1 mb-1">
+                                    <tr class="order-row" onclick="location.href='{{ url_for('order.order_details', order_id=order.id) }}'" style="cursor: pointer;">
+                                        <td>{{ order.id }}</td>
+                                        <td>
                                             {% if order.user %}
                                                 <a href="{{ url_for('user.view_profile', user_id=order.user.id) }}">
                                                     {% if order.user.profile_picture %}
-                                                        <img src="{{ url_for('uploaded_file', folder='users', filename=order.user.profile_picture) }}" alt="" width="32" height="32" class="rounded-circle me-2">
+                                                        <img src="{{ url_for('uploaded_file', folder='users', filename=order.user.profile_picture) }}" alt="Profile Picture" width="32" height="32" class="rounded-circle me-2">
                                                     {% else %}
                                                         <img src="{{ url_for('uploaded_file', folder='users', filename='defaultuser.jpg') }}" alt="Default Icon" width="32" height="32" class="rounded-circle me-2">
                                                     {% endif %}
@@ -50,17 +50,19 @@
                                                 {{ order.guest_name }}
                                             {% endif %}
                                         </td>
-                                        <td class="mt-1 mb-1">{{ order.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-                                        <td class="mt-1 mb-1">{{ "{:,.2f}".format(order.total_price) }}</td>
-                                        <td class="mt-1 mb-1">
-                                            <span class="status-circle" style="background-color: {% if order.order_status == 'pending' %}red{% elif order.order_status == 'approved' %}blue{% elif order.order_status == 'rejected' %}yellow{% elif order.order_status == 'completed' %}green{% endif %};"></span>
+                                        <td>{{ order.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                                        <td>{{ "{:,.2f}".format(order.total_price) }}</td>
+                                        <td>
+                                            <span class="status-circle" style="background-color: 
+                                                {% if order.order_status == 'pending' %}red{% elif order.order_status == 'approved' %}blue{% elif order.order_status == 'rejected' %}yellow{% elif order.order_status == 'completed' %}green{% endif %};">
+                                            </span>
                                             {{ order.get_status_display() }}
                                         </td>
                                     </tr>
                                 {% endfor %}
                             {% else %}
                                 <tr>
-                                    <td colspan="6" class="text-center">No orders found</td>
+                                    <td colspan="5" class="text-center">No orders found</td>
                                 </tr>
                             {% endif %}
                         </tbody>
@@ -71,5 +73,13 @@
     </div>
 </div>
 
-<!-- CSS for Status Circle -->
+<!-- Optional CSS for Status Circle -->
+<style>
+    .status-circle {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+    }
+</style>
 {% endblock %}

@@ -26,9 +26,9 @@
             <div class="card">
                 <div class="m-2 heading">Order Info</div>
                 <div class="card-body">
-                    <p><strong>Order ID:</strong> {{ order.id }}</p>
-                    <p><strong>Total Price:</strong> {{ order.total_price }}</p>
-                    <p><strong>Message:</strong> {{ order.message }}</p>
+                    <p ><strong class="heading">Order ID:</strong> {{ order.id }}</p>
+                    <p ><strong class="heading">Total Price:</strong> {{ "{:,.2f}".format(order.total_price) }}</p> 
+                    <p ><strong class="heading">Message:</strong> {{ order.message }}</p>
                 </div>
             </div>
         </div>
@@ -43,14 +43,16 @@
                     <tr>
                         <th>Item ID</th>
                         <th>Name</th>
+                        <th>Quantity Requested</th> <!-- New column for Quantity Requested -->
                         <th>Number in Stock</th>
-                        <th>Stock Status </th>
+                        <th>Stock Status</th>
                         <th>Price</th>
+                        <th>Stock Sufficient</th> <!-- Column for Stock sufficiency -->
                     </tr>
                 </thead>
                 <tbody>
                     {% for item in items %}
-                        <tr>
+                        <tr id="item-{{ item.id }}">
                             <td>{{ item.id }}</td>
                             <td>
                                 {% if item.car %}
@@ -61,6 +63,7 @@
                                     No linked item
                                 {% endif %}
                             </td>
+                            <td>{{ item.quantity }}</td> <!-- Quantity requested -->
                             <td>
                                 {% if item.car %}
                                     {{ item.car.stock }}
@@ -79,17 +82,33 @@
                                     N/A
                                 {% endif %}
                             </td>
-                            <td>{{ item.price }}</td>
+                            <td>{{ "{:,.2f}".format(item.price) }}</td>
+                            <td id="stock-status-{{ item.id }}">
+                                {% if item.car %}
+                                    {% if item.car.stock >= item.quantity %}
+                                        <span class="text-success">Stock Sufficient</span>
+                                    {% else %}
+                                        <span class="text-danger">Stock Insufficient</span>
+                                    {% endif %}
+                                {% elif item.product %}
+                                    {% if item.product.stock >= item.quantity %}
+                                        <span class="text-success">Stock Sufficient</span>
+                                    {% else %}
+                                        <span class="text-danger">Stock Insufficient</span>
+                                    {% endif %}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
-    
 
     <!-- Update Order Button -->
-    <form id="update-order-form" class="mt-4 col-lg-3">
+    <form id="update-order-form" class="mt-4 mb-4 col-lg-3">
         <select name="status" id="order-status" class="form-select">
             <option value="pending" {% if order.order_status == 'pending' %}selected{% endif %}>Pending</option>
             <option value="approved" {% if order.order_status == 'approved' %}selected{% endif %}>Approved</option>
@@ -98,6 +117,8 @@
         </select>
         <button type="button" class="btn btn-primary mt-2" id="update-order-btn">Update Order</button>
     </form>
+
+    <div id="status-message" class="mt-3"></div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -106,14 +127,25 @@
         $('#update-order-btn').on('click', function() {
             const status = $('#order-status').val();
             const orderId = {{ order.id }};
+            const url = `/orders/${orderId}`;
 
             $.ajax({
-                url: `/orders/${orderId}`,
+                url: url,
                 type: 'PUT',
-                contentType: 'application/json', // Set the content type
-                data: JSON.stringify({ status: status }), // Send data as JSON
+                contentType: 'application/json', 
+                data: JSON.stringify({ status: status }), 
                 success: function(response) {
                     $('#status-message').text(response.message).removeClass('text-danger').addClass('text-success');
+
+                    // Update the stock status for each item dynamically
+                    $.each(response.items, function(index, item) {
+                        const stockStatusElement = $('#stock-status-' + item.id);
+                        if (item.stock_sufficient) {
+                            stockStatusElement.html('<span class="text-success">Stock Sufficient</span>');
+                        } else {
+                            stockStatusElement.html('<span class="text-danger">Stock Insufficient</span>');
+                        }
+                    });
                 },
                 error: function(xhr) {
                     const errorMessage = xhr.responseJSON ? xhr.responseJSON.error : 'An error occurred.';

@@ -144,7 +144,7 @@ Home Page
                             {% if car.car_images|length > 0 %}
                                 {% for image in car.car_images %}
                                 <div class="carousel-item {% if loop.first %}active{% endif %}">
-                                    <img class="d-block w-100 rounded" src="{{ url_for('uploaded_file', folder='cars', filename=image.image_path) }}" alt="Car Image" style="height: 200px; object-fit: cover;">
+                                    <img class=" w-100 rounded" src="{{ url_for('uploaded_file', folder='cars', filename=image.image_path) }}" alt="Car Image" style="height: 200px; object-fit: cover;">
                                 </div>
                                 {% endfor %}
                             {% else %}
@@ -247,7 +247,7 @@ Home Page
                             {% if computer.product_images|length > 0 %}
                                 {% for image in computer.product_images %}
                                 <div class="carousel-item {% if loop.first %}active{% endif %}">
-                                    <img class="d-block w-100 rounded" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" alt="Product Image" style="height: 200px; object-fit: cover;">
+                                    <img class=" w-100 rounded" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" alt="Product Image" style="height: 200px; object-fit: cover;">
                                 </div>
                                 {% endfor %}
                             {% else %}
@@ -326,7 +326,7 @@ Home Page
                             {% if tool.product_images|length > 0 %}
                                 {% for image in tool.product_images %}
                                 <div class="carousel-item {% if loop.first %}active{% endif %}">
-                                    <img class="d-block w-100 rounded" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" 
+                                    <img class=" w-100 rounded" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" 
                                         alt="Product Image" style="height: 200px; object-fit: cover;">
                                 </div>
                                 {% endfor %}
