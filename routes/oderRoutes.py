@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, render_template, session, redirect, url_for, flash
-from models import db, Order, User, Car, OrderStatus, Product, Item
+from models import db, Order, User, Car, OrderStatus, Product, Item, CategoryType
 from functools import wraps
 from sqlalchemy.orm import joinedload
 import traceback
@@ -151,20 +151,22 @@ def get_order(order_id):
     return render_template('orders/orderDetail.html', order=order, user=current_user, items=items)
 
 # Delete an order
-@order_bp.route('/orders/<int:order_id>', methods=['DELETE'])
+@order_bp.route('/orders/<int:order_id>', methods=['DELETE', 'POST'])
 @admin_required
 def delete_order(order_id):
     current_user = session['user']
     order = Order.query.get_or_404(order_id)
-
-    if order.user_id != current_user['id']:
-        flash("You are not authorized to delete this order.", "danger")
-        return redirect(url_for('order.get_orders'))
-
+    
+    # Delete associated items first
+    for item in order.items:
+        db.session.delete(item)
+    
     db.session.delete(order)
     db.session.commit()
     flash("Order deleted successfully!", "success")
-    return jsonify({'success': True}), 204
+    return redirect(url_for('order.get_orders'))
+
+
 
 def check_stock_availability(order):
     """
@@ -288,59 +290,82 @@ def order_details(order_id):
 
     # Fetch related items in the order
     items = Item.query.filter_by(order_id=order.id).all()
+    print(items)
 
     return render_template('users/order_details.html', order=order, items=items, user=current_user)
 
 @order_bp.route('/order/edit/<int:order_id>', methods=['GET', 'POST'])
 def edit_order(order_id):
     current_user = session['user']
-    order = Order.query.get_or_404(order_id)  # Fetch the order by ID
+    order = Order.query.get_or_404(order_id)
 
-    # Check if the order belongs to the logged-in user
-    if order.user_id != current_user['id']:
+    if order.user_id != current_user['id'] and current_user['role'] != 'admin':
         flash("You do not have permission to view this order.", "danger")
-        return redirect(url_for('user_orders'))
+        return redirect(url_for('order.user_orders'))
 
-    if order.order_status not in [OrderStatus.PENDING, OrderStatus.PROCESSING]:  # Only editable if pending or processing
+    if order.order_status not in [OrderStatus.PENDING]:
         flash("This order is no longer editable.", "danger")
         return redirect(url_for('order.user_orders'))
 
-
-    # If the request method is GET, we render the form
     if request.method == 'GET':
-        # Get the order items for the user to modify
         order_items = Item.query.filter_by(order_id=order_id).all()
-        products = Product.query.all()  # List of products to choose from
-        cars = Car.query.all()
-        return render_template('users/order_edit.html', order=order, order_items=order_items, products=products)
+        category_types = CategoryType
+        cars = Car.query.all()  # All cars
+        return render_template('users/order_edit.html', user=current_user, order=order, order_items=order_items, category_types=category_types, cars=cars)
 
-    # If the request method is POST, handle form submission
     if request.method == 'POST':
-        # Iterate over order items and update the quantities or remove items
-        for item in order.order_items:
+        # Handle updates (e.g., quantity changes, product or car addition)
+        for item in order.items:
             new_quantity = request.form.get(f"quantity_{item.id}")
-            new_product = request.form.get(f"product_{item.id}")
-            
-            # Check if the item should be updated
             if new_quantity:
                 item.quantity = int(new_quantity)
-            
+
+        # Add new product or car if selected
+        new_product_id = request.form.get("product")
+        new_car_id = request.form.get("car")
+
+        if new_product_id:
+            new_product = Product.query.get(new_product_id)
             if new_product:
-                item.product_id = int(new_product)
-        
-        # Remove items if marked for removal (checkboxes or similar)
-        items_to_remove = request.form.getlist('remove_items')
-        for item_id in items_to_remove:
-            item_to_remove = Item.query.get(item_id)
-            if item_to_remove:
-                db.session.delete(item_to_remove)
+                new_item = Item(order_id=order.id, product_id=new_product.id, price=new_product.price, total_price=new_product.price)
+                db.session.add(new_item)
+
+        if new_car_id:
+            new_car = Car.query.get(new_car_id)
+            if new_car:
+                new_item = Item(order_id=order.id, car_id=new_car.id, price=new_car.price, total_price=new_car.price)
+                db.session.add(new_item)
 
         # Recalculate the total price
-        total_price = sum(item.product.price * item.quantity for item in order.order_items)
+        total_price = sum(item.price for item in order.items)
         order.total_price = total_price
 
-        # Commit changes to the database
         db.session.commit()
 
         flash("Order updated successfully!", "success")
         return redirect(url_for('order.user_orders'))
+
+# New endpoint for updating products by category
+@order_bp.route('/order/update_products_by_category', methods=['POST'])
+def update_products_by_category():
+    category_id = request.form['category_id']
+    products = Product.query.filter_by(category=category_id).all()
+    product_data = [{'id': product.id, 'name': product.name} for product in products]
+    return jsonify({'products': product_data})
+
+
+# Route to remove an item from the order
+@order_bp.route('/order/remove_item/<int:item_id>', methods=['GET'])
+def remove_item(item_id):
+    item = Item.query.get_or_404(item_id)
+    order = item.order
+
+    if item:
+        db.session.delete(item)
+        db.session.commit()
+        flash("Item removed successfully!", "success")
+    else:
+        flash("Item not found.", "danger")
+
+    return redirect(url_for('order.edit_order', order_id=order.id))
+

@@ -1,5 +1,6 @@
-/* Import Poppins font from Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+/* Import Google Fonts: Poppins and Lora */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Lora:wght@400;700&display=swap');
+
 
 /* Define CSS variables in :root */
 :root {
@@ -22,9 +23,9 @@
 body {
   margin: 0; /* Set body margin to 0 */
   background-color: var(--body-bg-color)!important;
-  font-family: "Montserrat", serif;
   font-optical-sizing: auto;
   font-style: normal;
+  font-family: 'Poppins', sans-serif;  /* Default font for the body */
 }
 .flashes {
   list-style-type: none;
@@ -175,10 +176,11 @@ body {
 
 /* Hover effect for rows */
 .table tbody tr:hover {
-  transform: scale(1.010); /* Slightly increase size on hover */ 
+  transform: scale(1.014); /* Slightly increase size on hover */ 
   color: var(--nav-text-color)!important; /* Change text color */
   border: none;
   background: var(--tabele-bg-color);
+  font-weight: 500;
 }
 
 /* Optional: Align actions cell, if needed */
@@ -736,12 +738,33 @@ ul.summary-list > li:last-child  {
   margin-right: 0px;
 }
 
-.status-circle {
+/* General styles for the status bubble */
+.status-bubble {
   display: inline-block;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  margin-right: 5px;
+  padding: 5px 15px;        /* Adjust padding to make the bubble size */
+  border-radius: 20px;      /* Creates the rounded bubble */
+  font-weight: bold;        /* Make text bold */
+  color: white;             /* Text color */
+  text-transform: uppercase;/* Make the text uppercase */
+  text-align: center;       /* Center the text inside the bubble */
+  font-size: 14px;          /* Adjust font size */
+}
+
+/* Specific bubble styles based on order status */
+.status-pending {
+  background-color: yellow;  /* Yellow bubble for pending status */
+}
+
+.status-approved {
+  background-color: blue;    /* Blue bubble for approved status */
+}
+
+.status-rejected {
+  background-color: red;     /* Red bubble for rejected status */
+}
+
+.status-completed {
+  background-color: green;   /* Green bubble for completed status */
 }
 
 /* end of user profile page */

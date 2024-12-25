@@ -19,7 +19,6 @@ class UserStatus(Enum):
 
 class OrderStatus(Enum):
     PENDING = "pending"
-    PROCESSING = "processign"
     APPROVED = "approved"
     REJECTED = "rejected"
     COMPLETED = "completed"

@@ -2,35 +2,146 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2>Edit Order #{{ order.id }}</h2>
+    <div class="mt-1 mb-3">
+        <h2 class="heading">Order Details</h2>
+        <p>{{ order.created_at.strftime('%d-%m-%Y- %H:%M:%S') }}</p>
+        <p class="bubble col-lg-2 heading"> {{ order.get_status_display() | upper }}</p>
+    </div>
 
-    <!-- Form to Edit Order Items -->
-    <form method="POST">
-        <div class="row">
-            {% for item in order_items %}
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Product: </label>
-                        <select class="form-control" name="product_{{ item.id }}">
-                            <option value="">Select Product</option>
-                            {% for product in products %}
-                                <option value="{{ product.id }}" {% if product.id == item.product_id %}selected{% endif %}>{{ product.name }} - ${{ product.price }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Quantity: </label>
-                        <input type="number" class="form-control" name="quantity_{{ item.id }}" value="{{ item.quantity }}" min="1">
-                    </div>
-                    <div class="form-group">
-                        <label>Remove Item:</label>
-                        <input type="checkbox" name="remove_items" value="{{ item.id }}">
-                    </div>
+    <div class="row d-flex justify-content-center">
+        <!-- User Info Card -->
+        <div class="col-md-5 text-2xs">
+            <div class="card">
+                <h3 class="m-2 heading">User Info</h3>
+                <div class="card-body">
+                    <p><strong>Name:</strong> {{ order.guest_name if not order.user else order.user.username }}</p>
+                    <p><strong>Email:</strong> {{ order.guest_email if not order.user else order.user.email }}</p>
+                    <p><strong>Phone:</strong> {{ order.guest_phone if not order.user else order.user.phone_number }}</p>
                 </div>
-            {% endfor %}
+            </div>
         </div>
-        
-        <button type="submit" class="btn btn-primary mt-3">Update Order</button>
-    </form>
+
+        <!-- Order Info Card -->
+        <div class="col-md-5">
+            <div class="card">
+                <div class="m-2 heading">Order Info</div>
+                <div class="card-body">
+                    <p><strong>Order ID:</strong> {{ order.id }}</p>
+                    <p><strong>Total Price:</strong> {{ "{:,.2f}".format(order.total_price) }}</p>
+                    <p><strong>Message:</strong> {{ order.message }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <h4>Items in Order</h4>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Item ID</th>
+                        <th>Name</th>
+                        <th>Quantity Requested</th>
+                        <th>Stock Status</th>
+                        <th>Price</th>
+                        <th>Action</th> <!-- Add Action for Remove -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order_items %}
+                    <tr id="item-{{ item.id }}">
+                        <td>{{ item.id }}</td>
+                        <td>
+                            {% if item.car %}
+                            <a href="{{ url_for('car.get_car', car_id=item.car.id) }}">{{ item.car.model }}</a>
+                            {% elif item.product %}
+                            <a href="{{ url_for('product.get_product', product_id=item.product.id) }}">{{ item.product.name }}</a>
+                            {% else %}
+                            No linked item
+                            {% endif %}
+                        </td>
+                        <td>
+                            <input type="number" name="quantity_{{ item.id }}" value="{{ item.quantity }}" min="1">
+                        </td>
+                        <td>
+                            {% if item.car %}
+                            {{ item.car.StockStatus.value }}
+                            {% elif item.product %}
+                            {{ item.product.StockStatus.value }}
+                            {% else %}
+                            N/A
+                            {% endif %}
+                        </td>
+                        <td>{{ "{:,.2f}".format(item.price) }} </td>
+                        <td>
+                            <!-- Remove Item Button -->
+                            <a href="{{ url_for('order.remove_item', item_id=item.id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="mt-3 mt-3">
+        <h4>Update Items</h4>
+        <form method="POST">
+            <!-- Category Dropdown (for Products only) -->
+            <select id="category-select" name="category" onchange="updateProducts()">
+                <option value="">Select Category</option>
+                {% for category in category_types %}
+                    <option value="{{ category.value }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
+
+            <!-- Product Dropdown (dynamically populated based on category) -->
+            <select id="product-select" name="product">
+                <option value="">Select Product</option>
+                {% for product in products %}
+                    <option value="{{ product.id }}">{{ product.name }}</option>
+                {% endfor %}
+            </select>
+
+            <!-- Car Dropdown (all cars, no category filter) -->
+            <select id="car-select" name="car">
+                <option value="">Select Car</option>
+                {% for car in cars %}
+                    <option value="{{ car.id }}">{{ car.model }}</option>
+                {% endfor %}
+            </select>
+
+            <div id="status-message"></div>
+            <button type="submit" class="btn btn-primary mt-3">Update Order</button>
+        </form>
+    </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function updateProducts() {
+        const categoryId = document.getElementById("category-select").value;
+        if (categoryId) {
+            $.ajax({
+                url: '{{ url_for("order.update_products_by_category") }}',
+                method: 'POST',
+                data: { category_id: categoryId },
+                success: function(data) {
+                    const productSelect = document.getElementById("product-select");
+                    productSelect.innerHTML = '<option value="">Select Product</option>';
+                    data.products.forEach(function(product) {
+                        const option = document.createElement("option");
+                        option.value = product.id;
+                        option.textContent = product.name;
+                        productSelect.appendChild(option);
+                    });
+                }
+            });
+        }
+    }
+</script>
+
 {% endblock %}
