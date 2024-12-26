@@ -10,6 +10,7 @@ from models import User, UserRole,  UserStatus, Gender
 from app import db, oauth, login_manager
 from authlib.integrations.flask_client import OAuth
 from flask_login import login_user, logout_user, LoginManager
+from datetime import timedelta
 
 bcrypt = Bcrypt()
 user_bp = Blueprint('user', __name__)
