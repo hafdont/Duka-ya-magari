@@ -14,6 +14,7 @@ from datetime import datetime
 from flask_apscheduler import APScheduler
 from flask_mail import Mail, Message
 import smtplib
+from datetime import timedelta
 
 
 # Initialize pymysql
@@ -44,6 +45,11 @@ app.config['MAIL_USE_SSL'] = os.getenv('MAIL_USE_SSL') == 'True'
 app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 mail = Mail(app)
+
+# In your Flask app setup (typically app.py)
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=6)
+app.config['SESSION_PERMANENT'] = True
+
 
 # Define error handling routes and logging
 # Handle 404 errors (Page Not Found)
@@ -123,7 +129,6 @@ def send_log_email():
 
 # Schedule the task to run every 24 hours
 scheduler.add_job(id='send_log_email', func=send_log_email, trigger='interval', hours=24)
-
 
 @app.before_request
 def log_request():

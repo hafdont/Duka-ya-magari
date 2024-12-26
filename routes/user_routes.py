@@ -81,6 +81,7 @@ def login():
         user = User.query.filter((User.email == identifier) | (User.username == identifier)).first()
 
         if user and bcrypt.check_password_hash(user.password, password):
+            session.permanent = True  # Make session permanent to enable timeout
             session['user'] = {
                 'id': user.id,
                 'username': user.username,
@@ -199,6 +200,12 @@ def edit_profile(user_id):
                 user_to_edit.role = user_data['role']
             # Commit changes
             db.session.commit()
+
+            # Refresh the session if role changes
+
+            if user_data.get('role') != current_user['role']:
+                session['user']['role'] = user_data['role']  # Refresh the session's role
+
             flash("Profile updated successfully!", "success")
         except Exception as e:
             db.session.rollback()  # Rollback changes if there's an error
