@@ -199,6 +199,7 @@ class Blog(db.Model):
     title = db.Column(db.String(255), nullable=False)
     content = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    view_count = db.Column(db.Integer, default=0)  # Total view count
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     # Relationship to store blog images
@@ -209,6 +210,16 @@ class Blog(db.Model):
     likes = db.relationship('Like', backref='liked_blog', lazy=True)
     # Reference to the user who created the blog post
     user = db.relationship('User', backref='blogs')
+
+class BlogView(db.Model):
+    __tablename__ = 'blog_views'
+    id = db.Column(db.Integer, primary_key=True)
+    blog_id = db.Column(db.Integer, db.ForeignKey('blogs.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)  # Optional if the user is logged in
+    viewed_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    blog = db.relationship('Blog', backref='views')
+    user = db.relationship('User', backref='blog_views', lazy=True)
 
 # Image model for storing multiple images for Cars, Users, and potentially Admins
 class Image(db.Model):

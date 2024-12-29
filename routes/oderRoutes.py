@@ -4,6 +4,7 @@ from functools import wraps
 from sqlalchemy.orm import joinedload
 import traceback
 from .user_routes import admin_required
+from datetime import datetime
 
 order_bp = Blueprint('order', __name__)
 
@@ -18,6 +19,11 @@ def user_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+# Function to recalculate the total price for an order
+def update_order_total(order):
+    total = sum(item.total_price for item in order.items)
+    order.total_price = total
+    db.session.commit()
 
 @order_bp.route('/orders', methods=['POST'])
 def create_order():
@@ -166,8 +172,6 @@ def delete_order(order_id):
     flash("Order deleted successfully!", "success")
     return redirect(url_for('order.get_orders'))
 
-
-
 def check_stock_availability(order):
     """
     Check if stock is sufficient for all products and cars in the order.
@@ -237,7 +241,6 @@ def update_order(order_id):
     else:
         return jsonify({'success': False, 'error': 'Invalid status provided.'}), 400
 
-
 # Endpoint to display all orders for the logged-in user with status filtering
 @order_bp.route('/user/orders', methods=['GET'])
 def user_orders():
@@ -299,10 +302,12 @@ def edit_order(order_id):
     current_user = session['user']
     order = Order.query.get_or_404(order_id)
 
+    # Permission check
     if order.user_id != current_user['id'] and current_user['role'] != 'admin':
         flash("You do not have permission to view this order.", "danger")
         return redirect(url_for('order.user_orders'))
 
+    # Check if order is still editable (pending status)
     if order.order_status not in [OrderStatus.PENDING]:
         flash("This order is no longer editable.", "danger")
         return redirect(url_for('order.user_orders'))
@@ -314,13 +319,20 @@ def edit_order(order_id):
         return render_template('users/order_edit.html', user=current_user, order=order, order_items=order_items, category_types=category_types, cars=cars)
 
     if request.method == 'POST':
-        # Handle updates (e.g., quantity changes, product or car addition)
+        # Debug: Print initial total price before updating
+        print(f"Initial order total price: {order.total_price}")
+
+        # Handle quantity updates for existing items
         for item in order.items:
             new_quantity = request.form.get(f"quantity_{item.id}")
             if new_quantity:
-                item.quantity = int(new_quantity)
+                new_quantity = int(new_quantity)
+                if new_quantity != item.quantity:  # Only update if quantity has changed
+                    item.quantity = new_quantity
+                    item.total_price = item.price * new_quantity  # Recalculate the total price of the item
+                    print(f"Updated item {item.id} - New quantity: {new_quantity}, Total price: {item.total_price}")
 
-        # Add new product or car if selected
+        # Handle adding a new product or car to the order
         new_product_id = request.form.get("product")
         new_car_id = request.form.get("car")
 
@@ -329,17 +341,22 @@ def edit_order(order_id):
             if new_product:
                 new_item = Item(order_id=order.id, product_id=new_product.id, price=new_product.price, total_price=new_product.price)
                 db.session.add(new_item)
+                print(f"Added new product item - Product ID: {new_product.id}, Price: {new_product.price}, Total price: {new_item.total_price}")
 
         if new_car_id:
             new_car = Car.query.get(new_car_id)
             if new_car:
                 new_item = Item(order_id=order.id, car_id=new_car.id, price=new_car.price, total_price=new_car.price)
                 db.session.add(new_item)
+                print(f"Added new car item - Car ID: {new_car.id}, Price: {new_car.price}, Total price: {new_item.total_price}")
 
-        # Recalculate the total price
-        total_price = sum(item.price for item in order.items)
-        order.total_price = total_price
+        # Recalculate total price of the order after adding new items and updating existing items
+        update_order_total(order)
 
+        # Debug: Print final total price after updating
+        print(f"Updated order total price after adding items: {order.total_price}")
+
+        # Commit the session after adding new items and recalculating the order total
         db.session.commit()
 
         flash("Order updated successfully!", "success")
@@ -353,9 +370,8 @@ def update_products_by_category():
     product_data = [{'id': product.id, 'name': product.name} for product in products]
     return jsonify({'products': product_data})
 
-
 # Route to remove an item from the order
-@order_bp.route('/order/remove_item/<int:item_id>', methods=['GET'])
+@order_bp.route('/order/remove_item/<int:item_id>', methods=['POST'])
 def remove_item(item_id):
     item = Item.query.get_or_404(item_id)
     order = item.order
@@ -367,5 +383,11 @@ def remove_item(item_id):
     else:
         flash("Item not found.", "danger")
 
+    # Recalculate total price after item removal
+    update_order_total(order)
+
     return redirect(url_for('order.edit_order', order_id=order.id))
+
+
+
 

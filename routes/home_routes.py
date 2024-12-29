@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, session, request, flash, redirect, url_for, jsonify, make_response
-from models import Car, Category, Like,  Product, Brand, Image
+from models import Car, Category, Like,  Product, Brand, Image, CategoryType
 from flask_sqlalchemy import SQLAlchemy
 from app import db
 
@@ -11,12 +11,13 @@ def index():
     categories = Category.query.all()
     brands = Brand.query.all()
 
-    # Limited queries for products
+    # Limited queries for products    TOOLS_MACHINERY = 'Tools_and_Machinery'
     cars = Car.query.order_by(Car.added_at.desc()).limit(8).all()
-    computers = Product.query.filter_by(category='Computers').order_by(Product.added_at.desc()).limit(8).all()
-    tools = Product.query.filter_by(category='Tools_and_Machinery').order_by(Product.added_at.desc()).limit(8).all()
-    household = Product.query.filter_by(category='Household_Items').order_by(Product.added_at.desc()).limit(8).all()
-    carParts = Product.query.filter_by(category='Car_Parts').order_by(Product.added_at.desc()).limit(8).all()
+    computers = Product.query.filter_by(category=CategoryType.COMPUTERS).order_by(Product.added_at.desc()).limit(8).all()
+    tools = Product.query.filter_by(category=CategoryType.TOOLS_MACHINERY).order_by(Product.added_at.desc()).limit(8).all()
+    household = Product.query.filter_by(category=CategoryType.HOUSEHOLD_ITEMS).order_by(Product.added_at.desc()).limit(8).all()
+    carParts = Product.query.filter_by(category=CategoryType.CAR_PARTS).order_by(Product.added_at.desc()).limit(8).all()
+    print(tools,cars)
 
     liked_items = {}
     if current_user:
@@ -80,6 +81,7 @@ def cars():
     # Get distinct years and brands for the filter options
     years = db.session.query(Car.year).distinct().all()
     brands = Brand.query.filter_by(category='Cars').all()
+    print(tools)
 
     return render_template('cars.html', 
                            cars=cars, 
@@ -97,7 +99,8 @@ def carParts():
 @home_bp.route('/tools')
 def tools():
     current_user = session.get('user')  
-    products = Product.query.filter_by(category='Tools_and_Machinery').all()
+    products = Product.query.filter_by(category=CategoryType.TOOLS_MACHINERY).all()
+    print(products)
     return render_template('tools.html',  user=current_user,  products=products)
 
 

@@ -45,7 +45,7 @@
                         <th>Name</th>
                         <th>Quantity Requested</th> <!-- New column for Quantity Requested -->
                         <th>Price</th>
-                        <th>Actions</th>
+                        <th>View Details</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -68,11 +68,6 @@
                                 <a href="{{ url_for('order.edit_order', order_id=order.id) }}" class="text-info m-1">
                                   <i class="fa-duotone fa-solid fa-pen-to-square fa-lg"></i>
                                 </a>
-                                <form action="{{ url_for('order.delete_order', order_id=order.id) }}" method="DELETE" class="d-inline-block">
-                                  <button type="submit" class="btn btn-sm btn-danger">
-                                    <i class="fa-duotone fa-solid fa-trash-can fa-lg"></i>
-                                  </button>
-                                </form>
                               </td>
 
 

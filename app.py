@@ -27,7 +27,6 @@ load_dotenv()
 app = Flask(__name__)
 
 
-
 if not app.debug: 
     app.config['SQLALCHEMY_ECHO'] = True
     log_file_path = os.getenv('LOG_FILE_PATH', 'logs/user_actions.log')

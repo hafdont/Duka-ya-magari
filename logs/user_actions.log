@@ -1,0 +1,2 @@
+2024-12-29 20:05:48,516 - ERROR - Request to http://127.0.0.1:5000/static/css/style.css failed with status code 304.
+2024-12-29 20:06:03,989 - ERROR - Request to http://127.0.0.1:5000/static/img/computers.jpg failed with status code 304.

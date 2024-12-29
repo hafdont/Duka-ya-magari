@@ -10,22 +10,23 @@
                 
                 <!-- Name Group -->
                 <div class="mb-3 d-flex">
-                    <div class="me-2" style="flex: 1;">
+                    <div class="me-2 col-lg-4" style="flex: 1;">
                         <label for="firstname" class="form-label">First Name</label>
                         <input type="text" class="form-control" id="firstname" name="firstname" value="{{ user.firstname }}" required>
                     </div>
-                    <div style="flex: 1;">
+                    <div style="flex: 1;" class="col-lg-4">
                         <label for="lastname" class="form-label">Last Name</label>
                         <input type="text" class="form-control" id="lastname" name="lastname" value="{{ user.lastname }}" required>
+                    </div>
+                    <div class="me-2 col-lg-4" style="flex: 1;">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required>
                     </div>
                 </div>
 
                 <!-- Email and Username Group -->
                 <div class="mb-3 d-flex">
-                    <div class="me-2" style="flex: 1;">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required>
-                    </div>
+
                     <div style="flex: 1;">
                         <label for="email" class="form-label">Email</label>
                         <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
@@ -99,7 +100,7 @@
 
 
 
-                <button type="submit" class="btn btn-primary">Update Profile</button>
+                <button type="submit" class="btn btn-primary mb-3">Update Profile</button>
                 <a href="{{ url_for('user.view_profile', user_id=user.id) }}" class="btn btn-secondary">Cancel</a>
             </form>
         </div>

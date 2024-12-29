@@ -1,6 +1,6 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash, session, jsonify
 from werkzeug.utils import secure_filename
-from models import db, Blog, Image, Category, Brand, Order, Item, OrderStatus, Review, Like, Comment, User
+from models import db, Blog, Image, Category, Brand, Order, Item, OrderStatus, Review, Like, Comment, User, BlogView
 import os
 from .user_routes import admin_required
 from enum import Enum
@@ -94,33 +94,39 @@ def get_blogs():
 
 @blog_bp.route('/blog/<int:blog_id>', methods=['GET', 'POST'])
 def view_blog(blog_id):
-    current_user = session.get('user', None)  # Assuming current_user is a dict with user info from session
+    current_user = session.get('user', None)
     blog = Blog.query.get_or_404(blog_id)
+
+    # Increment the total view count
+    blog.view_count += 1
+    db.session.commit()
+
+    # Record the user view in BlogView (if the user is logged in)
+    if current_user:
+        user_id = current_user.get('id')  # Assuming current_user is a dictionary
+        new_view = BlogView(blog_id=blog_id, user_id=user_id)
+    else:
+        new_view = BlogView(blog_id=blog_id)
+
+    db.session.add(new_view)
+    db.session.commit()
 
     # Handle comment submission
     if request.method == 'POST' and 'comment' in request.form:
         comment_content = request.form['comment']
-
-        # Check if the user is logged in before allowing comment submission
         if not current_user:
-            flash("Kindly log in to comment.")  # Flash message when the user is not logged in
-            return redirect(url_for('auth.login'))  # Redirect to the login page
+            flash("Kindly log in to comment.")
+            return redirect(url_for('auth.login'))
 
         if comment_content:
-            # Ensure user_id is properly extracted if current_user is a dictionary or an object
             user_id = current_user.id if isinstance(current_user, User) else current_user.get('id')
-    
             new_comment = Comment(content=comment_content, user_id=user_id, blog_id=blog_id)
             db.session.add(new_comment)
             db.session.commit()
 
-    # Get the comments for this blog
+    # Get the comments and likes for the blog
     comments = Comment.query.filter_by(blog_id=blog_id).all()
-
-    # Add comment count and like count to the blog object
-    blog.comments_count = Comment.query.filter_by(blog_id=blog_id).count()  # Count comments for this blog
-    blog_likes_count = Like.query.filter_by(blog_id=blog_id, target_type='blog').count()  # Count likes for this blog
-    print("blog likes:",blog_likes_count)
+    blog_likes_count = Like.query.filter_by(blog_id=blog_id, target_type='blog').count()
 
     # Retrieve liked items dynamically from the Like table
     liked_items = {}
@@ -135,13 +141,12 @@ def view_blog(blog_id):
         for comment in comments
     }
 
-    # Pass the counts to the template
     return render_template(
-        'blogs/view_blog.html', 
-        blog=blog, 
-        user=current_user, 
-        comments=comments, 
-        blog_likes_count=blog_likes_count, 
+        'blogs/view_blog.html',
+        blog=blog,
+        user=current_user,
+        comments=comments,
+        blog_likes_count=blog_likes_count,
         comments_likes_count=comments_likes_count,
         liked_items=liked_items
     )

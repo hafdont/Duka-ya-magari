@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, session
 from app import db
-from models import Like, Car, Review, Product, Blog, Review
+from models import Like, Car, Review, Product, Blog, Review, Comment
 
 like_bp = Blueprint('like', __name__)
 
@@ -18,7 +18,7 @@ def like():
     user_id = current_user.get('id')
 
     # Validate item_type and update the corresponding field
-    valid_types = {'car': Car, 'product': Product, 'blog': Blog, 'review': Review}
+    valid_types = {'car': Car, 'product': Product, 'blog': Blog, 'review': Review, 'comment': Comment}
     if item_type not in valid_types:
         return jsonify({'error': 'Invalid item type'}), 400
 

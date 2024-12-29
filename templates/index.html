@@ -6,30 +6,71 @@ Home Page
 {% block content %}
 <!-- Main container that will handle the layout -->
 
-<div class="container-fluid vh-100 bg-primary">
-    <div class="row">
+<div class="container-fluid carouselContainer mb-0  p-0" data-aos="fade-in" > <!-- Removed padding -->
+    <div class="row no-gutters"> <!-- Removed gutters for a seamless edge -->
 
-        <div id="carouselExampleFade" class="carousel bg-primary slide carousel-fade " data-bs-ride="carousel">
-            <div class="carousel-inner">
-              <div class="carousel-item active">
-                <img src="" class="d-block w-100" alt="...">
-              </div>
-              <div class="carousel-item">
-                <img src="..." class="d-block w-100" alt="...">
-              </div>
-              <div class="carousel-item">
-                <img src="..." class="d-block w-100" alt="...">
-              </div>
+        <div id="carouselExampleCaptions" class="carousel slide index-carousel w-100" data-bs-ride="false">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="3" aria-label="Slide 4"></button>
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="4" aria-label="Slide 5"></button>
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Next</span>
-            </button>
-          </div>
+
+            <div class="carousel-inner">
+
+                <div class="carousel-item active">
+                    <img style="height: 38rem;" src="{{ url_for('static', filename='img/carsindex.jpg') }}" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>First slide label</h5>
+                        <p>Some representative placeholder content for the first slide.</p>
+                    </div>
+                </div>
+
+                <div class="carousel-item">
+                    <img style="height: 38rem;" src="{{ url_for('static', filename='img/carparts.jpg') }}" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Second slide label</h5>
+                        <p>Some representative placeholder content for the second slide.</p>
+                    </div>
+                </div>
+
+                <div class="carousel-item">
+                    <img style="height: 38rem;" src="{{ url_for('static', filename='img/tools_and_merchinery.jpg') }}" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Third slide label</h5>
+                        <p>Some representative placeholder content for the third slide.</p>
+                    </div>
+                </div>
+
+                <div class="carousel-item">
+                    <img style="height:38rem;" src="{{ url_for('static', filename='img/computersindex.jpg') }}" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Fourth slide label</h5>
+                        <p>Some representative placeholder content for the fourth slide.</p>
+                    </div>
+                </div>
+
+                <div class="carousel-item">
+                    <img style="height:inherit;" src="{{ url_for('static', filename='img/computersindex.jpg') }}" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Fifth slide label</h5>
+                        <p>Some representative placeholder content for the fifth slide.</p>
+                    </div>
+                </div>
+
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                  </button>
+                  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                  </button>
+
+            </div>
+        </div>
 
     </div>
 </div>
@@ -44,13 +85,101 @@ Home Page
 
         <div class="row justify-content-center bg-light col-lg-12">
 
+
+            <div class="productDemo col-sm-4 col-md-3 col-lg-2 mb-4">
+                <img class="w-100"  src="{{ url_for('static', filename='img/carrs.png') }}">
+                <div class="productDemo__content">
+                  <h5 class="productDemo__title heading">Cars</h5>
+                    <p class="productDemo__description mb-3">Explore our wide range of cars from trusted Brands.</h5>
+                        <a href="{{ url_for('home_bp.cars') }}" class="cta-link mt-3 mb-3">
+                            <button type="button" class="cta mt-2">
+                              <span>Explore</span>
+                              <svg width="10px" height="7px" viewBox="0 0 13 10">
+                                <path d="M1,5 L11,5"></path>
+                                <polyline points="8 1 12 5 8 9"></polyline>
+                              </svg>
+                            </button>
+                          </a>
+                          
+                </div>
+            </div>
+            <div class="productDemo col-sm-4 col-md-3 col-lg-2 mb-4">
+                <img class="w-100"  src="{{ url_for('static', filename='img/tools.png') }}" >
+                <div class="productDemo__content">
+                  <p class="productDemo__title">Tools and Merchinery
+                  </p><p class="productDemo__description">Discover top tools for DIY projects and professional use.</p>
+
+                    <a href="{{ url_for('home_bp.tools') }}" class="cta-link">
+                        <button type="button" class="cta mt-2">
+                        <span>Explore</span>
+                        <svg width="10px" height="7px" viewBox="0 0 13 10">
+                            <path d="M1,5 L11,5"></path>
+                            <polyline points="8 1 12 5 8 9"></polyline>
+                        </svg>
+                        </button>
+                    </a>
+
+                </div>
+            </div>
+            <div class="productDemo col-sm-4 col-md-3 col-lg-2 mb-4">
+                <img class="w-100"  src="{{ url_for('static', filename='img/tableware.png') }}">
+                <div class="productDemo__content">
+                  <p class="productDemo__title heading">Household Items
+                  </p><p class="productDemo__description">Shop for your everyday needs with a variety of household products.</p>
+                    <a href="{{ url_for('home_bp.househldItems') }}" class="cta-link">
+                        <button type="button" class="cta mt-2">
+                        <span>Explore</span>
+                        <svg width="10px" height="7px" viewBox="0 0 13 10">
+                            <path d="M1,5 L11,5"></path>
+                            <polyline points="8 1 12 5 8 9"></polyline>
+                        </svg>
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <div class="productDemo col-sm-4 col-md-3 col-lg-2 mb-4">
+                <img  class="w-100"  src="{{ url_for('static', filename='img/toolsAndMerch.png') }}">
+                <div class="productDemo__content">
+                  <p class="heading productDemo__title">Car Parts
+                  </p><p class="productDemo__description">Find high-quality car parts for repairs and upgrades..</p>
+
+                    <a href="{{ url_for('home_bp.househldItems') }}" class="cta-link">
+                        <button type="button" class="cta mt-2">
+                        <span>Explore</span>
+                        <svg width="10px" height="7px" viewBox="0 0 13 10">
+                            <path d="M1,5 L11,5"></path>
+                            <polyline points="8 1 12 5 8 9"></polyline>
+                        </svg>
+                        </button>
+                    </a>
+
+                </div>
+            </div>
+            <div class="productDemo col-sm-4 col-md-3 col-lg-2 mb-4">
+                <img class="w-100"  src="{{ url_for('home_bp.computers') }}">
+                <div class="productDemo__content">
+                  <h3 class="productDemo__title">Computers</h3>
+                    <p class="productDemo__description">Browse through a variety of high-performance computers and accessories.</p>
+                        <a href="{{ url_for('static', filename='img/computers.jpg') }}" class="cta-link">
+                            <button type="button" class="cta mt-2">
+                            <span>Explore</span>
+                            <svg width="10px" height="7px" viewBox="0 0 13 10">
+                                <path d="M1,5 L11,5"></path>
+                                <polyline points="8 1 12 5 8 9"></polyline>
+                            </svg>
+                            </button>
+                        </a>
+                </div>
+            </div>
+            
+
             <!-- Car Jumbotron -->
             <div class="jumbotron jumbotron-fluid col-12 col-sm-4 col-md-3 col-lg-2 mb-4">
                 <div class="">
                     <h4 class="heading">Cars</h4>
                     <img src="{{ url_for('static', filename='img/carrs.png') }}"
                          class="d-block w-100" width="100" height="100" >
-                    <p class="text-center">Explore our wide range of cars from trusted manufacturers.</p>
+                    <p class="text-center">Explore our wide range of cars from trusted Brands.</p>
                     <a class="btn btn-primary" href="{{ url_for('home_bp.cars') }}">Explore Cars</a>
                 </div>
             </div>
@@ -81,7 +210,7 @@ Home Page
             <div class="jumbotron jumbotron-fluid col-12 col-sm-4 col-md-3 col-lg-2 mb-4">
                 <div class="">
                     <h4 class="heading">Car Parts</h4>
-                    <img src="{{ url_for('static', filename='img/toolsAndMerch.jpg') }}"
+                    <img class="w-100"  src="{{ url_for('static', filename='img/toolsAndMerch.jpg') }}"
                          class="d-block w-100 rounded-circle" width="100" height="100" >
                     <p class="text-center">Find high-quality car parts for repairs and upgrades.</p>
                     <a class="btn btn-primary" href="{{ url_for('home_bp.carParts') }}">Explore Car Parts</a>
@@ -108,12 +237,17 @@ Home Page
             {% if brands %}
             <div class="row">
                 {% for brand in brands %}
-                    <div class="col-12 col-md-2 mb-4 jumbotron">
-                        <div class="d-flex justify-content-center">
-                            <a href="{{ url_for('brand_bp.read_brand', brand_id=brand.id) }} ">
-                                <img src="{{ url_for('uploaded_file', folder='brands', filename=brand.brand_logo) }}" 
-                                     class="d-block w-100" alt="{{ brand.name }}" width="100" height="100"> 
-                            </a>
+                    <div class="col my-3">
+                        <div class="card border-hover-primary hover-scale">
+                            <div class="card-body">
+                                <div class="text-primary mb-5">
+                                    <a width="60" height="60" viewBox="0 0 24 24" href="{{ url_for('brand_bp.read_brand', brand_id=brand.id) }} ">
+                                        <img src="{{ url_for('uploaded_file', folder='brands', filename=brand.brand_logo) }}" 
+                                             class="d-block w-100" alt="{{ brand.name }}" width="100" height="100"> 
+                                    </a>
+                                </div>
+                                <p class="font-weight-bold mb-3 heading">{{ brand.brand_name }}</p>
+                            </div>
                         </div>
                     </div>
                     {% if loop.index % 10 == 0 and not loop.last %}
@@ -129,8 +263,7 @@ Home Page
 
 </div>
 
-
-<div class="container">
+<div class="container-fluid">
     <h1 class="text-center heading mt-5 mb-5">Featured Items</h1>
 
     <!-- Cars Section -->
@@ -164,37 +297,34 @@ Home Page
                         </a>
                         {% endif %}
                     </div>
-                    <div class="card-body text-uppercase" style="font-size: 0.8rem;">
+                    <div class="card-body text-uppercase" style="font-size: 0.7rem;">
                         <!-- Car Information Section -->
-                        <div class="d-flex justify-content-between mb-2">
+                        <div class="d-flex mb-2">
                             <!-- Year and Mileage -->
-                            <p class="mb-0 mr-1">
+                            <p class="m-1">
                                 <i class="fa-solid fa-calendar" style="color: #74C0FC;"></i> 
                                 {{ car.year }}
                             </p>
-                            <p class="mb-0 mr-1">
+                            <p class="m-1">
                                 <i class="fa-solid fa-tachometer-alt" style="color: #74C0FC;"></i>
                                 {{ car.mileage }} miles
                             </p>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <!-- Added At and Transmission -->
-                            <p class="mb-0 mr-1">
+                            <p class="m-1">
                                 <i class="fa-solid fa-calendar-day" style="color: #74C0FC;"></i> 
-                                {{ car.added_at.strftime('%b %d, %Y') }}
+                                {{ car.added_at.strftime('%b %d, %Y') }} 
                             </p>
-                            <p class="mb-0 mr-1">
+                        </div>
+                        <div class="d-flex mb-2">
+                            <!-- Fuel Type and Status -->
+                            <p class="m-1">
                                 <i class="fa-solid fa-cogs" style="color: #74C0FC;"></i> 
                                 {{ car.transmission }}
                             </p>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <!-- Fuel Type and Status -->
-                            <p class="mb-0 ">
+                            <p class="m-1">
                                 <i class="fa-solid fa-gas-pump mr-1" style="color: #74C0FC;"></i> 
                                 {{ car.fuel_type }}
                             </p>
-                            <p class="mb-0 mr-1">
+                            <p class="m-1">
                                 <i class="fa-solid fa-circle" style="color: #74C0FC;"></i> 
                                 {{ car.status }}
                             </p>
@@ -212,21 +342,22 @@ Home Page
 
                             </div> 
 
-                            <!-- Add to Cart Icon -->
+                           <!-- Add to Cart Icon -->
                             <div class="d-flex align-items-center">
                                 <i 
                                     id="add-to-cart-icon-{{ cars.id }}" 
-                                    class="fa-duotone fa-outline fa-cart-shopping"  
+                                    class="fa-2xl fa-duotone fa-solid fa-cart-shopping" 
                                     style="color: #74C0FC;" 
                                     title="Add to Cart"
                                     onclick="event.stopPropagation(); addToCart({{ car.id }}, 'car')">
                                 </i>
                             </div>
+                                                            
                             
                             
                                                            
                             <!-- Price -->
-                            <p class="price mb-0" style="font-size: 1rem; text-align: right;"><strong><strong>{{ "{:,.2f}".format(car.price) }}</strong></strong></p>
+                            <p class="price mb-0 heading" ><strong>{{ "{:,.2f}".format(car.price) }}</strong></p>
                         </div>
                     </div>
                 </div>
@@ -238,17 +369,16 @@ Home Page
     <div class="row mb-5 bg-light Demo shadow" id="computers-list">
         <h2 class="mb-3">Computers</h2>
         {% for computer in computers %}
-            <div class="col-lg-3 col-md-6 col-sm-6 mb-4 ">
-                <div class="card car-card" style="cursor: pointer;" onclick="location.href='{{ url_for('product.get_product', product_id=computer.id) }}'"></div>
+            <div class="col-lg-3 col-md-6 col-sm-6 mb-4 product-row">
+                <div class="card car-card" style="cursor: pointer;" onclick="location.href='{{ url_for('product.get_product', product_id=computer.id) }}'">
                     <!-- Carousel Section -->
-                    <!-- Carousel Section for Computers -->
                     <div id="carousel-{{ computer.id }}" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-inner">
                             {% if computer.product_images|length > 0 %}
                                 {% for image in computer.product_images %}
-                                <div class="carousel-item {% if loop.first %}active{% endif %}">
-                                    <img class=" w-100 rounded" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" alt="Product Image" style="height: 200px; object-fit: cover;">
-                                </div>
+                                    <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                        <img class="d-block w-100 rounded" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" alt="Product Image" style="height: 200px; object-fit: cover;">
+                                    </div>
                                 {% endfor %}
                             {% else %}
                                 <div class="carousel-item active">
@@ -256,7 +386,7 @@ Home Page
                                 </div>
                             {% endif %}
                         </div>
-
+    
                         {% if computer.product_images|length > 1 %}
                         <a class="carousel-control-prev" href="#carousel-{{ computer.id }}" role="button" data-bs-slide="prev" onclick="event.stopPropagation();">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -268,6 +398,7 @@ Home Page
                         </a>
                         {% endif %}
                     </div>
+    
                     <!-- Product Information Section -->
                     <div class="card-body text-uppercase" style="font-size: 0.8rem;">
                         <h5 class="card-title">{{ computer.name }}</h5>
@@ -279,7 +410,8 @@ Home Page
                             <strong>Status:</strong> {{ computer.StockStatus.value }}
                         </p>
                         <div class="btmBorder mt-2"></div>
-                        
+
+
                         <div class="d-flex justify-content-between align-items-center mt-2">
                             <!-- Like Button -->
                             <div class="d-flex align-items-center">
@@ -290,29 +422,33 @@ Home Page
                                 title="{{ 'Remove from Wishlist' if computer.id in liked_items['products'] else 'Add to Wishlist' }}"
                                 onclick="event.stopPropagation(); toggleLike({{ computer.id }}, 'product', '{{ 'unlike' if computer.id in liked_items['products'] else 'like' }}', this)">
                             </i>
-                            
                             </div>
 
-                                <!-- Add to Cart Icon -->
-                                <div class="d-flex align-items-center">
-                                    <i 
-                                        id="add-to-cart-icon-{{ computer.id }}" 
-                                        class="fa-2xl fa-duotone fa-solid fa-cart-shopping" 
-                                        style="color: #74C0FC;" 
-                                        title="Add to Cart"
-                                        onclick="event.stopPropagation(); addToCart({{ computer.id }}, 'product')">
-                                    </i>
-                                </div>
+                            <!-- Add to Cart Icon -->
+                            <div class="d-flex align-items-center">
+                                <i 
+                                    id="add-to-cart-icon-{{ computer.id }}" 
+                                    class="fa-2xl fa-duotone fa-solid fa-cart-shopping" 
+                                    style="color: #74C0FC;" 
+                                    title="Add to Cart"
+                                    onclick="event.stopPropagation(); addToCart({{ computer.id }}, 'product')">
+                                </i>
+                            </div>
 
+                                   
                             <!-- Price -->
                             <p class="price mb-0" style="font-size: 1rem; text-align: right;">
-                                <h5 class="heading">${{ "{:,.2f}".format(computer.price) }}</h5>
+                                <p class="heading"> <strong>${{ "{:,.2f}".format(computer.price) }}</p> </strong>
                             </p>
                         </div>
+    
+
                     </div>
+                </div>
             </div>
         {% endfor %}
     </div>
+    
 
     <!-- Tools Section -->
     <div class="row mb-5 bg-light Demo shadow" id="tools-list">
@@ -326,8 +462,7 @@ Home Page
                             {% if tool.product_images|length > 0 %}
                                 {% for image in tool.product_images %}
                                 <div class="carousel-item {% if loop.first %}active{% endif %}">
-                                    <img class=" w-100 rounded" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" 
-                                        alt="Product Image" style="height: 200px; object-fit: cover;">
+                                    <img class="d-block w-100 rounded" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" alt="Product Image" style="height: 200px; object-fit: cover;">
                                 </div>
                                 {% endfor %}
                             {% else %}
@@ -336,8 +471,8 @@ Home Page
                                 </div>
                             {% endif %}
                         </div>
-
-                        {% if tool.product_images|length > 1 %}
+            
+                        {% if household.product_images|length > 1 %}
                         <a class="carousel-control-prev" href="#carousel-{{ tool.id }}" role="button" data-bs-slide="prev" onclick="event.stopPropagation();">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                             <span class="visually-hidden">Previous</span>
@@ -348,7 +483,7 @@ Home Page
                         </a>
                         {% endif %}
                     </div>
-
+            
                     <!-- Product Information Section -->
                     <div class="card-body text-uppercase" style="font-size: 0.8rem;">
                         <h5 class="card-title">{{ tool.name }}</h5>
@@ -370,23 +505,25 @@ Home Page
                                 style="color: #74C0FC;" 
                                 title="{{ 'Remove from Wishlist' if tool.id in liked_items['products'] else 'Add to Wishlist' }}"
                                 onclick="event.stopPropagation(); toggleLike({{ tool.id }}, 'product', '{{ 'unlike' if tool.id in liked_items['products'] else 'like' }}', this)">
-                            </i>
+                                </i>
                             </div>
 
-                                <!-- Add to Cart Icon -->
-                                <div class="d-flex align-items-center">
-                                    <i 
-                                        id="add-to-cart-icon-{{ tool.id }}" 
-                                        class="fa-2xl fa-cart-plus" 
-                                        style="color: #74C0FC;" 
-                                        title="Add to Cart"
-                                        onclick="event.stopPropagation(); addToCart({{ tool.id }}, 'product')">
-                                    </i>
-                                </div>
+                            <!-- Add to Cart Icon -->
+                            <div class="d-flex align-items-center">
+                                <i 
+                                    id="add-to-cart-icon-{{ tool.id }}" 
+                                    class="fa-2xl fa-cart-plus" 
+                                    style="color: #74C0FC;" 
+                                    title="Add to Cart"
+                                    onclick="event.stopPropagation(); addToCart({{ tool.id }}, 'product')">
+                                </i>
+                            </div>
 
+                                                            
+            
                             <!-- Price -->
-                            <p class="price mb-0" style="font-size: 1rem; text-align: right;">
-                                <strong>${{ "{:,.2f}".format(tool.price) }}</strong>
+                            <p class="price mb-0" >
+                                <p class="heading"> <strong>${{ "{:,.2f}".format(tool.price) }}</p> </strong>
                             </p>
                         </div>
                     </div>
@@ -457,7 +594,7 @@ Home Page
                             <div class="d-flex align-items-center">
                                 <i 
                                     id="add-to-cart-icon-{{ household.id }}" 
-                                    class="fa-2xl fa-cart-plus" 
+                                    class="fa-2xl fa-duotone fa-solid fa-cart-shopping"
                                     style="color: #74C0FC;" 
                                     title="Add to Cart"
                                     onclick="event.stopPropagation(); addToCart({{ household.id }}, 'product')">
@@ -468,7 +605,7 @@ Home Page
             
                             <!-- Price -->
                             <p class="price mb-0" style="font-size: 1rem; text-align: right;">
-                                <strong>${{ "{:,.2f}".format(household.price) }}</strong>
+                                <p class="heading"><strong>${{ "{:,.2f}".format(household.price) }}</p> </strong>
                             </p>
                         </div>
                     </div>
@@ -539,7 +676,7 @@ Home Page
                             <div class="d-flex align-items-center">
                                 <i 
                                     id="add-to-cart-icon-{{ carPart.id }}" 
-                                    class="fa-2xl fa-cart-plus" 
+                                    class="fa-2xl fa-duotone fa-solid fa-cart-shopping" 
                                     style="color: #74C0FC;" 
                                     title="Add to Cart"
                                     onclick="event.stopPropagation(); addToCart({{ carPart.id }}, 'product')">
@@ -547,11 +684,12 @@ Home Page
                             </div>
 
 
+
                                                         
 
                             <!-- Price -->
                             <p class="price mb-0" style="font-size: 1rem; text-align: right;">
-                                <strong>${{ "{:,.2f}".format(carPart.price) }}</strong>
+                                <p class="heading"> <strong>${{ "{:,.2f}".format(carPart.price) }}</p> </strong>
                             </p>
                         </div>
                     </div>
@@ -562,30 +700,109 @@ Home Page
 
 </div>
 
+<div class="container-fluid">
 
-<script>
-    function addToCart(itemId, targetType) {
-        $.ajax({
-            url: "{{ url_for('cart.add_to_cart') }}",
-            method: "POST",
-            data: {
-                item_id: itemId,
-                target_type: targetType,
-                quantity: 1  // You can dynamically change this if needed
-            },
-            success: function(response) {
-                if (response.status === "success") {
-                    alert(response.message);  // Notify user
-                } else {
-                    alert(response.message);  // Notify user about error
-                }
-            },
-            error: function() {
-                alert("An error occurred while adding the item to the cart.");
-            }
-        });
-    }
-</script>
+    <div class="contact-row">
+
+            <div class="contact">
+
+                <div class="bg align-items-center justify-content-center">
+                    <i style="color: #74C0FC;"  class="mt-2 mb-2 fa-duotone fa-solid fa-location-dot fa-2xl"></i>
+                    <p class="mt-2 mb-2 heading"> </p>
+                    <h4 class="mt-2 mb-2 heading">Address</h4>
+                   
+                    <p class="mt-2 mb-3 heading">Langata Road Somewhere</p>
+                </div>
+                <div class="blob"></div>
+
+            </div>
+
+
+            <div class="contact">
+                <div class="bg align-items-center justify-content-center">
+
+                    <i style="color: #74C0FC;"  class=" mt-2 mb-2 fa-duotone fa-solid fa-phone fa-2xl"></i>
+                    <p class="mt-2 mb-2 heading"> </p>
+                    <h4 class="heading mt-2 mb-2">Call Us</h4>
+                    <p class="mt-2 mb-2 heading"> 07 22 78921 </p>
+                </div>
+                <div class="blob">       
+                </div>
+            </div>
+
+
+            <div class="contact">
+                <div class="bg align-items-center  justify-content-center">
+                    <i style="color: #74C0FC;"  class="mt-2 mb-2 fa-duotone fa-solid fa-envelope fa-2xl"></i>
+                    <p class="mt-2 mb-2 heading"> </p>
+                    <h4 class="heading mt-2 mb-2">Email Us</h4>
+                   
+                    <p class="mt-2 mb-2 heading">info@nasimgeneralmerchants@co.ke</p>
+                </div>
+                <div class="blob"></div>
+            </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6 h-100">
+            <iframe src="" frameborder="0"></iframe>
+        </div>
+    </div>
+    <div class="col-lg-6 mb-3">
+        <form action="" method="post" class=" form email-form mb-3 mt-3" data-aos="fade-up" data-aos-delay="400">
+            <div class="row mb-3 ">
+    
+              <div class="col-md-6">
+                <input type="text" name="name" class="form-control" placeholder="Your Name" required="">
+              </div>
+    
+              <div class="col-md-6 ">
+                <input type="email" class="form-control" name="email" placeholder="Your Email" required="">
+              </div>
+    
+              <div class="col-md-12">
+                <input type="text" class="form-control" name="subject" placeholder="Subject" required="">
+              </div>
+    
+              <div class="col-md-12">
+                <textarea type="text" class="form-control" name="message" rows="6" placeholder="Message" required=""></textarea>
+              </div>
+    
+              <div class="col-md-12 mb-2 mt-2 text-center">
+    
+                <button class="emailButton mb-3 mt-1">
+                    <div class="svg-wrapper-1">
+                      <div class="svg-wrapper">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          width="24"
+                          height="24"
+                        >
+                          <path fill="none" d="M0 0h24v24H0z"></path>
+                          <path
+                            fill="currentColor"
+                            d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
+                          ></path>
+                        </svg>
+                      </div>
+                    </div>
+                    <span>Send</span>
+                  </button>
+              </div>
+    
+            </div>
+          </form>
+
+    </div>
+      
+
+</div>
+
+
+
 
 {% endblock %}
 
+
+  </div>
