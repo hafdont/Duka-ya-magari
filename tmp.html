@@ -1,83 +1,59 @@
-    <!-- Car Parts Section -->
-    <div class="row mb-5 bg-light Demo shadow" id="carparts-list">
-        <h2 class="mb-3">Car Parts</h2>
-        {% for carPart in carParts %}
-            <div class="col-lg-3 col-md-6 col-sm-6 mb-4 product-row">
-                <div class="card car-card" style="cursor: pointer;" onclick="location.href='{{ url_for('product.get_product', product_id=carPart.id) }}'">
-                    <!-- Carousel Section -->
-                    <div id="carousel-{{ carPart.id }}" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                            {% if carPart.product_images|length > 0 %}
-                                {% for image in carPart.product_images %}
-                                <div class="carousel-item {% if loop.first %}active{% endif %}">
-                                    <img class="d-block w-100 rounded" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" alt="Product Image" style="height: 200px; object-fit: cover;">
+        <!-- Car Parts Section -->
+        <div class="row mb-5 bg-light Demo shadow" id="carparts-list">
+            <h2 class="mb-3 heading">Car Parts</h2>
+            {% for carPart in carParts %}
+                <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
+                    <div class="product" style="cursor: pointer;" onclick="location.href='{{ url_for('product.get_product', product_id=carPart.id) }}'event.stopPropagation();">
+                        <!-- Image Carousel Section -->
+                        <div class="image-container">
+                            <div id="carousel-{{ carPart.id }}" class="carousel slide" data-bs-ride="carousel">
+                                <div class="carousel-inner">
+                                    {% if carPart.product_images|length > 0 %}
+                                        {% for image in carPart.product_images %}
+                                            <div class="carousel-item  {% if loop.first %}active{% endif %}">
+                                                <img class="d-block w-100 rounded" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" alt="Product Image" style="height: 200px; object-fit: cover;">
+                                            </div>
+                                        {% endfor %}
+                                    {% else %}
+                                        <div class="carousel-item active">
+                                            <img src="path/to/default-image.jpg" class="d-block w-100 rounded" alt="Default Thumbnail" style="height: 200px; object-fit: cover;">
+                                        </div>
+                                    {% endif %}
                                 </div>
-                                {% endfor %}
-                            {% else %}
-                                <div class="carousel-item active">
-                                    <img src="path/to/default-image.jpg" class="d-block w-100 rounded" alt="Default Thumbnail" style="height: 200px; object-fit: cover;">
-                                </div>
-                            {% endif %}
+                            </div>
+                            <div class="price"> KES{{ "{:,.2f}".format(carPart.price) }} </div> 
                         </div>
 
-                        {% if carPart.product_images|length > 1 %}
-                        <a class="carousel-control-prev" href="#carousel-{{ carPart.id }}" role="button" data-bs-slide="prev" onclick="event.stopPropagation();">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </a>
-                        <a class="carousel-control-next" href="#carousel-{{ carPart.id }}" role="button" data-bs-slide="next" onclick="event.stopPropagation();">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </a>
-                        {% endif %}
-                    </div>
+                        <!-- Price Section -->
 
-                    <!-- Product Information Section -->
-                    <div class="card-body text-uppercase" style="font-size: 0.8rem;">
-                        <h5 class="card-title">{{ carPart.name }}</h5>
-                        <p class="mb-1">
-                            <strong>Description:</strong> {{ carPart.description }}
-                        </p>
-                        <p class="mb-1">
-                            <i class="fa-solid fa-circle" style="color: #74C0FC;"></i> 
-                            <strong>Status:</strong> {{ carPart.StockStatus.value }}
-                        </p>
-                        <div class="btmBorder mt-2"></div>
+
+                        <label class="favorite">
+                            <input type="checkbox" id="like-checkbox-{{ carPart.id }}"
+                                   {% if carPart.id in liked_items['products'] %}checked{% endif %}
+                                   onclick="event.stopPropagation(); toggleLike({{ carPart.id }}, 'product', this)">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="heart-icon">
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+                            </svg>
+                        </label>
                         
-                        <div class="d-flex justify-content-between align-items-center mt-2">
-                            <!-- Like Button -->
-                            <div class="d-flex align-items-center">
-                                <i 
-                                id="like-icon-{{ carPart.id }}" 
-                                class="fa-2xl {{ 'fa-solid fa-heart' if carPart.id in liked_items['products'] else 'fa-regular fa-heart' }}" 
-                                style="color: #74C0FC;" 
-                                title="{{ 'Remove from Wishlist' if carPart.id in liked_items['products'] else 'Add to Wishlist' }}"
-                                onclick="event.stopPropagation(); toggleLike({{ carPart.id }}, 'product', '{{ 'unlike' if carPart.id in liked_items['products'] else 'like' }}', this)">
-                            </i>
+                        <!-- Product Information Section -->
+                        <div class="content">
+                            
+                            <div class="brand heading"> {{ carPart.name }} </div>
+                            <div class="product-name heading">{{ carPart.description }}</div>
+                            <div class="rating">
+                                ({{ carPart.reviews_count }}) 
                             </div>
+                        </div>
 
-                            <!-- Add to Cart Icon -->
-                            <div class="d-flex align-items-center">
-                                <i 
-                                    id="add-to-cart-icon-{{ carPart.id }}" 
-                                    class="fa-2xl fa-duotone fa-solid fa-cart-shopping" 
-                                    style="color: #74C0FC;" 
-                                    title="Add to Cart"
-                                    onclick="event.stopPropagation(); addToCart({{ carPart.id }}, 'product')">
-                                </i>
-                            </div>
-
-
-
-                                                        
-
-                            <!-- Price -->
-                            <p class="price mb-0" style="font-size: 1rem; text-align: right;">
-                                <p class="heading"> <strong>${{ "{:,.2f}".format(carPart.price) }}</p> </strong>
-                            </p>
+                        <!-- Action Buttons Section -->
+                        <div class="button-container">
+                            <button class="buy-button button" onclick="location.href='{{ url_for('product.get_product', product_id=carPart.id) }}'">Buy Now</button>
+                            <button class="cart-button button">
+                                <i id="add-to-cart-icon-{{ carPart.id }}" class=" fa-xs fa-duotone fa-solid fa-cart-shopping " style="color: #74C0FC;" title="Add to Cart" onclick="event.stopPropagation(); addToCart({{ carPart.id }}, 'product')"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
-            </div>
-        {% endfor %}
-    </div>
+            {% endfor %}
+        </div>

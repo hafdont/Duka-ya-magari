@@ -1,7 +1,8 @@
-from flask import Blueprint, render_template, session, request, flash, redirect, url_for, jsonify, make_response
+from flask import Blueprint, render_template, session, request, flash, redirect, url_for, jsonify
 from models import Car, Category, Like,  Product, Brand, Image, CategoryType
 from flask_sqlalchemy import SQLAlchemy
-from app import db
+from flask_mail import Message 
+from app import db, app, mail
 
 home_bp = Blueprint('home_bp', __name__)
 
@@ -120,3 +121,37 @@ def computers():
 def about():
     current_user = session.get('user')  
     return render_template('about.html',  user=current_user )
+
+@home_bp.route('/send_email', methods=['POST'])
+def send_email():
+    # Extract form data
+    name = request.form.get('name')
+    email = request.form.get('email')
+    subject = request.form.get('subject')
+    message = request.form.get('message')
+
+    # Validate form data
+    if not all([name, email, subject, message]):
+        return jsonify({"message": "All fields are required"}), 400
+
+    try:
+        # Create the email message
+        msg = Message(
+            subject=subject,
+            recipients=[app.config['MAIL_USERNAME']],  # The recipient email
+            sender=email,  # User's email as sender
+            html=render_template(
+                'email/email_template.html',  # Template path
+                subject=subject,
+                name=name,
+                email=email,
+                message=message
+            )
+        )
+
+        # Send the email
+        mail.send(msg)
+        return jsonify({"message": "Email sent successfully!"}), 200
+    except Exception as e:
+        app.logger.error(f"Error sending email: {e}")
+        return jsonify({"message": "Failed to send email"}), 500

@@ -156,11 +156,11 @@ Home Page
                 </div>
             </div>
             <div class="productDemo col-sm-4 col-md-3 col-lg-2 mb-4">
-                <img class="w-100"  src="{{ url_for('home_bp.computers') }}">
+                <img class="w-100"  src=" {{ url_for('static', filename='img/computers.jpg') }}">
                 <div class="productDemo__content">
                   <h3 class="productDemo__title">Computers</h3>
                     <p class="productDemo__description">Browse through a variety of high-performance computers and accessories.</p>
-                        <a href="{{ url_for('static', filename='img/computers.jpg') }}" class="cta-link">
+                        <a href="{{ url_for('home_bp.computers') }} " class="cta-link">
                             <button type="button" class="cta mt-2">
                             <span>Explore</span>
                             <svg width="10px" height="7px" viewBox="0 0 13 10">
@@ -234,22 +234,22 @@ Home Page
     <div class="row">
         <div class="col-12 text-center mt-3 bg-light shadow">
             <h2 class="heading mt-3">Our Brands</h2>
+            
             {% if brands %}
             <div class="row">
                 {% for brand in brands %}
-                    <div class="col my-3">
-                        <div class="card border-hover-primary hover-scale">
-                            <div class="card-body">
-                                <div class="text-primary mb-5">
-                                    <a width="60" height="60" viewBox="0 0 24 24" href="{{ url_for('brand_bp.read_brand', brand_id=brand.id) }} ">
-                                        <img src="{{ url_for('uploaded_file', folder='brands', filename=brand.brand_logo) }}" 
-                                             class="d-block w-100" alt="{{ brand.name }}" width="100" height="100"> 
-                                    </a>
-                                </div>
-                                <p class="font-weight-bold mb-3 heading">{{ brand.brand_name }}</p>
-                            </div>
+
+                    <div class="cardBrand col-lg-2 mt-3 mb-2">
+                        <div class="cardBrand-details">
+                            <a width="60" height="60" viewBox="0 0 24 24" href="{{ url_for('brand_bp.read_brand', brand_id=brand.id) }} ">
+                                <img src="{{ url_for('uploaded_file', folder='brands', filename=brand.brand_logo) }}" 
+                                     class="d-block w-100" alt="{{ brand.name }}" width="100" height="100"> 
+                            </a>
                         </div>
-                    </div>
+                        <a class="cardBrand-button" href="{{ url_for('brand_bp.read_brand', brand_id=brand.id) }}">{{ brand.brand_name }}</a>
+                      </div>
+
+
                     {% if loop.index % 10 == 0 and not loop.last %}
                         </div><div class="row">
                     {% endif %}
@@ -268,7 +268,7 @@ Home Page
 
     <!-- Cars Section -->
     <div class="row mb-5 bg-light Demo shadow" id="cars-list ">
-        <h2 class="mb-3">Cars</h2>
+        <h2 class="mb-3 heading">Cars</h2>
         {% for car in cars %}
             <div class="col-lg-3 col-md-6 col-sm-6 mb-4 cars-row">
                 <div class="card car-card" style="cursor: pointer;" onclick="location.href='{{ url_for('car.get_car', car_id=car.id) }}'">
@@ -367,336 +367,244 @@ Home Page
 
     <!-- Computers Section -->
     <div class="row mb-5 bg-light Demo shadow" id="computers-list">
-        <h2 class="mb-3">Computers</h2>
+        <h2 class="mb-3 heading">Computers</h2>
         {% for computer in computers %}
-            <div class="col-lg-3 col-md-6 col-sm-6 mb-4 product-row">
-                <div class="card car-card" style="cursor: pointer;" onclick="location.href='{{ url_for('product.get_product', product_id=computer.id) }}'">
-                    <!-- Carousel Section -->
-                    <div id="carousel-{{ computer.id }}" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                            {% if computer.product_images|length > 0 %}
-                                {% for image in computer.product_images %}
-                                    <div class="carousel-item {% if loop.first %}active{% endif %}">
-                                        <img class="d-block w-100 rounded" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" alt="Product Image" style="height: 200px; object-fit: cover;">
+            <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
+                <div class="product" style="cursor: pointer;" onclick="location.href='{{ url_for('product.get_product', product_id=computer.id) }}'event.stopPropagation();">
+                    <!-- Image Carousel Section -->
+                    <div class="image-container">
+                        <div id="carousel-{{ computer.id }}" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                {% if computer.product_images|length > 0 %}
+                                    {% for image in computer.product_images %}
+                                        <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                            <img class="d-block w-100 rounded" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" alt="Product Image" style="height: 200px; object-fit: cover;">
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="carousel-item active">
+                                        <img src="path/to/default-image.jpg" class="d-block w-100 rounded" alt="Default Thumbnail" style="height: 200px; object-fit: cover;">
                                     </div>
-                                {% endfor %}
-                            {% else %}
-                                <div class="carousel-item active">
-                                    <img src="path/to/default-image.jpg" class="d-block w-100 rounded" alt="Default Thumbnail" style="height: 200px; object-fit: cover;">
-                                </div>
-                            {% endif %}
+                                {% endif %}
+                            </div>
                         </div>
-    
-                        {% if computer.product_images|length > 1 %}
-                        <a class="carousel-control-prev" href="#carousel-{{ computer.id }}" role="button" data-bs-slide="prev" onclick="event.stopPropagation();">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </a>
-                        <a class="carousel-control-next" href="#carousel-{{ computer.id }}" role="button" data-bs-slide="next" onclick="event.stopPropagation();">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </a>
-                        {% endif %}
+                        <!-- Price Section -->
+                        <div class="price">
+                            KES{{ "{:,.2f}".format(computer.price) }}
+                        </div>
                     </div>
-    
+
+                    <!-- Favorite Section -->
+                    <label class="favorite">
+                        <input type="checkbox" id="like-checkbox-{{ computer.id }}"
+                            {% if computer.id in liked_items['products'] %}checked{% endif %}
+                            onclick="event.stopPropagation(); toggleLike({{ computer.id }}, 'product', this)">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="heart-icon">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+                        </svg>
+                    </label>
+
                     <!-- Product Information Section -->
-                    <div class="card-body text-uppercase" style="font-size: 0.8rem;">
-                        <h5 class="card-title">{{ computer.name }}</h5>
-                        <p class="mb-1">
-                            <strong>Description:</strong> {{ computer.description }}
-                        </p>
-                        <p class="mb-1">
-                            <i class="fa-solid fa-circle" style="color: #74C0FC;"></i> 
-                            <strong>Status:</strong> {{ computer.StockStatus.value }}
-                        </p>
-                        <div class="btmBorder mt-2"></div>
-
-
-                        <div class="d-flex justify-content-between align-items-center mt-2">
-                            <!-- Like Button -->
-                            <div class="d-flex align-items-center">
-                                <i 
-                                id="like-icon-{{ computer.id }}" 
-                                class="fa-2xl {{ 'fa-solid fa-heart' if computer.id in liked_items['products'] else 'fa-regular fa-heart' }}" 
-                                style="color: #74C0FC;" 
-                                title="{{ 'Remove from Wishlist' if computer.id in liked_items['products'] else 'Add to Wishlist' }}"
-                                onclick="event.stopPropagation(); toggleLike({{ computer.id }}, 'product', '{{ 'unlike' if computer.id in liked_items['products'] else 'like' }}', this)">
-                            </i>
-                            </div>
-
-                            <!-- Add to Cart Icon -->
-                            <div class="d-flex align-items-center">
-                                <i 
-                                    id="add-to-cart-icon-{{ computer.id }}" 
-                                    class="fa-2xl fa-duotone fa-solid fa-cart-shopping" 
-                                    style="color: #74C0FC;" 
-                                    title="Add to Cart"
-                                    onclick="event.stopPropagation(); addToCart({{ computer.id }}, 'product')">
-                                </i>
-                            </div>
-
-                                   
-                            <!-- Price -->
-                            <p class="price mb-0" style="font-size: 1rem; text-align: right;">
-                                <p class="heading"> <strong>${{ "{:,.2f}".format(computer.price) }}</p> </strong>
-                            </p>
+                    <div class="content">
+                        <div class="brand heading">{{ computer.name }}</div>
+                        <div class="product-name heading">{{ computer.description }}</div>
+                        <div class="rating">
+                            ({{ computer.reviews_count }})
                         </div>
-    
+                    </div>
 
+                    <!-- Action Buttons Section -->
+                    <div class="button-container">
+                        <button class="buy-button button" onclick="location.href='{{ url_for('product.get_product', product_id=computer.id) }}'">Buy Now</button>
+                        <button class="cart-button button">
+                            <i id="add-to-cart-icon-{{ computer.id }}" class="fa-xs fa-duotone fa-solid fa-cart-shopping" style="color: #74C0FC;" title="Add to Cart" onclick="event.stopPropagation(); addToCart({{ computer.id }}, 'product')"></i>
+                        </button>
                     </div>
                 </div>
             </div>
         {% endfor %}
     </div>
-    
 
     <!-- Tools Section -->
     <div class="row mb-5 bg-light Demo shadow" id="tools-list">
-        <h2 class="mb-3">Tools and Machinery</h2>
+        <h2 class="mb-3 heading">Tools and Machinery</h2>
         {% for tool in tools %}
-            <div class="col-lg-3 col-md-6 col-sm-6 mb-4 product-row">
-                <div class="card car-card" style="cursor: pointer;" onclick="location.href='{{ url_for('product.get_product', product_id=tool.id) }}'">
-                    <!-- Carousel Section -->
-                    <div id="carousel-{{ tool.id }}" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                            {% if tool.product_images|length > 0 %}
-                                {% for image in tool.product_images %}
-                                <div class="carousel-item {% if loop.first %}active{% endif %}">
-                                    <img class="d-block w-100 rounded" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" alt="Product Image" style="height: 200px; object-fit: cover;">
-                                </div>
-                                {% endfor %}
-                            {% else %}
-                                <div class="carousel-item active">
-                                    <img src="path/to/default-image.jpg" class="d-block w-100 rounded" alt="Default Thumbnail" style="height: 200px; object-fit: cover;">
-                                </div>
-                            {% endif %}
+            <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
+                <div class="product" style="cursor: pointer;" onclick="location.href='{{ url_for('product.get_product', product_id=tool.id) }}'event.stopPropagation();">
+                    <!-- Image Carousel Section -->
+                    <div class="image-container">
+                        <div id="carousel-{{ tool.id }}" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                {% if tool.product_images|length > 0 %}
+                                    {% for image in tool.product_images %}
+                                        <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                            <img class="d-block w-100 rounded" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" alt="Product Image" style="height: 200px; object-fit: cover;">
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="carousel-item active">
+                                        <img src="path/to/default-image.jpg" class="d-block w-100 rounded" alt="Default Thumbnail" style="height: 200px; object-fit: cover;">
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
-            
-                        {% if household.product_images|length > 1 %}
-                        <a class="carousel-control-prev" href="#carousel-{{ tool.id }}" role="button" data-bs-slide="prev" onclick="event.stopPropagation();">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </a>
-                        <a class="carousel-control-next" href="#carousel-{{ tool.id }}" role="button" data-bs-slide="next" onclick="event.stopPropagation();">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </a>
-                        {% endif %}
+                        <!-- Price Section -->
+                        <div class="price">
+                            KES{{ "{:,.2f}".format(tool.price) }}
+                        </div>
                     </div>
-            
+                    
+                    <!-- Favorite Section -->
+                    <label class="favorite">
+                        <input type="checkbox" id="like-checkbox-{{ tool.id }}"
+                            {% if tool.id in liked_items['products'] %}checked{% endif %}
+                            onclick="event.stopPropagation(); toggleLike({{ tool.id }}, 'product', this)">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="heart-icon">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+                        </svg>
+                    </label>
+
                     <!-- Product Information Section -->
-                    <div class="card-body text-uppercase" style="font-size: 0.8rem;">
-                        <h5 class="card-title">{{ tool.name }}</h5>
-                        <p class="mb-1">
-                            <strong>Description:</strong> {{ tool.description }}
-                        </p>
-                        <p class="mb-1">
-                            <i class="fa-solid fa-circle" style="color: #74C0FC;"></i> 
-                            <strong>Status:</strong> {{ tool.StockStatus.value }}
-                        </p>
-                        <div class="btmBorder mt-2"></div>
-                        
-                        <div class="d-flex justify-content-between align-items-center mt-2">
-                            <!-- Like Button -->
-                            <div class="d-flex align-items-center">
-                                <i 
-                                id="like-icon-{{ tool.id }}" 
-                                class="fa-2xl {{ 'fa-solid fa-heart' if tool.id in liked_items['products'] else 'fa-regular fa-heart' }}" 
-                                style="color: #74C0FC;" 
-                                title="{{ 'Remove from Wishlist' if tool.id in liked_items['products'] else 'Add to Wishlist' }}"
-                                onclick="event.stopPropagation(); toggleLike({{ tool.id }}, 'product', '{{ 'unlike' if tool.id in liked_items['products'] else 'like' }}', this)">
-                                </i>
-                            </div>
-
-                            <!-- Add to Cart Icon -->
-                            <div class="d-flex align-items-center">
-                                <i 
-                                    id="add-to-cart-icon-{{ tool.id }}" 
-                                    class="fa-2xl fa-cart-plus" 
-                                    style="color: #74C0FC;" 
-                                    title="Add to Cart"
-                                    onclick="event.stopPropagation(); addToCart({{ tool.id }}, 'product')">
-                                </i>
-                            </div>
-
-                                                            
-            
-                            <!-- Price -->
-                            <p class="price mb-0" >
-                                <p class="heading"> <strong>${{ "{:,.2f}".format(tool.price) }}</p> </strong>
-                            </p>
+                    <div class="content">
+                        <div class="brand heading">{{ tool.name }}</div>
+                        <div class="product-name heading">{{ tool.description }}</div>
+                        <div class="rating">
+                            ({{ tool.reviews_count }})
                         </div>
+                    </div>
+
+                    <!-- Action Buttons Section -->
+                    <div class="button-container">
+                        <button class="buy-button button" onclick="location.href='{{ url_for('product.get_product', product_id=tool.id) }}'">Buy Now</button>
+                        <button class="cart-button button">
+                            <i id="add-to-cart-icon-{{ tool.id }}" class="fa-xs fa-duotone fa-solid fa-cart-shopping" style="color: #74C0FC;" title="Add to Cart" onclick="event.stopPropagation(); addToCart({{ tool.id }}, 'product')"></i>
+                        </button>
                     </div>
                 </div>
             </div>
         {% endfor %}
     </div>
+
 
     <!-- Household Items Section -->
     <div class="row mb-5 bg-light Demo shadow" id="household-list">
-        <h2 class="mb-3">Household Items</h2>
+        <h2 class="mb-3 heading">Household Items</h2>
         {% for household in household %}
-            <div class="col-lg-3 col-md-6 col-sm-6 mb-4 product-row">
-                <div class="card car-card" style="cursor: pointer;" onclick="location.href='{{ url_for('product.get_product', product_id=household.id) }}'">
-                    <!-- Carousel Section -->
-                    <div id="carousel-{{ household.id }}" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                            {% if household.product_images|length > 0 %}
-                                {% for image in household.product_images %}
-                                <div class="carousel-item {% if loop.first %}active{% endif %}">
-                                    <img class="d-block w-100 rounded" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" alt="Product Image" style="height: 200px; object-fit: cover;">
-                                </div>
-                                {% endfor %}
-                            {% else %}
-                                <div class="carousel-item active">
-                                    <img src="path/to/default-image.jpg" class="d-block w-100 rounded" alt="Default Thumbnail" style="height: 200px; object-fit: cover;">
-                                </div>
-                            {% endif %}
+            <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
+                <div class="product" style="cursor: pointer;" onclick="location.href='{{ url_for('product.get_product', product_id=household.id) }}'event.stopPropagation();">
+                    <!-- Image Carousel Section -->
+                    <div class="image-container">
+                        <div id="carousel-{{ household.id }}" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                {% if household.product_images|length > 0 %}
+                                    {% for image in household.product_images %}
+                                        <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                            <img class="d-block w-100 rounded" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" alt="Product Image" style="height: 200px; object-fit: cover;">
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="carousel-item active">
+                                        <img src="path/to/default-image.jpg" class="d-block w-100 rounded" alt="Default Thumbnail" style="height: 200px; object-fit: cover;">
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
-            
-                        {% if household.product_images|length > 1 %}
-                        <a class="carousel-control-prev" href="#carousel-{{ household.id }}" role="button" data-bs-slide="prev" onclick="event.stopPropagation();">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </a>
-                        <a class="carousel-control-next" href="#carousel-{{ household.id }}" role="button" data-bs-slide="next" onclick="event.stopPropagation();">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </a>
-                        {% endif %}
+                        <!-- Price Section -->
+                        <div class="price"> 
+                            KES{{ "{:,.2f}".format(household.price) }} 
+                        </div>
                     </div>
-            
+                    
+                    <!-- Favorite Section -->
+                    <label class="favorite">
+                        <input type="checkbox" id="like-checkbox-{{ household.id }}" 
+                            {% if household.id in liked_items['products'] %}checked{% endif %}
+                            onclick="event.stopPropagation(); toggleLike({{ household.id }}, 'product', this)">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="heart-icon">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+                        </svg>
+                    </label>
+                    
                     <!-- Product Information Section -->
-                    <div class="card-body text-uppercase" style="font-size: 0.8rem;">
-                        <h5 class="card-title">{{ household.name }}</h5>
-                        <p class="mb-1">
-                            <strong>Description:</strong> {{ household.description }}
-                        </p>
-                        <p class="mb-1">
-                            <i class="fa-solid fa-circle" style="color: #74C0FC;"></i> 
-                            <strong>Status:</strong> {{ household.StockStatus.value }}
-                        </p>
-                        <div class="btmBorder mt-2"></div>
-                        
-                        <div class="d-flex justify-content-between align-items-center mt-2">
-                            <!-- Like Button -->
-                            <div class="d-flex align-items-center">
-                                <i 
-                                id="like-icon-{{ household.id }}" 
-                                class="fa-2xl {{ 'fa-solid fa-heart' if household.id in liked_items['products'] else 'fa-regular fa-heart' }}" 
-                                style="color: #74C0FC;" 
-                                title="{{ 'Remove from Wishlist' if household.id in liked_items['products'] else 'Add to Wishlist' }}"
-                                onclick="event.stopPropagation(); toggleLike({{ household.id }}, 'product', '{{ 'unlike' if household.id in liked_items['products'] else 'like' }}', this)">
-                                </i>
-                            </div>
-
-                            <!-- Add to Cart Icon -->
-                            <div class="d-flex align-items-center">
-                                <i 
-                                    id="add-to-cart-icon-{{ household.id }}" 
-                                    class="fa-2xl fa-duotone fa-solid fa-cart-shopping"
-                                    style="color: #74C0FC;" 
-                                    title="Add to Cart"
-                                    onclick="event.stopPropagation(); addToCart({{ household.id }}, 'product')">
-                                </i>
-                            </div>
-
-                                                            
-            
-                            <!-- Price -->
-                            <p class="price mb-0" style="font-size: 1rem; text-align: right;">
-                                <p class="heading"><strong>${{ "{:,.2f}".format(household.price) }}</p> </strong>
-                            </p>
+                    <div class="content">
+                        <div class="brand heading">{{ household.name }}</div>
+                        <div class="product-name heading">{{ household.description }}</div>
+                        <div class="rating">
+                            ({{ household.reviews_count }})
                         </div>
+                    </div>
+
+                    <!-- Action Buttons Section -->
+                    <div class="button-container">
+                        <button class="buy-button button" onclick="location.href='{{ url_for('product.get_product', product_id=household.id) }}'">Buy Now</button>
+                        <button class="cart-button button">
+                            <i id="add-to-cart-icon-{{ household.id }}" class="fa-xs fa-duotone fa-solid fa-cart-shopping" style="color: #74C0FC;" title="Add to Cart" onclick="event.stopPropagation(); addToCart({{ household.id }}, 'product')"></i>
+                        </button>
                     </div>
                 </div>
             </div>
         {% endfor %}
     </div>
 
-    <!-- Car Parts Section -->
-    <div class="row mb-5 bg-light Demo shadow" id="carparts-list">
-        <h2 class="mb-3">Car Parts</h2>
-        {% for carPart in carParts %}
-            <div class="col-lg-3 col-md-6 col-sm-6 mb-4 product-row">
-                <div class="card car-card" style="cursor: pointer;" onclick="location.href='{{ url_for('product.get_product', product_id=carPart.id) }}'">
-                    <!-- Carousel Section -->
-                    <div id="carousel-{{ carPart.id }}" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                            {% if carPart.product_images|length > 0 %}
-                                {% for image in carPart.product_images %}
-                                <div class="carousel-item {% if loop.first %}active{% endif %}">
-                                    <img class="d-block w-100 rounded" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" alt="Product Image" style="height: 200px; object-fit: cover;">
-                                </div>
-                                {% endfor %}
-                            {% else %}
-                                <div class="carousel-item active">
-                                    <img src="path/to/default-image.jpg" class="d-block w-100 rounded" alt="Default Thumbnail" style="height: 200px; object-fit: cover;">
-                                </div>
-                            {% endif %}
-                        </div>
 
-                        {% if carPart.product_images|length > 1 %}
-                        <a class="carousel-control-prev" href="#carousel-{{ carPart.id }}" role="button" data-bs-slide="prev" onclick="event.stopPropagation();">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </a>
-                        <a class="carousel-control-next" href="#carousel-{{ carPart.id }}" role="button" data-bs-slide="next" onclick="event.stopPropagation();">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </a>
-                        {% endif %}
+     <!-- Car Parts Section -->
+      <div class="row mb-5 bg-light Demo shadow">
+        <h2 class="mb-3 heading">Car Parts</h2>
+            {% for carPart in carParts %}
+            <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
+
+                <div class="product" style="cursor: pointer;" onclick="location.href='{{ url_for('product.get_product', product_id=carPart.id) }}'event.stopPropagation();">
+                    <!-- Image Carousel Section -->
+                    <div class="image-container">
+                        <div id="carousel-{{ carPart.id }}" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                {% if carPart.product_images|length > 0 %}
+                                    {% for image in carPart.product_images %}
+                                        <div class="carousel-item  {% if loop.first %}active{% endif %}">
+                                            <img class="d-block w-100 rounded" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" alt="Product Image" style="height: 200px; object-fit: cover;">
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="carousel-item active">
+                                        <img src="path/to/default-image.jpg" class="d-block w-100 rounded" alt="Default Thumbnail" style="height: 200px; object-fit: cover;">
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="price"> KES{{ "{:,.2f}".format(carPart.price) }} </div> 
                     </div>
 
+                    <!-- Price Section -->
+                    <label class="favorite">
+                        <input type="checkbox" id="like-checkbox-{{ carPart.id }}"
+                               {% if carPart.id in liked_items['products'] %}checked{% endif %}
+                               onclick="event.stopPropagation(); toggleLike({{ carPart.id }}, 'product', this)">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="heart-icon">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+                        </svg>
+                    </label>
                     <!-- Product Information Section -->
-                    <div class="card-body text-uppercase" style="font-size: 0.8rem;">
-                        <h5 class="card-title">{{ carPart.name }}</h5>
-                        <p class="mb-1">
-                            <strong>Description:</strong> {{ carPart.description }}
-                        </p>
-                        <p class="mb-1">
-                            <i class="fa-solid fa-circle" style="color: #74C0FC;"></i> 
-                            <strong>Status:</strong> {{ carPart.StockStatus.value }}
-                        </p>
-                        <div class="btmBorder mt-2"></div>
+                    <div class="content">
                         
-                        <div class="d-flex justify-content-between align-items-center mt-2">
-                            <!-- Like Button -->
-                            <div class="d-flex align-items-center">
-                                <i 
-                                id="like-icon-{{ carPart.id }}" 
-                                class="fa-2xl {{ 'fa-solid fa-heart' if carPart.id in liked_items['products'] else 'fa-regular fa-heart' }}" 
-                                style="color: #74C0FC;" 
-                                title="{{ 'Remove from Wishlist' if carPart.id in liked_items['products'] else 'Add to Wishlist' }}"
-                                onclick="event.stopPropagation(); toggleLike({{ carPart.id }}, 'product', '{{ 'unlike' if carPart.id in liked_items['products'] else 'like' }}', this)">
-                            </i>
-                            </div>
-
-                            <!-- Add to Cart Icon -->
-                            <div class="d-flex align-items-center">
-                                <i 
-                                    id="add-to-cart-icon-{{ carPart.id }}" 
-                                    class="fa-2xl fa-duotone fa-solid fa-cart-shopping" 
-                                    style="color: #74C0FC;" 
-                                    title="Add to Cart"
-                                    onclick="event.stopPropagation(); addToCart({{ carPart.id }}, 'product')">
-                                </i>
-                            </div>
-
-
-
-                                                        
-
-                            <!-- Price -->
-                            <p class="price mb-0" style="font-size: 1rem; text-align: right;">
-                                <p class="heading"> <strong>${{ "{:,.2f}".format(carPart.price) }}</p> </strong>
-                            </p>
+                        <div class="brand heading"> {{ carPart.name }} </div>
+                        <div class="product-name heading">{{ carPart.description }}</div>
+                        <div class="rating">
+                            ({{ carPart.reviews_count }}) 
                         </div>
                     </div>
+                    <!-- Action Buttons Section -->
+                    <div class="button-container">
+                        <button class="buy-button button" onclick="location.href='{{ url_for('product.get_product', product_id=carPart.id) }}'">Buy Now</button>
+                        <button class="cart-button button">
+                            <i id="add-to-cart-icon-{{ carPart.id }}" class=" fa-xs fa-duotone fa-solid fa-cart-shopping " style="color: #74C0FC;" title="Add to Cart" onclick="event.stopPropagation(); addToCart({{ carPart.id }}, 'product')"></i>
+                        </button>
+                    </div>
+                    
+                        
                 </div>
             </div>
-        {% endfor %}
-    </div>
+            {% endfor %}
+      </div>
 
 </div>
 
@@ -704,105 +612,251 @@ Home Page
 
     <div class="contact-row">
 
-            <div class="contact">
-
-                <div class="bg align-items-center justify-content-center">
-                    <i style="color: #74C0FC;"  class="mt-2 mb-2 fa-duotone fa-solid fa-location-dot fa-2xl"></i>
-                    <p class="mt-2 mb-2 heading"> </p>
-                    <h4 class="mt-2 mb-2 heading">Address</h4>
-                   
-                    <p class="mt-2 mb-3 heading">Langata Road Somewhere</p>
+        <div class="col-lg-4 col-md-4 col-sm-12">
+            <div class="our_solution_category">
+                <div class="solution_cards_box">
+                    <div class="solution_card">
+                        <div class="hover_color_bubble"></div>
+                        <div class="so_top_icon">
+                            <!-- Font Awesome Icon for Address -->
+                            <i style="color: #74C0FC;" class="mt-2 mb-2 fa-duotone fa-solid fa-location-dot fa-2xl"></i>
+                        </div>
+                        <div class="solu_title">
+                            <h4>Address</h4>
+                        </div>
+                        <div class="solu_description">
+                            <p>
+                                Langata Road Somewhere
+                            </p>
+                            <a href="https://www.google.com/maps/dir//Premier+Autoworld,+Along,+Mbagathi+Way,+Lindi/@-1.3231451,36.7948878,19z/data=!4m8!4m7!1m0!1m5!1m1!1s0x182f11659b78a163:0x6e208b70d145ba3d!2m2!1d36.795607!2d-1.3248561?entry=ttu&g_ep=EgoyMDI0MTIxMS4wIKXMDSoASAFQAw%3D%3D">
+                                <button class="read_more_btn" type="button"> Come Visit Us.</button>
+                            </a>
+                            
+                        </div>
+                    </div>
                 </div>
-                <div class="blob"></div>
-
             </div>
+        </div>
+
+        <!-- Card 2 - Call Us -->
+        <div class="col-lg-4 col-md-4 col-sm-12">
+            <div class="our_solution_category">
+                <div class="solution_cards_box">
+                    <div class="solution_card">
+                        <div class="hover_color_bubble"></div>
+                        <div class="so_top_icon">
+                            <!-- Font Awesome Icon for Call Us -->
+                            <i style="color: #74C0FC;" class="mt-2 mb-2 fa-duotone fa-solid fa-phone fa-2xl"></i>
+                        </div>
+                        <div class="solu_title">
+                            <h4 class="heading">Call Us</h4>
+                        </div>
+                        <div class="solu_description">
+                            <p class="heading"> 
+                                <Strong> +254 722 869 196 </Strong>
+                            </p>
+                            <a href="tel:+072278921" >
+
+                                <button class="read_more_btn" type="button">Call Us</button>
 
 
-            <div class="contact">
-                <div class="bg align-items-center justify-content-center">
-
-                    <i style="color: #74C0FC;"  class=" mt-2 mb-2 fa-duotone fa-solid fa-phone fa-2xl"></i>
-                    <p class="mt-2 mb-2 heading"> </p>
-                    <h4 class="heading mt-2 mb-2">Call Us</h4>
-                    <p class="mt-2 mb-2 heading"> 07 22 78921 </p>
-                </div>
-                <div class="blob">       
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
 
+        <!-- Card 3 - Email Us -->
+        <div class="col-lg-4 col-md-4 col-sm-12">
+            <div class="our_solution_category">
+                <div class="solution_cards_box">
+                    <div class="solution_card">
+                        <div class="hover_color_bubble"></div>
+                        <div class="so_top_icon">
+                            <!-- Font Awesome Icon for Email -->
+                            <i style="color: #74C0FC;" class="mt-2 mb-2 fa-duotone fa-solid fa-envelope fa-2xl"></i>
+                        </div>
+                        <div class="solu_title">
+                            <h4 class="heading">Email Us</h4>
+                        </div>
+                        <div class="solu_description">
+                            <p class="heading">
+                                info@nasimgeneralmerchants.co.ke
+                            </p>
+                            
 
-            <div class="contact">
-                <div class="bg align-items-center  justify-content-center">
-                    <i style="color: #74C0FC;"  class="mt-2 mb-2 fa-duotone fa-solid fa-envelope fa-2xl"></i>
-                    <p class="mt-2 mb-2 heading"> </p>
-                    <h4 class="heading mt-2 mb-2">Email Us</h4>
-                   
-                    <p class="mt-2 mb-2 heading">info@nasimgeneralmerchants@co.ke</p>
+                            <a href="mailto:info@nasimgeneralmerchants.co.ke" >
+                                <button   class="read_more_btn" type="button">Email Us</button>
+
+                            </a>
+
+                        </div>
+                    </div>
                 </div>
-                <div class="blob"></div>
             </div>
+        </div>
+
     </div>
 
-    <div class="row">
-        <div class="col-lg-6 h-100">
-            <iframe src="" frameborder="0"></iframe>
+    <div class="row "data-aos="fade-up" >
+        <div class="col-lg-6 ">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3988.753702397186!2d36.79608!3d-1.3236331!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f11659b78a163%3A0x6e208b70d145ba3d!2sPremier%20Autoworld!5e0!3m2!1sen!2ske!4v1735526709540!5m2!1sen!2ske" 
+                    width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+
+        <div class="col-lg-6 mb-3">
+
+            <form id="contactForm" action="{{ url_for('home_bp.send_email') }}" method="POST" class=" form email-form mb-3 mt-3" data-aos="fade-up" data-aos-delay="400">
+                    <div class="info ">
+                        <div class="info__icon">
+                        <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="m12 1.5c-5.79844 0-10.5 4.70156-10.5 10.5 0 5.7984 4.70156 10.5 10.5 10.5 5.7984 0 10.5-4.7016 10.5-10.5 0-5.79844-4.7016-10.5-10.5-10.5zm.75 15.5625c0 .1031-.0844.1875-.1875.1875h-1.125c-.1031 0-.1875-.0844-.1875-.1875v-6.375c0-.1031.0844-.1875.1875-.1875h1.125c.1031 0 .1875.0844.1875.1875zm-.75-8.0625c-.2944-.00601-.5747-.12718-.7808-.3375-.206-.21032-.3215-.49305-.3215-.7875s.1155-.57718.3215-.7875c.2061-.21032.4864-.33149.7808-.3375.2944.00601.5747.12718.7808.3375.206.21032.3215.49305.3215.7875s-.1155.57718-.3215.7875c-.2061.21032-.4864.33149-.7808.3375z" fill="#393a37"></path></svg>
+                        </div>
+                        <div class="info__title response alert"> </div>
+                        <div class="info__close"><svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 20 20" height="20"><path fill="#393a37" d="m15.8333 5.34166-1.175-1.175-4.6583 4.65834-4.65833-4.65834-1.175 1.175 4.65833 4.65834-4.65833 4.6583 1.175 1.175 4.65833-4.6583 4.6583 4.6583 1.175-1.175-4.6583-4.6583z"></path></svg></div>
+                    </div>
+
+                    <div class="row mb-3 ">
+        
+                  <div class="col-md-6">
+                    <input type="text" name="name" class="form-control" placeholder="Your Name" required="">
+                  </div>
+        
+                  <div class="col-md-6 ">
+                    <input type="email" class="form-control" name="email" placeholder="Your Email" required="">
+                  </div>
+        
+                  <div class="col-md-12">
+                    <input type="text" class="form-control" name="subject" placeholder="Subject" required="">
+                  </div>
+        
+                  <div class="col-md-12">
+                    <textarea type="text" class="form-control text" name="message" rows="6" placeholder="Message" required=""></textarea>
+                  </div>
+        
+                  <div class="col-md-12 mb-2 mt-2 text-center">
+            
+                        <button class="emailButton mb-3 mt-1">
+                            <div class="svg-wrapper-1">
+                            <div class="svg-wrapper">
+                                <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                width="24"
+                                height="24"
+                                >
+                                <path fill="none" d="M0 0h24v24H0z"></path>
+                                <path
+                                    fill="currentColor"
+                                    d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
+                                ></path>
+                                </svg>
+                            </div>
+                            </div>
+                            <span>Send</span>
+                        </button>
+                  </div>
+        
+                </div>
+            </form>
         </div>
     </div>
-    <div class="col-lg-6 mb-3">
-        <form action="" method="post" class=" form email-form mb-3 mt-3" data-aos="fade-up" data-aos-delay="400">
-            <div class="row mb-3 ">
-    
-              <div class="col-md-6">
-                <input type="text" name="name" class="form-control" placeholder="Your Name" required="">
-              </div>
-    
-              <div class="col-md-6 ">
-                <input type="email" class="form-control" name="email" placeholder="Your Email" required="">
-              </div>
-    
-              <div class="col-md-12">
-                <input type="text" class="form-control" name="subject" placeholder="Subject" required="">
-              </div>
-    
-              <div class="col-md-12">
-                <textarea type="text" class="form-control" name="message" rows="6" placeholder="Message" required=""></textarea>
-              </div>
-    
-              <div class="col-md-12 mb-2 mt-2 text-center">
-    
-                <button class="emailButton mb-3 mt-1">
-                    <div class="svg-wrapper-1">
-                      <div class="svg-wrapper">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          width="24"
-                          height="24"
-                        >
-                          <path fill="none" d="M0 0h24v24H0z"></path>
-                          <path
-                            fill="currentColor"
-                            d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
-                          ></path>
-                        </svg>
-                      </div>
-                    </div>
-                    <span>Send</span>
-                  </button>
-              </div>
-    
-            </div>
-          </form>
 
-    </div>
-      
+    
 
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).ready(function () {
+    // Ensure the info div is hidden initially
+    $('.info').hide();  // Make sure the message box is hidden on page load
+
+    // Handle the form submission using AJAX
+    $('#contactForm').submit(function (event) {
+        event.preventDefault(); // Prevent form from submitting the traditional way
+
+        // Get form data
+        var formData = $(this).serialize(); // Serializes form data
+
+        // AJAX request to send email
+        $.ajax({
+            url: '/send_email', // Endpoint for sending the email
+            type: 'POST',
+            data: formData,
+            success: function (response) {
+                // If email sent successfully
+                $('.info__title').text(response.message); // Display the success message
+                $('.info').addClass('alert-success').removeClass('alert-danger'); // Add success class
+                $('.info').fadeIn(); // Show the response div
+                setTimeout(function () {
+                    $('.info').fadeOut(); // Hide the response div after 5 seconds
+                }, 5000); // 5000ms = 5 seconds
+            },
+            error: function (xhr, status, error) {
+                // If there is an error
+                var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : 'Failed to send email';
+                $('.info__title').text(errorMessage); // Display error message
+                $('.info').addClass('alert-danger').removeClass('alert-success'); // Add error class
+                $('.info').fadeIn(); // Show the response div
+                setTimeout(function () {
+                    $('.info').fadeOut(); // Hide the response div after 5 seconds
+                }, 5000); // 5000ms = 5 seconds
+            }
+        });
+    });
+
+    // Close the response message when clicking the close button
+    $('.info__close').click(function () {
+        $('.info').fadeOut(); // Hide the response div when close button is clicked
+    });
+});
+
+</script>
 
 
 
 {% endblock %}
 
 
-  </div>
+<div class="card">
+    <div class="image-container">
+        <img src="" alt="">
+                
+        <div class="price">$49.9</div>
+    </div>
+    <label class="favorite">
+        <input checked="" type="checkbox">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000000">
+            <path d="M12 20a1 1 0 0 1-.437-.1C11.214 19.73 3 15.671 3 9a5 5 0 0 1 8.535-3.536l.465.465.465-.465A5 5 0 0 1 21 9c0 6.646-8.212 10.728-8.562 10.9A1 1 0 0 1 12 20z"></path>
+        </svg>
+    </label>
+
+    <div class="content">
+        <div class="brand">ADIDAS</div>
+        <div class="product-name">Classic oversized hoodie</div>
+        <div class="color-size-container">
+        </div>
+        <div class="rating">
+            <svg viewBox="0 0 99.498 16.286" xmlns="http://www.w3.org/2000/svg" class="svg four-star-svg">
+                <path fill="#fc0" transform="translate(-0.001 -1.047)" d="M9.357,1.558,11.282,5.45a.919.919,0,0,0,.692.5l4.3.624a.916.916,0,0,1,.509,1.564l-3.115,3.029a.916.916,0,0,0-.264.812l.735,4.278a.919.919,0,0,1-1.334.967l-3.85-2.02a.922.922,0,0,0-.855,0l-3.85,2.02a.919.919,0,0,1-1.334-.967l.735-4.278a.916.916,0,0,0-.264-.812L.279,8.14A.916.916,0,0,1,.789,6.576l4.3-.624a.919.919,0,0,0,.692-.5L7.71,1.558A.92.92,0,0,1,9.357,1.558Z" id="star-svgrepo-com"></path>
+                <path fill="#fc0" transform="translate(20.607 -1.047)" d="M9.357,1.558,11.282,5.45a.919.919,0,0,0,.692.5l4.3.624a.916.916,0,0,1,.509,1.564l-3.115,3.029a.916.916,0,0,0-.264.812l.735,4.278a.919.919,0,0,1-1.334.967l-3.85-2.02a.922.922,0,0,0-.855,0l-3.85,2.02a.919.919,0,0,1-1.334-.967l.735-4.278a.916.916,0,0,0-.264-.812L.279,8.14A.916.916,0,0,1,.789,6.576l4.3-.624a.919.919,0,0,0,.692-.5L7.71,1.558A.92.92,0,0,1,9.357,1.558Z" data-name="star-svgrepo-com" id="star-svgrepo-com-2"></path>
+                <path fill="#fc0" transform="translate(41.215 -1.047)" d="M9.357,1.558,11.282,5.45a.919.919,0,0,0,.692.5l4.3.624a.916.916,0,0,1,.509,1.564l-3.115,3.029a.916.916,0,0,0-.264.812l.735,4.278a.919.919,0,0,1-1.334.967l-3.85-2.02a.922.922,0,0,0-.855,0l-3.85,2.02a.919.919,0,0,1-1.334-.967l.735-4.278a.916.916,0,0,0-.264-.812L.279,8.14A.916.916,0,0,1,.789,6.576l4.3-.624a.919.919,0,0,0,.692-.5L7.71,1.558A.92.92,0,0,1,9.357,1.558Z" data-name="star-svgrepo-com" id="star-svgrepo-com-3"></path>
+                <path fill="#fc0" transform="translate(61.823 -1.047)" d="M9.357,1.558,11.282,5.45a.919.919,0,0,0,.692.5l4.3.624a.916.916,0,0,1,.509,1.564l-3.115,3.029a.916.916,0,0,0-.264.812l.735,4.278a.919.919,0,0,1-1.334.967l-3.85-2.02a.922.922,0,0,0-.855,0l-3.85,2.02a.919.919,0,0,1-1.334-.967l.735-4.278a.916.916,0,0,0-.264-.812L.279,8.14A.916.916,0,0,1,.789,6.576l4.3-.624a.919.919,0,0,0,.692-.5L7.71,1.558A.92.92,0,0,1,9.357,1.558Z" data-name="star-svgrepo-com" id="star-svgrepo-com-4"></path>
+                <path fill="#e9e9e9" transform="translate(82.431 -1.047)" d="M9.357,1.558,11.282,5.45a.919.919,0,0,0,.692.5l4.3.624a.916.916,0,0,1,.509,1.564l-3.115,3.029a.916.916,0,0,0-.264.812l.735,4.278a.919.919,0,0,1-1.334.967l-3.85-2.02a.922.922,0,0,0-.855,0l-3.85,2.02a.919.919,0,0,1-1.334-.967l.735-4.278a.916.916,0,0,0-.264-.812L.279,8.14A.916.916,0,0,1,.789,6.576l4.3-.624a.919.919,0,0,0,.692-.5L7.71,1.558A.92.92,0,0,1,9.357,1.558Z" data-name="star-svgrepo-com" id="star-svgrepo-com-5"></path>
+            </svg>
+            (29,062)
+        </div>
+    </div>
+
+    <div class="button-container">
+        <button class="buy-button button">Buy Now</button>
+        <button class="cart-button button">
+            <svg viewBox="0 0 27.97 25.074" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0,1.175A1.173,1.173,0,0,1,1.175,0H3.4A2.743,2.743,0,0,1,5.882,1.567H26.01A1.958,1.958,0,0,1,27.9,4.035l-2.008,7.459a3.532,3.532,0,0,1-3.4,2.61H8.36l.264,1.4a1.18,1.18,0,0,0,1.156.955H23.9a1.175,1.175,0,0,1,0,2.351H9.78a3.522,3.522,0,0,1-3.462-2.865L3.791,2.669A.39.39,0,0,0,3.4,2.351H1.175A1.173,1.173,0,0,1,0,1.175ZM6.269,22.724a2.351,2.351,0,1,1,2.351,2.351A2.351,2.351,0,0,1,6.269,22.724Zm16.455-2.351a2.351,2.351,0,1,1-2.351,2.351A2.351,2.351,0,0,1,22.724,20.373Z" id="cart-shopping-solid"></path>
+            </svg>
+
+        </button>
+    </div>
+</div>

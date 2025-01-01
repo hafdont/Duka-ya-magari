@@ -1,9 +1,9 @@
-from authlib.integrations.flask_client import OAuth
+from flask_dance.contrib.google import make_google_blueprint, google
 from flask import Flask, send_from_directory, abort, session, request, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
-from flask_login import LoginManager
+from flask_login import LoginManager, login_user
 from dotenv import load_dotenv
 import os
 import pymysql
@@ -43,6 +43,7 @@ app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT'))
 app.config['MAIL_USE_SSL'] = os.getenv('MAIL_USE_SSL') == 'True'
 app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER')
 mail = Mail(app)
 
 # In your Flask app setup (typically app.py)
@@ -50,41 +51,10 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=6)
 app.config['SESSION_PERMANENT'] = True
 
 
-# Define error handling routes and logging
-# Handle 404 errors (Page Not Found)
-@app.errorhandler(404)
-def not_found_error(error):
-    app.logger.error(f"404 Error: {request.url} - {error}")
-    return render_template('errors/404.html', error=error), 404
-
-# Handle 500 errors (Internal Server Error)
-@app.errorhandler(500)
-def internal_error(error):
-    app.logger.error(f"500 Error: {request.url} - {error}")
-    return render_template('errors/500.html', error=error), 500
-
-# Handle 403 errors (Forbidden)
-@app.errorhandler(403)
-def forbidden_error(error):
-    app.logger.error(f"403 Error: {request.url} - {error}")
-    return render_template('errors/403.html', error=error), 403
-
-# Handle 400 errors (Bad Request)
-@app.errorhandler(400)
-def bad_request_error(error):
-    app.logger.error(f"400 Error: {request.url} - {error}")
-    return render_template('errors/400.html', error=error), 400
-
-# Custom error handler for uncaught exceptions
-@app.errorhandler(Exception)
-def handle_exception(error):
-    app.logger.error(f"Unhandled Exception: {request.url} - {error}")
-    return render_template('errors/500.html', error=error), 500
-
 # Log error details to email (optional)
 def send_error_email(error_message):
     try:
-        recipient = os.getenv('ERROR_LOG_EMAIL_RECIPIENT', 'admin@example.com')
+        recipient = os.getenv('ERROR_LOG_EMAIL_RECIPIENT', 'admin@nasimgeneralmarchants.co.ke ')
         subject = 'Application Error Notification'
         msg = Message(subject, sender=app.config['MAIL_USERNAME'], recipients=[recipient])
         msg.body = f"An error occurred: {error_message}"
@@ -100,8 +70,14 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 # Initialize SQLAlchemy and Flask-Migrate
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-oauth = OAuth(app)  # Initialize OAuth with the app
 login_manager = LoginManager(app)  # Initialize LoginManager with the app
+
+# Set up Google OAuth with Flask-Dance
+google_bp = make_google_blueprint(client_id=os.getenv('GOOGLE_CLIENT_ID'),
+                                  client_secret=os.getenv('GOOGLE_CLIENT_SECRET'),
+                                  redirect_to='google_register')
+app.register_blueprint(google_bp, url_prefix='/google_login')
+
 
 # Set up the scheduler for email logs
 scheduler = APScheduler()
@@ -190,7 +166,6 @@ def create_tables():
 # Import and register routes
 from routes import register_routes  
 register_routes(app)
-
 
 @app.route('/uploads/<folder>/<filename>')
 def uploaded_file(folder, filename):

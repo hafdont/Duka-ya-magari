@@ -1,0 +1,39 @@
+{% extends 'base.html'%}
+{% block title %}  
+Error page.
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid" style="height: 100%;">
+    <div class="row">
+
+        <div class="error_card">
+        <img
+            src="https://uiverse.io/astronaut.png"
+            alt=""
+            class="image_error"
+        />
+        <div class="error_heading">Error <h1> {{ error_code }}</h1> </div>
+        <div class="icons">
+
+            <p class="heading">{{ error_message }}</p>
+
+            <p>We apologize for the inconvenience. Please try again 
+                later or contact support if the issue persists.</p>
+
+
+            
+
+        </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+{% endblock %}
+
+
+

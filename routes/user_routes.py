@@ -7,8 +7,7 @@ from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 from enum import Enum
 from models import User, UserRole,  UserStatus, Gender
-from app import db, oauth, login_manager
-from authlib.integrations.flask_client import OAuth
+from app import db, login_manager, google
 from flask_login import login_user, logout_user, LoginManager
 from datetime import timedelta
 
@@ -24,17 +23,6 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-
-google = oauth.register(
-    name='google',
-    client_id=os.getenv('GOOGLE_CLIENT_ID'),
-    client_secret=os.getenv('GOOGLE_CLIENT_SECRET'),
-    authorize_url='https://accounts.google.com/o/oauth2/auth',
-    authorize_params=None,
-    access_token_url='https://accounts.google.com/o/oauth2/token',
-    access_token_params=None,
-    client_kwargs={'scope': 'email profile'}
-)
 
 def get_user_data_from_form(form):
     return {
@@ -124,6 +112,72 @@ def register():
 
         flash("User registered successfully!", "success")
         return redirect(url_for('user.login'))
+
+
+# Google OAuth callback route
+@user_bp.route('/google_register')
+def google_register():
+    if not google.authorized:
+        return redirect(url_for('user.google_login'))  # Redirect to Google login if not authorized
+
+    # Get the user's info from Google
+    google_user = google.get('/plus/v1/people/me')
+    user_data = google_user.json()
+
+    # Extract relevant information from Google user data
+    user_info = {
+        'email': user_data['emails'][0]['value'],
+        'username': user_data['displayName'],
+        'firstname': user_data['name']['givenName'],
+        'lastname': user_data['name']['familyName'],
+        'profile_picture': user_data['image']['url'],
+    }
+
+    # Check if the user already exists
+    existing_user = User.query.filter_by(email=user_info['email']).first()
+    if existing_user:
+        session['user'] = {
+            'id': existing_user.id,
+            'username': existing_user.username,
+            'firstname': existing_user.firstname,
+            'lastname': existing_user.lastname,
+            'profile_picture': existing_user.profile_picture,
+            'role': existing_user.role.value,
+        }
+        flash("Logged in successfully with Google!", "success")
+        return redirect(url_for('home_bp.index'))
+
+    # Create a new user if they don't exist
+    new_user = User(
+        username=user_info['username'],
+        firstname=user_info['firstname'],
+        lastname=user_info['lastname'],
+        email=user_info['email'],
+        profile_picture=user_info['profile_picture'],
+        role=UserRole.CUSTOMER,
+    )
+    db.session.add(new_user)
+    db.session.commit()
+
+    # Log in the newly created user
+    session['user'] = {
+        'id': new_user.id,
+        'username': new_user.username,
+        'firstname': new_user.firstname,
+        'lastname': new_user.lastname,
+        'profile_picture': new_user.profile_picture,
+        'role': new_user.role.value,
+    }
+
+    flash("User registered and logged in via Google!", "success")
+    return redirect(url_for('home_bp.index'))
+
+
+# Route to initiate Google login
+@user_bp.route('/google_login')
+def google_login():
+    redirect_uri = url_for('user_bp.google_register', _external=True)
+    return google.authorize_redirect(redirect_uri)
 
 # Edit User Profile
 @user_bp.route('/editProfile/<int:user_id>', methods=['GET', 'POST'])

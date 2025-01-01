@@ -262,6 +262,7 @@
 
 <!-- Include Bootstrap JS and dependencies -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
@@ -289,8 +290,14 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
-// Function to toggle "like" status
-function toggleLike(itemId, itemType, action, element) {
+// Function to toggle "like" status for both icon-based and SVG-based like/unlike actions
+// Function to toggle "like" status for both checkbox and SVG actions
+function toggleLike(itemId, itemType, checkboxElement) {
+    // Prevent event propagation to avoid page navigation
+    event.stopPropagation();
+
+    const action = checkboxElement.checked ? 'like' : 'unlike'; // Determine the action based on checkbox state
+
     fetch('/like', {
         method: 'POST',
         headers: {
@@ -301,19 +308,19 @@ function toggleLike(itemId, itemType, action, element) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
+            // If the like action is successful, update the SVG fill
+            const svgElement = checkboxElement.nextElementSibling; // The SVG is the next sibling to the checkbox
             if (action === 'like') {
-                element.classList.remove('fa-regular');
-                element.classList.add('fa-solid');
-                element.setAttribute('title', 'Like');
-                element.setAttribute('onclick', `event.stopPropagation(); toggleLike(${itemId}, '${itemType}', 'unlike', this)`);
+                svgElement.setAttribute('fill', '#ff5959'); // Red fill for liked state
+                svgElement.setAttribute('stroke', '#ff5959'); // Red stroke for liked state
+                checkboxElement.setAttribute('title', 'Remove from Wishlist');
             } else {
-                element.classList.remove('fa-solid');
-                element.classList.add('fa-regular');
-                element.setAttribute('title', 'Unlike');
-                element.setAttribute('onclick', `event.stopPropagation(); toggleLike(${itemId}, '${itemType}', 'like', this)`);
+                svgElement.setAttribute('fill', 'none'); // Remove fill (outline) for unliked state
+                svgElement.setAttribute('stroke', '#a8a8a8'); // Grey stroke for unliked state
+                checkboxElement.setAttribute('title', 'Add to Wishlist');
             }
         } else if (data.error) {
-            alert(data.error);
+            alert(data.error); // Show error message if something goes wrong
         }
     })
     .catch(error => console.error('Error:', error));
