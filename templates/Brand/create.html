@@ -1,35 +1,33 @@
 {% extends 'admin_base.html' %}
 
 {% block main_content %}
-<div class="container-fluid d-flex align-items-center justify-content-center " >
+<div class="container-fluid holders d-flex align-items-center justify-content-center vh-100 mt-3" >
     <div class="row align-items-center justify-content-center w-100" >
 
 
         <div class="col-lg-8 vh-100">
-            <h1>Create Brand</h1>
-            <form action="{{ url_for('brand_bp.create_brand') }}" method="POST" enctype="multipart/form-data">
+            <h1 class="heading mt-4 mb-4">Create Brand</h1>
+            <form class="form" action="{{ url_for('brand_bp.create_brand') }}" method="POST" enctype="multipart/form-data">
                 <div class="form-group mb-2 mt-2">
-                    <label for="brand_name">Brand Name:</label>
-                    <input type="text" class="form-control" id="brand_name" name="brand_name" required>
+                    <input type="text" class="form-control" id="brand_name" name="brand_name" placeholder="Brand Name:" required>
                 </div>
                 <div class="form-group mb-3">
-                    <label for="brand_logo">Brand Logo:</label>
-                    <input type="file" class="form-control-file" id="brand_logo" name="brand_logo" required>
+                    <input type="file" class="form-control form-control-sm " id="brand_logo" name="brand_logo" required placeholder="Brand Logo:">
                 </div>
                 <div class="mb-3">
-                    <label for="category" class="form-label">Category Type</label>
-                    <select class="form-control" id="category" name="category" required>
+                    <label for="category" class="form-label col-lg-4">Category Type</label>
+                    <select type="select" class="form-control col-lg-7" id="category" name="category" required>
                         <option value="">Select A brand</option>
                         {% for type in cats %}
                         <option value="{{ type.value }}">{{ type.value }}</option>
                         {% endfor %}
                     </select>
                 </div>
-                <button type="submit" class="btn btn-primary mb-2 mt-3">Create Brand</button>
+                <button type="submit" class="btn-login mb-2 mt-3">Create Brand</button>
             </form>
             </div>
 
 
     </div>
-</div>
+</div>    
 {% endblock %}

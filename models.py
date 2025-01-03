@@ -2,7 +2,10 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from enum import Enum
 from flask_sqlalchemy import SQLAlchemy
-from app import db
+from app import db, app
+from flask_bcrypt import Bcrypt
+
+bcrypt = Bcrypt()
 
 class StockStatus(Enum):
     IN_STOCK = "In Stock"
@@ -64,6 +67,7 @@ class User(db.Model):
     password = db.Column(db.String(255), nullable=False)
     role = db.Column(db.Enum(UserRole), default=UserRole.CUSTOMER, nullable=False)
     status = db.Column(db.Enum(UserStatus), default=UserStatus.ACTIVE, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     # Address details
     city = db.Column(db.String(50), nullable=True)
@@ -88,6 +92,15 @@ class User(db.Model):
     orders = db.relationship('Order', backref='customer', lazy=True)
     likes = db.relationship('Like', backref='liked_items', lazy=True)
     products = db.relationship('Product', back_populates='user')  # Relationship to products
+    reset_token = db.Column(db.String(255), nullable=True)
+    reset_token_expiry = db.Column(db.DateTime, nullable=True)
+
+
+    # Helper method to generate the reset token
+    def generate_reset_token(self):
+        # Generate a random token and hash it with bcrypt
+        reset_token = bcrypt.generate_password_hash(str(datetime.now())).decode('utf-8')
+        return reset_token
 
 
     def __repr__(self):
@@ -119,11 +132,13 @@ class Item(db.Model):
     price = db.Column(db.Numeric(10, 2), nullable=False)
     total_price = db.Column(db.Numeric(10 , 2), nullable=False)
 
+
     car = db.relationship('Car', backref=db.backref('associated_items', lazy=True))
     product = db.relationship('Product', backref=db.backref('associated_items', lazy=True))
 
     def __repr__(self):
         return f"<Item (Car: {self.car_id}, Product: {self.product_id})>"
+    
 
 # Updated Product model
 class Product(db.Model):
@@ -136,9 +151,12 @@ class Product(db.Model):
     description = db.Column(db.Text, nullable=True)
     added_at = db.Column(db.DateTime, default=datetime.utcnow)
     category = db.Column(db.Enum(CategoryType), nullable=False)
+    brand_id = db.Column(db.Integer, db.ForeignKey('brands.id'), nullable=True)
+
 
 
     # Foreign key to link to the User model
+    brand = db.relationship('Brand', backref='products', lazy=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     specifications = db.relationship('ProductSpecification', backref='product', lazy=True)
 
@@ -157,13 +175,10 @@ class ProductSpecification(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
     key = db.Column(db.String(50), nullable=False)
     value = db.Column(db.String(255), nullable=False)
-    brand_name = db.Column(db.String(100), nullable=True)  # Store the brand name directly
     category_name = db.Column(db.String(100), nullable=True)  # Store the category name directly
 
     # Relationships
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=True)
-    brand_id = db.Column(db.Integer, db.ForeignKey('brands.id'), nullable=True)
-    brand = db.relationship('Brand', backref='products', lazy=True)
 
     def __repr__(self):
         return f"<Specification {self.key}: {self.value}>"
@@ -254,7 +269,7 @@ class Car(db.Model):
     
     __tablename__ = 'cars'
     id = db.Column(db.Integer, primary_key=True)
-    brand_id = db.Column(db.Integer, db.ForeignKey('brands.id'), nullable=False)
+    brand_id = db.Column(db.Integer, db.ForeignKey('brands.id'), nullable=True)
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)  
     model = db.Column(db.String(50), nullable=False)
     year = db.Column(db.Integer, nullable=False)

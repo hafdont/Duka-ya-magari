@@ -1,9 +1,10 @@
-from flask import Blueprint, request, render_template, redirect, url_for, flash, session, jsonify
+from flask import Blueprint, request, render_template, redirect, url_for, flash, session, jsonify, abort
 from werkzeug.utils import secure_filename
 from models import db, Blog, Image, Category, Brand, Order, Item, OrderStatus, Review, Like, Comment, User, BlogView
 import os
 from .user_routes import admin_required
 from enum import Enum
+from datetime import datetime, timedelta
 
 
 blog_bp = Blueprint('blogs', __name__)
@@ -95,23 +96,28 @@ def get_blogs():
 @blog_bp.route('/blog/<int:blog_id>', methods=['GET', 'POST'])
 def view_blog(blog_id):
     current_user = session.get('user', None)
-    blog = Blog.query.get_or_404(blog_id)
 
-    # Increment the total view count
-    blog.view_count += 1
-    db.session.commit()
+    try:
+        blog = Blog.query.get_or_404(blog_id)
+        blog.view_count = (blog.view_count or 0) + 1  # Handle None value
+        db.session.commit()
 
-    # Record the user view in BlogView (if the user is logged in)
-    if current_user:
-        user_id = current_user.get('id')  # Assuming current_user is a dictionary
-        new_view = BlogView(blog_id=blog_id, user_id=user_id)
-    else:
-        new_view = BlogView(blog_id=blog_id)
+        # Record the user view in BlogView (if the user is logged in)
+        if current_user:
+            user_id = current_user.get('id')
+            new_view = BlogView(blog_id=blog_id, user_id=user_id)
+        else:
+            new_view = BlogView(blog_id=blog_id)
 
-    db.session.add(new_view)
-    db.session.commit()
+        db.session.add(new_view)
+        db.session.commit()
 
-    # Handle comment submission
+    except Exception as e:
+        db.session.rollback()  # Rollback on any database error
+        print(f"Database error: {e}") # Log the error for debugging
+        abort(500) # Or handle the error differently
+
+    # Handle comment submission (rest of your existing code)
     if request.method == 'POST' and 'comment' in request.form:
         comment_content = request.form['comment']
         if not current_user:
@@ -123,19 +129,18 @@ def view_blog(blog_id):
             new_comment = Comment(content=comment_content, user_id=user_id, blog_id=blog_id)
             db.session.add(new_comment)
             db.session.commit()
+            return redirect(url_for('blog_bp.view_blog', blog_id=blog.id)) # Redirect to avoid resubmission on refresh
 
-    # Get the comments and likes for the blog
+
     comments = Comment.query.filter_by(blog_id=blog_id).all()
     blog_likes_count = Like.query.filter_by(blog_id=blog_id, target_type='blog').count()
 
-    # Retrieve liked items dynamically from the Like table
     liked_items = {}
     if current_user:
         user_id = current_user.get('id')
         liked_items['blog'] = [like.blog_id for like in Like.query.filter_by(user_id=user_id, target_type='blog').all()]
         liked_items['comment'] = [like.comment_id for like in Like.query.filter_by(user_id=user_id, target_type='comment').all()]
 
-    # Get the likes for each comment
     comments_likes_count = {
         comment.id: Like.query.filter_by(comment_id=comment.id, target_type='comment').count()
         for comment in comments
@@ -150,7 +155,6 @@ def view_blog(blog_id):
         comments_likes_count=comments_likes_count,
         liked_items=liked_items
     )
-
 
 @blog_bp.route('/blog/<int:blog_id>')
 @admin_required

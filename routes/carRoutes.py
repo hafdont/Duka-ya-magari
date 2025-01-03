@@ -42,7 +42,7 @@ def create_car():
     current_user = session.get('user', None)
 
     if request.method == 'GET':
-        brands = Brand.query.all()
+        brands = Brand.query.filter_by(category=CategoryType.CARS.value).all()
         categories = Category.query.filter_by(category_type=CategoryType.CARS.value).all()
         return render_template('cars/newCar.html', brands=brands, user=current_user,categories = categories )
 

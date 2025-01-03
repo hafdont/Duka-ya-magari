@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/system.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='img/logo.png') }}" type="image/x-icon">
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -16,7 +17,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <!-- TinyMCE CDN with Your API Key -->
     <script src="https://cdn.tiny.cloud/1/{{ TINYMCE_API_KEY }}/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -33,43 +34,43 @@
             <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
                 <!-- Center the ul with ms-auto and use d-flex to control the layout -->
                 <ul class="navbar-nav mb-2 mb-lg-0 d-flex justify-content-center ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link " aria-current="page" href="{{ url_for('admin_bp.home') if (session.get('user') and session['user']['role'] == 'admin') else url_for('home_bp.index') }}">
+                    <li class="nav-item padding_kidogo">
+                        <a class="nav-link py-3 " aria-current="page" href="{{ url_for('admin_bp.home') if (session.get('user') and session['user']['role'] == 'admin') else url_for('home_bp.index') }}">
                             Home
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ url_for('home_bp.about') }}">
+                    <li class="nav-item padding_kidogo ">
+                        <a class="nav-link  py-3" aria-current="page" href="{{ url_for('home_bp.about') }}">
                             About
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ url_for('home_bp.cars') }}">
+                    <li class="nav-item padding_kidogo ">
+                        <a class="nav-link  py-3" aria-current="page" href="{{ url_for('home_bp.cars') }}">
                             Cars
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ url_for('home_bp.carParts') }}">
+                    <li class="nav-item padding_kidogo ">
+                        <a class="nav-link  py-3 " aria-current="page" href="{{ url_for('home_bp.carParts') }}">
                             Car Parts
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link " aria-current="page" href="{{ url_for('home_bp.tools') }}">
+                    <li class="nav-item  padding_kidogo">
+                        <a class="nav-link  py-3" aria-current="page" href="{{ url_for('home_bp.tools') }}">
                             Tools
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ url_for('home_bp.househldItems') }}">
+                    <li class="nav-item padding_kidogo ">
+                        <a class="nav-link  py-3" aria-current="page" href="{{ url_for('home_bp.househldItems') }}">
                             Household Items
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ url_for('home_bp.computers') }}">
+                    <li class="nav-item padding_kidogo">
+                        <a class="nav-link  py-3" aria-current="page" href="{{ url_for('home_bp.computers') }}">
                             Computers
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ url_for('blogs.get_blogs') }}">
+                    <li class="nav-item padding_kidogo ">
+                        <a class="nav-link py-3" aria-current="page" href="{{ url_for('blogs.get_blogs') }}">
                             Blogs
                         </a>
                     </li>
@@ -79,7 +80,7 @@
     
                 <!-- User Profile Dropdown -->
                 {% if user %}
-                <div class="dropdown">
+                <div class="">
                     <a href="#" class="nav-link dropdown-toggle" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         {% if user.profile_picture %}
                         <img src="{{ url_for('uploaded_file', folder='users', filename=user.profile_picture) }}" alt="" width="32" height="32" class="rounded-circle me-2">
@@ -87,17 +88,17 @@
                         <img src="{{ url_for('uploaded_file', folder='users', filename='defaultuser.jpg') }}" alt="" width="32" height="32" class="rounded-circle me-2">
                         {% endif %}
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end nav-item" aria-labelledby="userDropdown">
-                        <li><a class="dropdown-item nav-link m-2" href="{{ url_for('user.edit_profile', user_id=user.id) }}">Update Profile</a></li>
-                        <li><a class="dropdown-item nav-link m-2" href="{{ url_for('user.view_profile', user_id=user.id) }}">View Profile</a></li>
-                        <li><a class="dropdown-item nav-link m-2" href="{{ url_for('user.logout') }}">Logout</a></li>
+                    <ul class=" dropdown dropdown-menu dropdown-menu-end  nav-item bg-light" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item nav-item nav-link m-2" href="{{ url_for('user.edit_profile', user_id=user.id) }}">Update Profile</a></li>
+                        <li><a class="dropdown-item nav-item nav-link m-2" href="{{ url_for('user.view_profile', user_id=user.id) }}">View Profile</a></li>
+                        <li><a class="dropdown-item nav-item nav-link m-2" href="{{ url_for('user.logout') }}">Logout</a></li>
                         <li class="nav-item">
                             <button class="nav-link active m-2" id="cart-icon" type="button">
                                 <i title="Orders" class="fa-duotone fa-solid fa-cart-shopping" style="--fa-primary-color: #74C0FC; --fa-secondary-color: #0d5d9b;"></i>
                             </button>
                         
                         </li>
-                        
+                        wewewe
                     
                         <li class="nav-item">
                             <a class="nav-link active m-2" aria-current="page" href=" {{ url_for('order.user_orders') }}">
@@ -107,7 +108,7 @@
                     </ul>
                 </div>
                 {% else %}
-                <a href="{{ url_for('user.login') }}" class="nav-link">
+                <a href="{{ url_for('user.login') }}" class=".nav-item-nav">
                     <i class="bi bi-person-circle"></i> Log In
                 </a>
                 {% endif %}
@@ -155,18 +156,17 @@
         {% endif %}
     {% endwith %}
 
-        <!-- Loader -->
-        <div id="page-loader">
-            <div class="loader">
-                <svg viewBox="25 25 50 50">
-                    <circle r="20" cy="50" cx="50"></circle>
-                  </svg>
-            </div>
-        </div>
 
 
-    {% block content %}
-    {% endblock %}
+        {% block content %}
+
+        {% endblock %}
+
+    <div class="col-lg-12">
+
+
+    </div>
+   
 
     <div class="whatsapp-button">    
         <a href="https://wa.me/+254722295419?text=Hello%20,%20I%20m%20interested%20in..." target="_blank">
@@ -174,99 +174,16 @@
         </a>
     </div>
 
-    <footer class="bg-dark footer mt-3">
-        <div class=" py-8">
-            <div class="container">
-                <div class="row gy-5">
-                    <div class="col-lg-8 pe-xxl-10">
-                        <div class="row gy-5">
-                            <div class="col-6 col-lg-4">
-                                <h5 class="text-white footer-title-01">NASIM GENERAL MERCHANTS</h5>
-                                <ul class="list-unstyled footer-link-01 m-0">
-                                    <li><a class="text-white text-opacity-75" href="#">Cars</a></li>
-                                    <li><a class="text-white text-opacity-75" href="#">Car Parts</a></li>
-                                    <li><a class="text-white text-opacity-75" href="#">Household Items</a></li>
-                                    <li><a class="text-white text-opacity-75" href="#">Computers</a></li>
-                                </ul>
-                            </div>
-                            <div class="col-6 col-lg-4">
-                                <h5 class="text-white footer-title-01">Find us online</h5>
-                                <ul class="list-unstyled footer-link-01 m-0">
-                                    <li>
-                                        <a class="text-white text-opacity-75" href="https://www.facebook.com/aselcars.cars?mibextid=kFxxJD" target="_blank">
-                                            <i class="fa-brands fa-facebook"></i> Facebook
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="text-white text-opacity-75" href="https://www.tiktok.com/yourprofile" target="_blank">
-                                            <i class="fa-brands fa-tiktok"></i> TikTok
-                                        </a>
-    
-                                    </li>
-                                    <li>
-                                        <a class="text-white text-opacity-75" href="https://www.youtube.com/yourchannel" target="_blank">
-                                            <i class="fa-brands fa-youtube"></i> YouTube
-                                        </a>
-    
-                                    </li>
-                                    <li>
-                                        <a class="text-white text-opacity-75" href="https://x.com/FrankOyoo" target="_blank">
-                                            <i class="fa-brands fa-x-twitter"></i> Twitter
-                                        </a>
-    
-                                    </li>
-                                    <li>
-    
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="col-6 col-lg-4">
-                                <h5 class="text-white footer-title-01">Need Help?</h5>
-                                <ul class="list-unstyled footer-link-01 m-0">
-                                    <li><a class="text-white text-opacity-75" href="#">Contact Us</a></li>
-                                    <li><a class="text-white text-opacity-75" href="#">FAQs</a></li>
-                                    <li><a class="text-white text-opacity-75" href="#">Offers &amp; Kits</a></li>
-                                    <li><a class="text-white text-opacity-75" href="#">Get the app</a></li>
-                                    <li><a class="text-white text-opacity-75" href="#">Store locator</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <h5 class="text-white footer-title-01 fs-5">Subscribe to our newsletter and get 15% off your next order.</h5>
-                        <div>
-                            <form class="d-flex flex-row mb-2 p-1 bg-white input-group"><input type="email" class="form-control rounded border-0" placeholder="Your Email"> <button class="btn btn-secondary flex-shrink-0" type="submit">Subscribe</button></form>
-                            <p class="fs-sm text-white text-opacity-75">I agree to receive Absolution newsletters</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom small py-3 border-top border-white border-opacity-10">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6 text-center text-md-start py-1">
-                        <p class="m-0 text-white text-opacity-75">© 2022 copyright by <a class="text-reset" href="#">bootdey.com</a></p>
-                    </div>
-                    <div class="col-md-6 text-center text-md-end py-1">
-                        <ul class="nav justify-content-center justify-content-md-end list-unstyled footer-link-01 m-0">
-                            <li class="p-0 mx-3 ms-md-0 me-md-3"><a href="#" class="text-white text-opacity-75">Privace &amp; Policy</a></li>
-                            <li class="p-0 mx-3 ms-md-0 me-md-3"><a href="#" class="text-white text-opacity-75">Faq's</a></li>
-                            <li class="p-0 mx-3 ms-md-0 me-md-3"><a href="#" class="text-white text-opacity-75">Get a Quote</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
+
 
 <!-- Include Bootstrap JS and dependencies -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+
 
 <script>
     // Initialize AOS (if necessary)
@@ -511,27 +428,7 @@ function updateSubtotal() {
     }
 }
 
-</script>
-<script>
-    // loader.js
-
-        // Function to show the loader
-        function showLoader() {
-            document.getElementById('page-loader').style.display = 'flex';
-        }
-
-        // Function to hide the loader
-        function hideLoader() {
-            document.getElementById('page-loader').style.display = 'none';
-        }
-
-        // Listen for page load event
-        window.addEventListener('load', hideLoader);
-
-        // Show loader when the page starts to load
-        window.addEventListener('beforeunload', showLoader);
-
-    function addToCart(itemId, targetType) {
+function addToCart(itemId, targetType) {
         $.ajax({
             url: "{{ url_for('cart.add_to_cart') }}",
             method: "POST",
@@ -553,6 +450,7 @@ function updateSubtotal() {
         });
     }
 </script>
+
 </body>
 </html>
 

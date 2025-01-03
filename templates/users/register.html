@@ -8,40 +8,45 @@ Register_User
 <div class="container-fluid d-flex align-items-center justify-content-center login vh-100" >
     <div class="row align-items-center justify-content-center w-100" >
 
-        <div class="form col-lg-6 bg-dark rounded p-4">
-            <a href="{{ url_for('user.google_register') }}" class="btn btn-google">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 48 48"><path fill="#4285F4" d="M23.49 12.28c0-.73-.06-1.43-.18-2.1H12v4.11h6.19c-0.26-1.28-1.02-2.36-2.19-2.9z"/><path fill="#34A853" d="M12 7.38c1.25 0 2.32-.42 3.14-1.14L9.12 3.23C8.2 4.1 7.02 4.61 5.74 4.61c-2.11 0-3.91-1.13-4.83-2.83L0 6.24C1.93 8.78 3.96 7.38 5.74 7.38z"/><path fill="#FBBC05" d="M5.74 7.38c1.72 0 3.21-0.58 4.25-1.57L9.12 3.23C8.2 4.1 7.02 4.61 5.74 4.61c-2.11 0-3.91-1.13-4.83-2.83L0 6.24C1.93 8.78 3.96 7.38 5.74 7.38z"/><path fill="#EA4335" d="M23.49 12.28c0-.73-.06-1.43-.18-2.1H12v4.11h6.19c-0.26-1.28-1.02-2.36-2.19-2.9z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
-                Register with Google
-            </a>
-            
+        <div class="form col-lg-4 mt-3 bg-dark rounded p-4" data-aos="zoom-out-up">
+            <div class="">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="" width="40" height="28">
+            </div>
             <form action="{{ url_for('user.register') }}" method="POST" class="text-white" id="loginForm">
                 <h4 class="text-center">Register with us</h4>
-                <div>
-                    <label class="form-label" for="username">Username</label>
-                    <input class="form-control" type="text" name="username" required>
+                <div> 
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" name="email" id="email" placeholder="Email" required>
+                    </div>
+                    <div class="">
+                        <label class="form-label" for="username">Username</label>
+                        <input class="form-control" type="text" name="username" required>
+                    </div>
+
                 </div>
                 <div>
-                    <label class="form-label" for="firstname">First Name</label>
-                    <input class="form-control" type="text" name="firstname" required>
+
+                    <div>
+                        <label class="form-label" for="firstname">First Name</label>
+                        <input class="form-control" type="text" name="firstname" required>  
+                        <label for="lastname" class="form-label">Last Name</label>
+                        <input class="form-control" type="text" name="lastname" required>
+                    </div>
                 </div>
-                <div>
-                    <label for="lastname" class="form-label">Last Name</label>
-                    <input class="form-control" type="text" name="lastname" required>
-                </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" name="email" id="email" placeholder="Email" required>
-                </div>
+
+
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
                     <input name="password" type="password" class="form-control" id="password" placeholder="Password" required>
                 </div>
-                <button class="btn btn-primary mb-3 mt-3" type="submit">Register</button>
+                <button class="btn-login" type="submit">Register</button>
             </form>
             
             <div class="text-center">
                 <p class="text-white">Already have an account? <a href="{{ url_for('user.login') }}" class="text-info">Log In here</a></p>
             </div>
+
         </div>
         
     </div>

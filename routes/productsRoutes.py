@@ -22,10 +22,12 @@ def create_product():
 
     if request.method == 'GET':
         categories = CategoryType
+        brands= Brand.query.all()
         return render_template(
             'products/new_product.html',
             categories=categories,
-            user=current_user
+            user=current_user,
+            brands=brands
         )
 
     if request.method == 'POST':
@@ -35,6 +37,7 @@ def create_product():
         stock = request.form.get('stock', 1)  # Default stock to 1
         description = request.form.get('description')
         category = request.form.get('category')
+        brand = request.form.get('brand')
 
         # Validate form fields
         if not name or not price:
@@ -49,7 +52,8 @@ def create_product():
                 stock=stock,
                 description=description,
                 category=CategoryType[category],
-                user_id=current_user.get('id') if current_user else None
+                user_id=current_user.get('id') if current_user else None,
+                brand_id=brand
             )
             db.session.add(new_product)
             db.session.commit()  # Commit to generate the product ID
@@ -202,7 +206,6 @@ def add_specifications(product_id):
     product = Product.query.get_or_404(product_id)
 
     # Get form data
-    brand_id = request.form.get('brand')
     category_id = request.form.get('category')
     spec_keys = request.form.getlist('spec_key[]')
     spec_values = request.form.getlist('spec_value[]')
@@ -213,7 +216,6 @@ def add_specifications(product_id):
             product_id=product.id,
             key=key,
             value=value,
-            brand_id=brand_id,
             category_id=category_id
         )
         db.session.add(specification)

@@ -35,6 +35,8 @@ body {
 /* Applies to heading throughout the website */
 .heading{
   color: var(--heading-color);
+  font-weight: 700;
+  letter-spacing: 1px;
 }
 
   /* General styles for the status bubble */
@@ -137,20 +139,6 @@ body {
 }
 
 
-#page-loader {
-  position: fixed;    /* Fix it in place */
-  top: 0;             /* Position at the top */
-  left: 0;            /* Position at the left */
-  width: 100%;        /* Full width */
-  height: 100%;       /* Full height */
-  background: rgba(255, 255, 255, 0.8); /* Slight background color to overlay */
-  display: flex;      /* Flexbox to center the loader */
-  justify-content: center;  /* Horizontally center */
-  align-items: center;     /* Vertically center */
-  z-index: 9999;      /* High z-index to stay on top */
-}
-
-
    /*============= Start of  NAVIGATION =============*/
     
    .navbar-brand img{
@@ -164,8 +152,8 @@ body {
 
   }
   
-  .nav-item{
-    padding: .5rem;
+  .padding_kidogo {
+    padding: .5rem!important;
   }
   
   .nav-link{
@@ -347,14 +335,6 @@ body {
 }
 /*============= Start of contact Section. =============*/
 
-.form{
-  height: 100%;
-  padding: 20px;
-  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
-  background-color: var(--card-bg-color);
-  margin: 10px;
-
-}
 
 .email-form {
   background-color: var(--card-bg-color);

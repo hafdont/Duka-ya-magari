@@ -2,14 +2,19 @@ from flask import Blueprint, request, jsonify, render_template, session, redirec
 from functools import wraps
 from flask_bcrypt import Bcrypt
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 from enum import Enum
 from models import User, UserRole,  UserStatus, Gender
-from app import db, login_manager, google
+from app import db, login_manager, google, mail, app
+from flask_mail import Message
 from flask_login import login_user, logout_user, LoginManager
-from datetime import timedelta
+import logging
+
+# Add logging for Flask-Mail
+app.logger.setLevel(logging.DEBUG)
+
 
 bcrypt = Bcrypt()
 user_bp = Blueprint('user', __name__)
@@ -113,7 +118,6 @@ def register():
         flash("User registered successfully!", "success")
         return redirect(url_for('user.login'))
 
-
 # Google OAuth callback route
 @user_bp.route('/google_register')
 def google_register():
@@ -172,6 +176,9 @@ def google_register():
     flash("User registered and logged in via Google!", "success")
     return redirect(url_for('home_bp.index'))
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 # Route to initiate Google login
 @user_bp.route('/google_login')
@@ -337,49 +344,104 @@ def view_profile(user_id):
                            reviews_count=user_reviews_count)
 
 
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
+
+       # try:
+        # Create the email message
+      #  msg = Message(
+           # subject=subject,
+          #  recipients=[app.config['MAIL_USERNAME']],  # The recipient email
+           # sender=email,  # User's email as sender
+            #html=render_template(
+             #   'email/email_template.html',  # Template path
+              #  subject=subject,
+               # name=name,
+                #email=email,
+                #message=message
+          #  )
+       # )
+
+        # Send the email
+       # mail.send(msg)
+       # return jsonify({"message": "Email sent successfully!"}), 200
+   # except Exception as e:
+    #    app.logger.error(f"Error sending email: {e}")
+     #   return jsonify({"message": "Failed to send email"}), 500
 
 
-@user_bp.route('/login/google')
-def login_google():
-    redirect_uri = url_for('user.authorize_google', _external=True)
-    return google.authorize_redirect(redirect_uri)
+@user_bp.route('/reset_password_request', methods=['GET', 'POST'])
+def reset_password_request():
+    if request.method == 'POST':
+        identifier = request.form['identifier']  # This can be either username or email
 
-@user_bp.route('/auth/google/callback')
-def google_callback():
-    token = google.authorize_access_token()
-    user_info = google.get('https://www.googleapis.com/oauth2/v3/userinfo').json()
+        # Find the user by either username or email
+        user = User.query.filter((User.email == identifier) | (User.username == identifier)).first()
 
-    # Extract user info from the response
-    email = user_info.get('email')
-    first_name = user_info.get('given_name')
-    last_name = user_info.get('family_name')
+        if user:
+            print(user.email)
+            # Generate a bcrypt token for the reset link
+            reset_token = user.generate_reset_token()  # Token generation logic here
+            reset_link = url_for('user.reset_password', token=reset_token, _external=True)
+            
 
-    # Check if the user already exists in the database
-    user = User.query.filter_by(email=email).first()
+            # Set the reset token and expiration in the user record
+            user.reset_token = reset_token
+            user.reset_token_expiry = datetime.now() + timedelta(minutes=30)  # 30-minute expiry
+            db.session.commit()
 
-    if not user:
-        # If the user doesn't exist, create a new user
-        user = User(
-            email=email,
-            firstname=first_name,
-            lastname=last_name,
-            role=UserRole.CUSTOMER  # Default role for new users
-        )
-        db.session.add(user)
-        db.session.commit()
+            try:
+                # Create the email message
+                msg = Message(
+                    subject="Password Reset",
+                    recipients=[user.email],  # The recipient email
+                    html=render_template(
+                        'email/email_template.html',  # Template path
+                        message=f"Click the link below to reset your password:\n{reset_link}"
+                    )
+                )
 
-    # Store user info in the session
-    session['user'] = {
-        'id': user.id,
-        'username': user.username,
-        'firstname': user.firstname,
-        'lastname': user.lastname,
-        'role': user.role.value,
-    }
+                # Log before sending email
+                app.logger.debug(f"Sending email to: {user.email}")
+                # Send the email
+                mail.send(msg)
 
-    flash("Login successful!", "success")
-    return redirect(url_for('home_bp.index'))
+                # Log success
+                app.logger.debug(f"Email successfully sent to: {user.email}")
 
+                flash("Password reset link sent! Check your email.", "info")
+                return redirect(url_for('user.login'))
+            except Exception as e:
+                app.logger.error(f"Error sending email: {e}")
+                flash("There was an error sending the password reset email. Please try again.", "danger")
+                return redirect(url_for('user.reset_password_request'))
+            
+        flash("No user found with that username or email.", "danger")
+        return redirect(url_for('user.reset_password_request'))
+            
+    return render_template('reset_password_request.html')
+
+@user_bp.route('/reset_password/<path:token>', methods=['GET', 'POST'])
+def reset_password(token):
+    user = User.query.filter_by(reset_token=token).first()
+    print(token)
+
+    # Check if the user exists, and the token is valid (i.e., not expired)
+    if user and user.reset_token_expiry > datetime.now():
+        if request.method == 'POST':
+            new_password = request.form['password']
+
+            # Hash the new password using bcrypt
+            hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
+            
+            # Update the user's password
+            user.password = hashed_password
+            user.reset_token = None  # Clear the token after successful reset
+            user.reset_token_expiry = None  # Clear the expiry timestamp
+            db.session.commit()
+
+            flash("Your password has been reset. Please log in.", "success")
+            return redirect(url_for('user.login'))
+
+        return render_template('reset_password.html', token=token)
+
+    flash("The reset link is either invalid or expired.", "danger")
+    return redirect(url_for('user.reset_password_request'))

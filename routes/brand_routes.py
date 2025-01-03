@@ -4,7 +4,10 @@ from flask import Blueprint, request, render_template, session, redirect, url_fo
 from werkzeug.utils import secure_filename
 from .user_routes import admin_required
 from models import User, Brand,CategoryType, Product, Order, Item, ProductSpecification, Car, db
-
+from app import app, db
+from sqlalchemy.orm import joinedload
+from collections import Counter
+from sqlalchemy import func, case
 brand_bp = Blueprint('brand_bp', __name__)
 
 BRAND_UPLOAD_FOLDER = os.getenv('BRAND_UPLOAD_FOLDER', 'uploads/brands')
@@ -104,21 +107,21 @@ def read_brand(brand_id):
     # Get the list of cars under this brand
     cars = Car.query.filter_by(brand_id=brand.id).all()
 
-    # Count the number of products under this brand (via ProductSpecification)
-    products_count = db.session.query(Product).join(ProductSpecification).filter(ProductSpecification.brand_id == brand.id).count()
+    # Count the number of products under this brand 
+    products_count = Product.query.filter_by(brand_id=brand.id).all()
 
     # Get the list of products under this brand
-    products = db.session.query(Product).join(ProductSpecification).filter(ProductSpecification.brand_id == brand.id).all()
+    products = Product.query.filter_by(brand_id=brand.id).all()
 
     # Count the number of orders containing products or cars from this brand
     orders_count = db.session.query(Order).join(Item).outerjoin(Product, Item.product_id == Product.id).outerjoin(Car, Item.car_id == Car.id) \
-    .filter((ProductSpecification.brand_id == brand.id) | (Car.brand_id == brand.id)) \
-    .distinct(Order.id).count()
+        .filter((Product.brand_id == brand.id) | (Car.brand_id == brand.id)) \
+        .distinct(Order.id).count()
 
     # Get the list of orders containing products or cars from this brand
     orders = db.session.query(Order).join(Item).outerjoin(Product, Item.product_id == Product.id).outerjoin(Car, Item.car_id == Car.id) \
-    .filter((ProductSpecification.brand_id == brand.id) | (Car.brand_id == brand.id)) \
-    .distinct(Order.id).all()
+        .filter((Product.brand_id == brand.id) | (Car.brand_id == brand.id)) \
+        .distinct(Order.id).all()
 
     return render_template('Brand/view.html', brand=brand, user=current_user, cars_count=cars_count, products_count=products_count, orders_count=orders_count, cars=cars, products=products, orders=orders)
 
@@ -161,12 +164,107 @@ def update_brand(brand_id):
 
     return redirect(url_for('brand_bp.view_all_brands'))  # Fallback return
     
-# Delete a Brand
 @brand_bp.route('/Brand/delete/<int:brand_id>', methods=['POST'])
 @admin_required
 def delete_brand(brand_id):
+    current_user = session.get('user', None)
     brand = Brand.query.get_or_404(brand_id)
+
+    # Update all cars that reference this brand to set their brand_id to None
+    # Ensure that all related cars have their brand_id set to NULL
+    cars_to_update = Car.query.filter_by(brand_id=brand.id).all()
+    products_to_update = Product.query.filter_by(brand_id=brand_id).all()
+    for car in cars_to_update:
+        car.brand_id = None
+
+    for product in products_to_update:
+        product.brand_id = None
+
+    # Commit the updates to the cars
+    db.session.commit()
+
+    # Now, delete the brand
     db.session.delete(brand)
     db.session.commit()
+
     flash("Brand deleted successfully!", "success")
     return redirect(url_for('brand_bp.view_all_brands'))
+
+@brand_bp.route('/Brands/admin')
+@admin_required
+def brand_home():
+    current_user = session.get('user', None)
+    
+    try:
+        # Get all brands
+        brands = Brand.query.all()
+
+        # Query to get orders related to products
+        product_orders = db.session.query(
+            Product.brand_id,
+            Order.order_status,
+            func.count(Order.id).label('order_count')
+        ).join(
+            Item, Item.product_id == Product.id
+        ).join(
+            Order, Order.id == Item.order_id
+        ).group_by(
+            Product.brand_id, Order.order_status
+        ).all()
+
+        # Query to get orders related to cars
+        car_orders = db.session.query(
+            Car.brand_id,
+            Order.order_status,
+            func.count(Order.id).label('order_count')
+        ).join(
+            Item, Item.car_id == Car.id
+        ).join(
+            Order, Order.id == Item.order_id
+        ).group_by(
+            Car.brand_id, Order.order_status
+        ).all()
+
+        # Combine product and car order counts
+        brand_order_status = {}
+        for product_order in product_orders:
+            if product_order.brand_id not in brand_order_status:
+                brand_order_status[product_order.brand_id] = {}
+            brand_order_status[product_order.brand_id][product_order.order_status] = product_order.order_count
+
+        for car_order in car_orders:
+            if car_order.brand_id not in brand_order_status:
+                brand_order_status[car_order.brand_id] = {}
+            brand_order_status[car_order.brand_id][car_order.order_status] = car_order.order_count
+
+        # Filter brands based on low stock of products and cars
+        brands_with_low_stock = Brand.query.outerjoin(Product).filter(Product.stock < 5).all()
+        brands_with_no_cars = Brand.query.outerjoin(Car).filter(Car.stock == 0).all()
+
+        # Brand statistics (products and cars count)
+        brand_stats = []
+        for brand in brands:
+            brand_products = Product.query.filter_by(brand_id=brand.id).count()
+            brand_cars = Car.query.filter_by(brand_id=brand.id).count()
+            low_stock_products = Product.query.filter_by(brand_id=brand.id, stock=0).count()
+            brand_stats.append({
+                'brand_name': brand.brand_name,
+                'brand_products': brand_products,
+                'brand_cars': brand_cars,
+                'low_stock_products': low_stock_products
+            })
+        
+    except Exception as e:
+        app.logger.error(f"Error in brand home: {e}")
+        return render_template('error.html', message="An error occurred while loading brand data.")
+
+    # Render the template and pass the required data
+    return render_template(
+        'Brand/brandHome.html', 
+        user=current_user,
+        brands=brands,
+        brands_with_low_stock=brands_with_low_stock, 
+        brands_with_no_cars=brands_with_no_cars, 
+        brand_stats=brand_stats,
+        brand_order_status=brand_order_status
+    )

@@ -5,9 +5,186 @@ Home Page
 
 {% block main_content %}
 
-<div class="row">
-      <h1>ola Admin</h1> yeye
+<div class="container-fluid ">
+
+    <h3 class="mt-5 mb-3 heading">Admin Dashboard</h3>
+    <div class="row">
+        <!-- Monthly User Growth Graph -->
+        <div class="col-12 col-md-6 mb-4">
+            <div class="card" style="height:25rem">
+                <div class="card-body">
+                    <h5>User Growth ({{ period.capitalize() }} View)</h5>
+                    <canvas id="userGrowthChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Status Breakdown (Pie Chart) -->
+        <div class="col-12 col-md-6 mb-4" style="height:25rem">
+            <div class="card">
+                <div class="card-body">
+                    <h5>User Status Breakdown</h5>
+                    <canvas id="userStatusChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Stock Summary -->
+    <div class="row mb-4">
+        <!-- Low Stock and Out of Stock Products -->
+        <div class="col-12 col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Product Stock Summary</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Low Stock Products (Threshold: 5 units)</h6>
+                    <ul>
+                        {% for product in product_stock_data.low_stock_products %}
+                            <li>{{ product.name }} ({{ product.stock }} in stock)</li>
+                        {% endfor %}
+                    </ul>
+                    <h6>Out of Stock Products: {{ product_stock_data.out_of_stock_products }}</h6>
+                    <h6>Total Products: {{ product_stock_data.total_products }}</h6>
+                    <h6>Total Cars: {{ total_cars }}</h6>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Product Stock Summary</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Low Stock Products (Threshold: 5 units)</h6>
+                    <ul>
+                        {% for product in product_stock_data.low_stock_products %}
+                            <li>{{ product.name }} ({{ product.stock }} in stock)</li>
+                        {% endfor %}
+                    </ul>
+                    <h6>Out of Stock Products: {{ product_stock_data.out_of_stock_products }}</h6>
+                    <h6>Total Products: {{ product_stock_data.total_products }}</h6>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5>Product Stock Summary</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Low Stock Products (Threshold: 5 units)</h6>
+                    <ul>
+                        {% for product in product_stock_data.low_stock_products %}
+                            <li>{{ product.name }} ({{ product.stock }} in stock)</li>
+                        {% endfor %}
+                    </ul>
+                    <h6>Out of Stock Products: {{ product_stock_data.out_of_stock_products }}</h6>
+                    <h6>Total Products: {{ product_stock_data.total_products }}</h6>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
+<script>
+    // Set up the initial chart data
+    var initialData = {
+        months: {{ user_growth_data.months|tojson }},
+        user_counts: {{ user_growth_data.user_counts|tojson }},
+    };
+
+    // Function to update the chart data from the server (via polling)
+    function updateUserGrowthData() {
+        fetch('/home?period={{ period }}', { method: 'GET' })
+            .then(response => response.json())
+            .then(data => {
+                userGrowthChart.data.labels = data.months; // Update months
+                userGrowthChart.data.datasets[0].data = data.user_counts; // Update user counts
+                userGrowthChart.update(); // Redraw the chart with new data
+            })
+            .catch(error => console.error('Error fetching user growth data:', error));
+    }
+
+    // Create the chart
+    var ctx = document.getElementById('userGrowthChart').getContext('2d');
+    var userGrowthChart = new Chart(ctx, {
+        type: 'line',  // You can change to 'bar' or other types
+        data: {
+            labels: initialData.months,  // Initial months
+            datasets: [{
+                label: 'New Users',
+                data: initialData.user_counts,  // Initial user counts
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',  // Light green background
+                borderColor: 'rgba(75, 192, 192, 1)',  // Bold green line
+                borderWidth: 3,
+                pointRadius: 5,  // Larger data points
+                pointBackgroundColor: 'rgba(75, 192, 192, 1)',  // Green color for points
+                pointBorderWidth: 2,
+                fill: true,  // Fill the area under the line
+            }]
+        },
+        options: {
+            responsive: false,  // Enable responsiveness
+            maintainAspectRatio: false,  // Allow it to resize
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)',  // Light grid lines
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)',  // Light grid lines
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    cornerRadius: 5,
+                    padding: 10,
+                }
+            }
+        }
+    });
+
+    // Update the chart every 30 seconds (for live updates)
+    setInterval(updateUserGrowthData, 30000);  // Update every 30 seconds
+
+    // User Status Breakdown Chart (Pie chart)
+    var ctxUserStatus = document.getElementById('userStatusChart').getContext('2d');
+    var userStatusChart = new Chart(ctxUserStatus, {
+        type: 'pie',
+        data: {
+            labels: {{ user_status_data.labels|tojson }},
+            datasets: [{
+                data: {{ user_status_data.data|tojson }},
+                backgroundColor: ['rgba(54, 162, 235, 0.5)', 'rgba(255, 159, 64, 0.5)'],
+                borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 159, 64, 1)'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: false,  // Enable responsiveness
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return tooltipItem.label + ': ' + tooltipItem.raw + ' users';
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
 
 {% endblock %}
