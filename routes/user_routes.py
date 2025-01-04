@@ -29,23 +29,35 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-def get_user_data_from_form(form):
-    return {
+def get_user_data_from_form(form, current_user=None):
+    data = {
         'username': form.get('username'),
         'firstname': form.get('firstname'),
         'lastname': form.get('lastname'),
         'email': form.get('email'),
         'password': form.get('password'),
-        'role': form.get('role'),  # Role field (admin or customer)
         'city': form.get('city'),
         'postal_code': form.get('postal_code'),
-        'country': form.get('country'),  # Added country field
+        'country': form.get('country'),
         'phone_number': form.get('phone_number'),
         'bio': form.get('bio'),
-        'date_of_birth': form.get('date_of_birth'),  # Added date_of_birth field
-        'gender': form.get('gender'),  # Added gender field
-        'status': form.get('status'),  # Added status field (active/inactive)
+        'date_of_birth': form.get('date_of_birth'),
+        'gender': form.get('gender'),
+        'status': form.get('status'),
     }
+
+    # Only allow admins to modify the role
+    if current_user and current_user['role'] == 'admin':
+        data['role'] = form.get('role')
+    elif current_user:
+        # If not admin, ensure role stays unchanged (don't set it to null)
+        data['role'] = current_user['role']
+    else:
+        # If current_user is None, don't set a role (like in registration)
+        data['role'] = 'customer'  # Default to 'customer' role
+
+    return data
+
 
 def admin_required(f):
     @wraps(f)
@@ -186,6 +198,7 @@ def google_login():
     redirect_uri = url_for('user_bp.google_register', _external=True)
     return google.authorize_redirect(redirect_uri)
 
+
 # Edit User Profile
 @user_bp.route('/editProfile/<int:user_id>', methods=['GET', 'POST'])
 def edit_profile(user_id):
@@ -210,7 +223,7 @@ def edit_profile(user_id):
         return render_template('users/userEdit.html', user=user_to_edit, roles=UserRole)
 
     if request.method == 'POST':
-        user_data = get_user_data_from_form(request.form)
+        user_data = get_user_data_from_form(request.form, current_user)
 
         # Handle profile picture upload with validation
         if 'profile_picture' in request.files:
@@ -303,7 +316,7 @@ def view_all_users():
     search_query = request.args.get('search')
 
     if search_query:
-        users = User.query.filter(User.username.contains(search_query) | User.email.contains(search_query)).all()
+        users = User.query.filter(User.username.contains(search_query) | User.email.contains(search_query) | User.phone_number.contains(search_query)).all()
     else:
         users = User.query.all()
 
@@ -343,29 +356,6 @@ def view_profile(user_id):
                            cars_count=user_cars_count,
                            reviews_count=user_reviews_count)
 
-
-
-       # try:
-        # Create the email message
-      #  msg = Message(
-           # subject=subject,
-          #  recipients=[app.config['MAIL_USERNAME']],  # The recipient email
-           # sender=email,  # User's email as sender
-            #html=render_template(
-             #   'email/email_template.html',  # Template path
-              #  subject=subject,
-               # name=name,
-                #email=email,
-                #message=message
-          #  )
-       # )
-
-        # Send the email
-       # mail.send(msg)
-       # return jsonify({"message": "Email sent successfully!"}), 200
-   # except Exception as e:
-    #    app.logger.error(f"Error sending email: {e}")
-     #   return jsonify({"message": "Failed to send email"}), 500
 
 
 @user_bp.route('/reset_password_request', methods=['GET', 'POST'])

@@ -243,24 +243,36 @@ def update_order(order_id):
 
 # Endpoint to display all orders for the logged-in user with status filtering
 @order_bp.route('/user/orders', methods=['GET'])
-def user_orders():
+@order_bp.route('/user/orders/<int:user_id>', methods=['GET'])
+def user_orders(user_id=None):
     if 'user' not in session:  # Check if the user is logged in
         flash("You must be logged in to view your orders.", "danger")
         return redirect(url_for('user.login'))
+    
+    current_user = User.query.get(session['user']['id'])  # Fetch the actual logged-in user from the DB
 
-    current_user = session['user']
+    if user_id:  # If a user_id is provided, check for that specific user's orders
+        target_user = User.query.get(user_id)
 
-    # Fetch orders based on the logged-in user
-    user_orders = Order.query.filter_by(user_id=current_user['id']).all()
+        if target_user is None:
+            flash("User not found.", "danger")
+            return redirect(url_for('user.index'))
+
+        # Check if the logged-in user is allowed to view this user's orders
+        if session['user']['role'] != 'admin' and current_user.id != target_user.id:
+            flash("You are not authorized to view this user's orders.", "danger")
+            return redirect(url_for('user.view_profile', user_id=current_user.id))
+    else:
+        target_user = current_user  # If no user_id is provided, show the logged-in user's orders
+
+    # Fetch orders for the target user
+    user_orders = Order.query.filter_by(user_id=target_user.id).all()
 
     # Fetch orders by status for filtering purposes
-    pending_orders = Order.query.filter_by(user_id=current_user['id'], order_status='pending').all()
-    approved_orders = Order.query.filter_by(user_id=current_user['id'], order_status='approved').all()
-    rejected_orders = Order.query.filter_by(user_id=current_user['id'], order_status='rejected').all()
-    completed_orders = Order.query.filter_by(user_id=current_user['id'], order_status='completed').all()
-
-    # Fetch all orders regardless of status for other purposes (if needed)
-    all_orders = Order.query.filter_by(user_id=current_user['id']).all()
+    pending_orders = Order.query.filter_by(user_id=target_user.id, order_status='pending').all()
+    approved_orders = Order.query.filter_by(user_id=target_user.id, order_status='approved').all()
+    rejected_orders = Order.query.filter_by(user_id=target_user.id, order_status='rejected').all()
+    completed_orders = Order.query.filter_by(user_id=target_user.id, order_status='completed').all()
 
     # Organize orders by status
     orders_by_status = {
@@ -271,10 +283,10 @@ def user_orders():
     }
 
     # Render template with filtered orders and categorized by status
-    return render_template('users/user_orders.html', 
-                           user_orders=user_orders, 
-                           orders_by_status=orders_by_status, 
-                           user=current_user)
+    return render_template('users/user_orders.html',
+                           user_orders=user_orders,
+                           orders_by_status=orders_by_status,
+                           user=target_user)
 
 # Endpoint to display details of a specific order
 @order_bp.route('/user/orders/<int:order_id>', methods=['GET'])
@@ -293,7 +305,6 @@ def order_details(order_id):
 
     # Fetch related items in the order
     items = Item.query.filter_by(order_id=order.id).all()
-    print(items)
 
     return render_template('users/order_details.html', order=order, items=items, user=current_user)
 

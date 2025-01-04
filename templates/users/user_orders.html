@@ -34,7 +34,7 @@
                             {% set orders = orders_by_status[status] %}
                             {% if orders %}
                                 {% for order in orders %}
-                                    <tr class="order-row" onclick="location.href='{{ url_for('order.order_details', order_id=order.id) }}'" style="cursor: pointer;">
+                                    <tr class="order-row" onclick="location.href='{{ url_for('order.get_order', order_id=order.id) }}'" style="cursor: pointer;">
                                         <td>{{ order.id }}</td>
                                         <td>
                                             {% if order.user %}

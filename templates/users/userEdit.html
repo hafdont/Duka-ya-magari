@@ -2,12 +2,13 @@
 
 {% block content %}
 
-<div class="container-fluid d-flex align-items-center justify-content-center">
+<div class="container-fluid d-flex align-items-center justify-content-center  mt-3">
     <div class="row align-items-center justify-content-center w-100">
-        <div class="col-6">
-            <h2>Edit Profile</h2>
-            <form method="POST" action="{{ url_for('user.edit_profile', user_id=user.id) }}" enctype="multipart/form-data">
-                
+        <div class="col-8">
+            
+            <form class="form" method="POST" action="{{ url_for('user.edit_profile', user_id=user.id) }}" enctype="multipart/form-data">
+                <h2 class="mt-3 heading">Edit Profile</h2>
+            
                 <!-- Name Group -->
                 <div class="mb-3 d-flex">
                     <div class="me-2 col-lg-4" style="flex: 1;">
@@ -23,61 +24,67 @@
                         <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required>
                     </div>
                 </div>
-
-                <!-- Email and Username Group -->
+            
+                <!-- Email and Phone Number Group -->
                 <div class="mb-3 d-flex">
-
-                    <div style="flex: 1;">
+                    <div class="col-lg-5">
                         <label for="email" class="form-label">Email</label>
                         <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
                     </div>
+                    <div class="mb-3 col-lg-5">
+                        <label for="phone_number" class="form-label">Phone Number</label>
+                        <input type="text" class="form-control" id="phone_number" name="phone_number" value="{{ user.phone_number }}">
+                    </div>
                 </div>
-
-                <!-- Phone Number Group -->
-                <div class="mb-3">
-                    <label for="phone_number" class="form-label">Phone Number</label>
-                    <input type="text" class="form-control" id="phone_number" name="phone_number" value="{{ user.phone_number }}">
-                </div>
-
+            
                 <!-- Location and Address Group -->
-                <div class="mb-3">
-                    <label for="location" class="form-label">Location</label>
-                    <input type="text" class="form-control" id="location" name="location" value="{{ user.location }}">
+                <div class="col-lg-10 d-flex">
+                    <div class="mb-3 m-1 col-lg-3">
+                        <label for="country" class="form-label">Country</label>
+                        <input type="text" class="form-control" id="country" name="country" value="{{ user.country }}">
+                    </div>
+                    <div class="mb-3 m-1 col-lg-3">
+                        <label for="city" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="city" name="city" value="{{ user.city }}" placeholder="{{ user.city }}">
+                    </div>
+                    <div class="mb-3 m-1 col-lg-3">
+                        <label for="postal_code" class="form-label">Postal Code</label>
+                        <input type="text" class="form-control" id="postal_code" name="postal_code" value="{{ user.postal_code }}">
+                    </div>
                 </div>
+            
+                <!-- Bio and Profile Picture Group -->
+                    <div class="mb-3 ">
+                        <label for="bio" class="form-label">Bio</label>
+                        <textarea class="form-control" id="bio" name="bio" rows="4">{{ user.bio }}</textarea>
+                    </div>
+            
+                    <div class="mb-3 ">
+                        <label for="profile_picture" class="form-label">Profile Picture</label>
+                        <input type="file" class="form-control" id="profile_picture" name="profile_picture">
+                    </div>
+
+                    <div class="row">
+                        <div class="mb-3 col-lg-3">
+                            <label for="date_of_birth" class="form-label">Date Of Birth:</label>
+                            <input type="date" class="form-control" id="date_of_birth" name="date_of_birth">
+                        </div>
                 
-                <div class="mb-3">
-                    <label for="postal_code" class="form-label">Postal Code</label>
-                    <input type="text" class="form-control" id="postal_code" name="postal_code" value="{{ user.postal_code }}">
-                </div>
+                        <!-- Gender Section -->
+                        <div class="mb-3 col-lg-3">
+                            <label for="gender" class="form-label">Gender</label>
+                            <select class="form-select" id="gender" name="gender">
+                                <option value="{{ user.gender.value }}"> Currently set to: {{ user.gender.value }}</option>
+                                <option value="male" {% if user.gender == 'male' %}selected{% endif %}>Male</option>
+                                <option value="female" {% if user.gender == 'female' %}selected{% endif %}>Female</option>
+                            </select>
+                        </div>
 
-                <!-- Country Field -->
-                <div class="mb-3">
-                    <label for="country" class="form-label">Country</label>
-                    <input type="text" class="form-control" id="country" name="country" value="{{ user.country }}">
-                </div>
+                    </div>
+            
 
-                <!-- Bio Section -->
-                <div class="mb-3">
-                    <label for="bio" class="form-label">Bio</label>
-                    <textarea class="form-control" id="bio" name="bio" rows="4">{{ user.bio }}</textarea>
-                </div>
-
-                <!-- Profile Picture Upload -->
-                <div class="mb-3">
-                    <label for="profile_picture" class="form-label">Profile Picture</label>
-                    <input type="file" class="form-control" id="profile_picture" name="profile_picture">
-                </div>
-
-                <!-- Gender Section -->
-                <div class="mb-3">
-                    <label for="gender" class="form-label">Gender</label>
-                    <select class="form-select" id="gender" name="gender">
-                        <option value="male" {% if user.gender == 'male' %}selected{% endif %}>Male</option>
-                        <option value="female" {% if user.gender == 'female' %}selected{% endif %}>Female</option>
-                    </select>
-                </div>
-
-                <!-- Status and roles Field (Only visible to admins) -->
+            
+                <!-- Status and Roles Field (Only visible to admins) -->
                 {% if session.user.role == 'admin' %}
                 <div class="mb-3">
                     <label for="status" class="form-label">User Status</label>
@@ -86,23 +93,24 @@
                         <option value="inactive" {% if user.status == 'inactive' %}selected{% endif %}>Inactive</option>
                     </select>
                 </div>
-
+            
                 <div class="mb-3">
                     <label for="role" class="form-label">User Role</label>
                     <select class="form-select" id="role" name="role">
-                        <option value="{{ user.role.value }}">  {{ user.role.name }} </option>
+                        <option value="{{ user.role }}">  {{ user.role.name }} </option>
                         {% for role in roles %}
-                        <option id="role" name="role" value="{{ role.value }}">{{ role.name }}</option>
+                            <option value="{{ role.value }}">{{ role.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 {% endif %}
-
-
-
-                <button type="submit" class="btn btn-primary mb-3">Update Profile</button>
-                <a href="{{ url_for('user.view_profile', user_id=user.id) }}" class="btn btn-secondary">Cancel</a>
+            
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-primary mb-3">Update Profile</button>
+                    <a href="{{ url_for('user.view_profile', user_id=user.id) }}" class="btn btn-secondary">Cancel</a>
+                </div>
             </form>
+            
         </div>
     </div>
 </div>
