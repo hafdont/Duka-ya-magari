@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container-fluid m-3">
+<div class="container-fluid bg-ligh tm-3">
     <div class="row">
         <!-- Left Column -->
-        <div class="col-lg-7 mb-4 car">
-            <div class="car-image w-100">
+        <div class="col-lg-7 mt-3 mb-4 ">
+            <div class="car-image holders w-100">
                 <!-- Main Car Image Carousel -->
                 <div id="carousel-{{ car.id }}" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-inner">
@@ -46,32 +46,54 @@
                 {% endfor %}
             </div>
 
-            <div class="car-description mt-4" style="font-size: .8rem;">
+            <div class="car-description mt-4 holders py-3 m-3 mt-3 "style="font-size: .8rem;">
                 <h4 class="heading">Overview</h4>
                 <div class="profile-info col-md-9">
                     <div class="panel">
                         <div class="panel-body bio-graph-info">
-                            <div class="row">
-                                <div class="bio-row">
-                                    <p><span>Make</span>: <strong> {{ car.brand.brand_name }}</strong></p>
+                            <div class="row text-uppercase">
+                                <div class="bio-row col-lg-6 ">
+                                    <p class="text-uppercase heading"><span>Make</span>: <strong> {{ car.brand.brand_name }}</strong></p>
                                 </div>
-                                <div class="bio-row">
-                                    <p><span>Car Model</span>: <strong> {{ car.model }}</strong></p>
+                                <div class="bio-row col-lg-6">
+                                    <p class="text-uppercase "><span>Car Model</span>: <strong> {{ car.model }}</strong></p>
                                 </div>
-                                <div class="bio-row">
-                                    <p><span>Y.O.M</span>: <strong> {{ car.year }}</strong></p>
+                                <div class="bio-row col-lg-6">
+                                    <p class="text-uppercase "><span>Y.O.M</span>: <strong> {{ car.year }}</strong></p>
                                 </div>
-                                <div class="bio-row">
-                                    <p><span>Mileage</span>: <strong> {{ car.mileage }} mi</strong></p>
+                                <div class="bio-row col-lg-6">
+                                    <p class="text-uppercase"><span>Mileage</span>: <strong> {{ car.mileage }} mi</strong></p>
                                 </div>
-                                <div class="bio-row">
-                                    <p><span>Transmission</span>: <strong> {{ car.transmission }}</strong></p>
+                                <div class="bio-row col-lg-6">
+                                    <p class="text-uppercase"><span>Transmission</span>: <strong> {{ car.transmission }}</strong></p>
                                 </div>
-                                <div class="bio-row">
-                                    <p><span>Exterior Color</span>: <strong> {{ car.exterior_color }}</strong></p>
+                                <div class="bio-row col-lg-6">
+                                    <p class="text-uppercase"><span>Exterior Color</span>: <strong> {{ car.exterior_color }}</strong></p>
                                 </div>
-                                <div class="bio-row">
-                                    <p><span>Interior Color</span>: <strong> {{ car.interior_color }}</strong></p>
+                                <div class="bio-row col-lg-6">
+                                    <p class="text-uppercase"><span>Interior Color</span>: <strong> {{ car.interior_color }}</strong></p>
+                                </div>
+                                <div class="bio-row col-lg-6">
+                                    <p class="text-uppercase"> <span>Condition:  </span><strong>{{ car.condition}} </strong>
+                                    </p>
+                                </div>
+                                <div class="bio-row col-lg-6">
+                                    <p class="text-uppercase">
+                                        <span> Fuel Type:</span> <strong> {{ car.fuel_type }}</span></strong>
+                                    </p>
+                                </div>
+                                <div class="bio-row col-lg-6">
+                                    <p class="text-uppercase">
+                                        <span>Location: </span> <strong>{{ car.location }}</span> </strong>
+                                    </p>
+                                </div>
+                                <div class="bio-row col-lg-6">
+                                    <p class="text-uppercase">
+                                        <span> Warranty: </span> <strong> {{ car.warranty }}</span> </strong>
+                                    </p>
+                                </div>
+                                <div class="col-lg-8 bio-row">
+                                    <p class="text-uppercase"> <span> Price: </span> Ksh {{ "{:,.2f}".format(car.price) }}    </p>
                                 </div>
                             </div>
                         </div>
@@ -86,30 +108,37 @@
         </div>
 
         <!-- Right Column (4/12) -->
-        <div class="col-lg-4 mb-4 order">
-            <div class="text-center">
-                <h4 class="uppercase">{{ car.brand.brand_name }} {{ car.model }}</h4>
-                <p class="text-align-center">Mileage: <strong>{{ car.mileage }} mi</strong></p>
-                <p><strong>Price:</strong> Ksh {{ "{:,.2f}".format(car.price) }}</p>
-                <p><strong>Transmission:</strong> {{ car.transmission }}</p>
-                <p><strong>Exterior Color:</strong> {{ car.exterior_color }}</p>
-                <p><strong>Interior Color:</strong> {{ car.interior_color }}</p>
-                
+        <div class="col-lg-4 mb-4 mt-3 holders">               
                 {% if session.user %}
                 <div class="mt-3">
-                    <h4>Interested in this vehicle?</h4>
+                    <h4 class="heading">Interested in this vehicle?</h4>
                     <form action="{{ url_for('order.create_order') }}" method="POST">
                         <input type="hidden" name="car_id" value="{{ car.id }}">
                         <input type="hidden" name="total_price" value="{{ car.price }}">
-                        <button type="submit" class="btn btn-primary">Order This Car</button>
+
+                        
                         <div class="">
                             <label class="form-label" for="message">Add a message to your order</label>
                             <input type="text" class="form-control" id="message" name="message" placeholder="Add a short message to your order">
                         </div>
+
+
+                        <button type="submit"  class='Edit mt-3'>
+                            <div class="default-btn">
+                          
+                              <span>Order Now</span>
+                            </div>
+                            <div class="hover-btn">
+                          
+                              <span>Ksh {{ "{:,.2f}".format(car.price) }}</span>
+                            </div>
+                          </button>
+
+
                     </form>
                 </div>
                 {% else %}
-                <h4>Interested in this vehicle?</h4>
+                <h4 class="heading">Interested in this vehicle?</h4>
                 <form action="{{ url_for('order.create_order') }}" method="POST">
                     <input type="hidden" name="product_id" value="{{ car.id }}">
                     <input type="hidden" name="total_price" value="{{ car.price }}">
@@ -133,12 +162,23 @@
                         <label for="message" class="form-label">Message:</label>
                         <textarea class="form-control" name="message" rows="3"></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary">Order This Product Today</button>
+                    <button type="submit"  class='Edit'>
+                        <div class="default-btn">
+                      
+                          <span>Order Now</span>
+                        </div>
+                        <div class="hover-btn">
+                      
+                          <span>Ksh {{ "{:,.2f}".format(car.price) }} </span>
+                        </div>
+                      </button>
                 </form>
                 {% endif %}
             </div>
         </div>
     </div>
+
+   
 
     <!-- Reviews Section -->
     <div class="row">
@@ -191,6 +231,76 @@
             </div>
             {% endif %}
         </div>
+
+        
     </div>
 </div>
 {% endblock %}
+
+
+<div class="row">
+    {% if reviews and reviews|length > 0 %}
+    {% for review in reviews %}
+
+    <span class="title">Comments</span>
+    <div class="comments">
+        <div class="comment-react">
+            <button>
+            <svg fill="none" viewBox="0 0 24 24" height="16" width="16" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#707277" stroke-linecap="round" stroke-width="2" stroke="#707277" d="M19.4626 3.99415C16.7809 2.34923 14.4404 3.01211 13.0344 4.06801C12.4578 4.50096 12.1696 4.71743 12 4.71743C11.8304 4.71743 11.5422 4.50096 10.9656 4.06801C9.55962 3.01211 7.21909 2.34923 4.53744 3.99415C1.01807 6.15294 0.221721 13.2749 8.33953 19.2834C9.88572 20.4278 10.6588 21 12 21C13.3412 21 14.1143 20.4278 15.6605 19.2834C23.7783 13.2749 22.9819 6.15294 19.4626 3.99415Z"></path>
+            </svg>
+            </button>
+            <hr>
+            <span>14</span>
+        </div>
+        <div class="comment-container">
+            <div class="user">
+            <div class="user-pic">
+    
+            </div>
+            <div class="user-info">
+                <span>Yassine Zanina</span>
+                <p>Wednesday, March 13th at 2:45pm</p>
+            </div>
+            </div>
+            <p class="comment-content">
+            I've been using this product for a few days now and I'm really impressed! The interface is intuitive and easy to
+            use, and the features are exactly what I need to streamline my workflow.
+            </p>
+        </div>
+    </div>
+
+    {% else %}
+    <p>No reviews yet. Be the first to review this car!</p>
+    {% endif %}
+
+    <div class="text-box">
+        <div class="box-container">
+          <textarea placeholder="Reply"></textarea>
+    
+        </div>
+      </div>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="commentsReviews">
+
+  
+
+</div>

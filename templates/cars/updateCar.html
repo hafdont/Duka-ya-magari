@@ -3,8 +3,9 @@
 {% block title %}Edit Car{% endblock %}
 
 {% block main_content %}
-<h2>Edit Car: {{ car.model }}</h2>
+
 <form action="{{ url_for('car.update_car', car_id=car.id) }}" method="POST" enctype="multipart/form-data">
+    <h2>Edit Car: {{ car.model }}</h2>
     <!-- Grouped fields -->
     <div class="row">
         <div class="col-md-6">

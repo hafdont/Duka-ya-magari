@@ -139,7 +139,6 @@ class Item(db.Model):
     def __repr__(self):
         return f"<Item (Car: {self.car_id}, Product: {self.product_id})>"
     
-
 # Updated Product model
 class Product(db.Model):
     __tablename__ = 'products'

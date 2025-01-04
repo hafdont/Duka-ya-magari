@@ -1,3 +1,1 @@
-2025-01-04 16:19:17,038 - ERROR - Request to http://127.0.0.1:5000/uploads/products/sufuria.jpg failed with status code 304.
-2025-01-04 16:19:17,508 - INFO - User osman (ID: 3) made a request to http://127.0.0.1:5000/static/img/logo.png at 2025-01-04 16:19:17.508443.
-2025-01-04 16:19:17,510 - ERROR - Request to http://127.0.0.1:5000/static/img/logo.png failed with status code 304.
+2025-01-04 19:06:42,022 - ERROR - Request to http://127.0.0.1:5000/uploads/blogs/computers.jpg failed with status code 304.
