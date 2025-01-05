@@ -1,1 +1,44 @@
-2025-01-04 19:06:42,022 - ERROR - Request to http://127.0.0.1:5000/uploads/blogs/computers.jpg failed with status code 304.
+2025-01-05 11:22:48,049 - ERROR - Request to http://127.0.0.1:5000/static/img/logo.png failed with status code 304.
+2025-01-05 11:22:48,391 - INFO - Anonymous user made a request to http://127.0.0.1:5000/static/img/whatsapp.png at 2025-01-05 11:22:48.391823.
+2025-01-05 11:22:48,478 - ERROR - Request to http://127.0.0.1:5000/static/img/whatsapp.png failed with status code 304.
+2025-01-05 11:22:52,176 - INFO - Anonymous user made a request to http://127.0.0.1:5000/home_cars at 2025-01-05 11:22:52.176070.
+2025-01-05 11:22:52,312 - INFO - Request to http://127.0.0.1:5000/home_cars completed successfully.
+2025-01-05 11:22:52,440 - INFO - Anonymous user made a request to http://127.0.0.1:5000/static/css/style.css at 2025-01-05 11:22:52.440364.
+2025-01-05 11:22:52,444 - ERROR - Request to http://127.0.0.1:5000/static/css/style.css failed with status code 304.
+2025-01-05 11:22:52,452 - INFO - Anonymous user made a request to http://127.0.0.1:5000/static/css/system.css at 2025-01-05 11:22:52.452333.
+2025-01-05 11:22:52,456 - ERROR - Request to http://127.0.0.1:5000/static/css/system.css failed with status code 304.
+2025-01-05 11:22:52,465 - INFO - Anonymous user made a request to http://127.0.0.1:5000/static/img/carsplace.jpg at 2025-01-05 11:22:52.465298.
+2025-01-05 11:22:52,472 - ERROR - Request to http://127.0.0.1:5000/static/img/carsplace.jpg failed with status code 304.
+2025-01-05 11:22:52,494 - INFO - Anonymous user made a request to http://127.0.0.1:5000/uploads/cars/catapilla_logo.png at 2025-01-05 11:22:52.493231.
+2025-01-05 11:22:52,507 - ERROR - Request to http://127.0.0.1:5000/uploads/cars/catapilla_logo.png failed with status code 304.
+2025-01-05 11:22:52,582 - INFO - Anonymous user made a request to http://127.0.0.1:5000/static/img/logo.png at 2025-01-05 11:22:52.582983.
+2025-01-05 11:22:52,585 - ERROR - Request to http://127.0.0.1:5000/static/img/logo.png failed with status code 304.
+2025-01-05 11:22:52,608 - INFO - Anonymous user made a request to http://127.0.0.1:5000/static/img/whatsapp.png at 2025-01-05 11:22:52.608913.
+2025-01-05 11:22:52,612 - INFO - Anonymous user made a request to http://127.0.0.1:5000/uploads/cars/mercededs.jpeg at 2025-01-05 11:22:52.612904.
+2025-01-05 11:22:52,614 - ERROR - Request to http://127.0.0.1:5000/static/img/whatsapp.png failed with status code 304.
+2025-01-05 11:22:52,618 - ERROR - Request to http://127.0.0.1:5000/uploads/cars/mercededs.jpeg failed with status code 304.
+2025-01-05 11:22:52,647 - INFO - Anonymous user made a request to http://127.0.0.1:5000/uploads/cars/benzo_-_Copy.jpeg at 2025-01-05 11:22:52.647809.
+2025-01-05 11:22:52,668 - ERROR - Request to http://127.0.0.1:5000/uploads/cars/benzo_-_Copy.jpeg failed with status code 304.
+2025-01-05 11:22:52,723 - INFO - Anonymous user made a request to http://127.0.0.1:5000/uploads/cars/smwelngara.jpg at 2025-01-05 11:22:52.723608.
+2025-01-05 11:22:52,726 - INFO - Anonymous user made a request to http://127.0.0.1:5000/uploads/cars/subarunew_image1.jpg at 2025-01-05 11:22:52.726598.
+2025-01-05 11:22:52,736 - ERROR - Request to http://127.0.0.1:5000/uploads/cars/subarunew_image1.jpg failed with status code 304.
+2025-01-05 11:22:52,733 - ERROR - Request to http://127.0.0.1:5000/uploads/cars/smwelngara.jpg failed with status code 304.
+2025-01-05 11:22:52,731 - INFO - Anonymous user made a request to http://127.0.0.1:5000/uploads/cars/subaru_new1.jpg at 2025-01-05 11:22:52.731585.
+2025-01-05 11:22:52,745 - INFO - Anonymous user made a request to http://127.0.0.1:5000/uploads/cars/mitsubishi2.jpeg at 2025-01-05 11:22:52.745547.
+2025-01-05 11:22:52,749 - INFO - Anonymous user made a request to http://127.0.0.1:5000/uploads/cars/mitusbishi1.jpeg at 2025-01-05 11:22:52.749540.
+2025-01-05 11:22:52,764 - ERROR - Request to http://127.0.0.1:5000/uploads/cars/subaru_new1.jpg failed with status code 304.
+2025-01-05 11:22:52,764 - ERROR - Request to http://127.0.0.1:5000/uploads/cars/mitsubishi2.jpeg failed with status code 304.
+2025-01-05 11:22:52,777 - ERROR - Request to http://127.0.0.1:5000/uploads/cars/mitusbishi1.jpeg failed with status code 304.
+2025-01-05 11:22:52,871 - INFO - Anonymous user made a request to http://127.0.0.1:5000/uploads/cars/axela.jpeg at 2025-01-05 11:22:52.871212.
+2025-01-05 11:22:52,874 - ERROR - Request to http://127.0.0.1:5000/uploads/cars/axela.jpeg failed with status code 304.
+2025-01-05 11:22:54,133 - INFO - Anonymous user made a request to http://127.0.0.1:5000/cars/13 at 2025-01-05 11:22:54.133537.
+2025-01-05 11:22:54,149 - ERROR - Unhandled Exception: http://127.0.0.1:5000/cars/13 - 'flask.sessions.SecureCookieSession object' has no attribute 'user'
+2025-01-05 11:22:54,151 - ERROR - Request to http://127.0.0.1:5000/cars/13 failed with status code 500.
+2025-01-05 11:22:54,298 - INFO - Anonymous user made a request to http://127.0.0.1:5000/static/css/style.css at 2025-01-05 11:22:54.298674.
+2025-01-05 11:22:54,301 - ERROR - Request to http://127.0.0.1:5000/static/css/style.css failed with status code 304.
+2025-01-05 11:22:54,303 - INFO - Anonymous user made a request to http://127.0.0.1:5000/static/css/system.css at 2025-01-05 11:22:54.303659.
+2025-01-05 11:22:54,311 - ERROR - Request to http://127.0.0.1:5000/static/css/system.css failed with status code 304.
+2025-01-05 11:22:54,482 - INFO - Anonymous user made a request to http://127.0.0.1:5000/static/img/logo.png at 2025-01-05 11:22:54.482184.
+2025-01-05 11:22:54,489 - ERROR - Request to http://127.0.0.1:5000/static/img/logo.png failed with status code 304.
+2025-01-05 11:22:54,492 - INFO - Anonymous user made a request to http://127.0.0.1:5000/static/img/whatsapp.png at 2025-01-05 11:22:54.492156.
+2025-01-05 11:22:54,497 - ERROR - Request to http://127.0.0.1:5000/static/img/whatsapp.png failed with status code 304.

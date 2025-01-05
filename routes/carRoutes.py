@@ -155,10 +155,9 @@ def get_cars():
 
 @car_bp.route('/cars/<int:car_id>', methods=['GET'])
 def get_car(car_id):
-    current_user = session.get('user', None)
     car = Car.query.get_or_404(car_id)
     reviews = Review.query.filter_by(car_id=car_id).all()
-    return render_template('cars/car_detail.html', car=car, user=current_user,reviews=reviews )
+    return render_template('cars/car_detail.html', car=car,reviews=reviews )
 
 @car_bp.route('/likes', methods=['POST'])
 def toggle_like():

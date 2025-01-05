@@ -5,7 +5,7 @@ from app import db
 review_bp = Blueprint('review', __name__)
 
 # Add a new review
-@review_bp.route('/add_review/<int:car_id>', methods=['POST'])
+@review_bp.route('/add_review', methods=['POST'])
 def add_review():
     current_user = session.get('user')
     if not current_user:
@@ -40,7 +40,7 @@ def add_review():
     db.session.commit()
     
     flash("Review added successfully!", "success")
-    return redirect(url_for('product.view_product', product_id=product.id) if product_id else url_for('car.view_car', car_id=car.id))
+    return redirect(request.referrer)
 
 # View all reviews for a car
 @review_bp.route('/reviews/<int:car_id>', methods=['GET'])
