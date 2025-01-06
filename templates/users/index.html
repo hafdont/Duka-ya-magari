@@ -62,19 +62,19 @@
                             
                             <div class="button ">
                                
-                                <span>Role: {{ user.role.value}}</span>
+                                <span style="font-weight: 600;">Role: {{ user.role.value}}</span>
                             </div>
 
                             <div class="button ">
-                                    <span>Status: {{ user.status.display }}</span>
+                                    <span style="font-weight: 600;" >Status: {{ user.status.display }}</span>
                             </div>
                             <div class="button">
-                                    <span> Gender: {{ user.gender.value}}</span>
+                                    <span style="font-weight: 600;"> Gender: {{ user.gender.value}}</span>
                             </div>
   
                         </div>
                         <button class="button">
-                            <a href="{{ url_for('user.view_profile', user_id=user.id) }}" class="text-decoration-none text-dark">View Detail</a>
+                            <a style="font-weight: 600;" href="{{ url_for('user.view_profile', user_id=user.id) }}" class="text-decoration-none text-dark">View Profile</a>
                         </button>
                     </div>
                 </div>

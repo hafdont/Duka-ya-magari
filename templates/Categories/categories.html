@@ -48,7 +48,7 @@
 
     <!-- Add Category Form -->
     <h3>Add New Category</h3>
-    <form action="{{ url_for('category.add_category') }}" method="POST">
+    <form class="form" action="{{ url_for('category.add_category') }}" method="POST">
         <div class="mb-3">
             <label for="category_name" class="form-label">Category Name</label>
             <input type="text" class="form-control" id="category_name" name="category_name" required>

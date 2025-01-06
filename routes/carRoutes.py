@@ -155,9 +155,10 @@ def get_cars():
 
 @car_bp.route('/cars/<int:car_id>', methods=['GET'])
 def get_car(car_id):
+    current_user = session.get('user', None)
     car = Car.query.get_or_404(car_id)
     reviews = Review.query.filter_by(car_id=car_id).all()
-    return render_template('cars/car_detail.html', car=car,reviews=reviews )
+    return render_template('cars/car_detail.html', car=car,user=current_user, reviews=reviews )
 
 @car_bp.route('/likes', methods=['POST'])
 def toggle_like():
@@ -181,48 +182,56 @@ def toggle_like():
     db.session.commit()
     return jsonify({'success': True})
 
-# Update a Car
 @car_bp.route('/cars/edit/<int:car_id>', methods=['GET', 'POST'])
 @admin_required
 def update_car(car_id):
     current_user = session.get('user', None)
     car = Car.query.get(car_id)
+    
     if not car:
         flash("Car not found.", "danger")
         return redirect(url_for('car.get_all_cars'))
 
     if request.method == 'GET':
         brands = Brand.query.all()
-        categories = Category.query.all()
-        return render_template('cars/updateCar.html', car=car, brands=brands, categories = Category.query.filter_by(category_type=CategoryType.CARS.value).all(),user=current_user)
+        categories = Category.query.filter_by(category_type=CategoryType.CARS.value).all()
+        return render_template('cars/updateCar.html', car=car, brands=brands, categories=categories, user=current_user)
 
     if request.method == 'POST':
         car_data = get_car_data_from_form(request.form)
 
-        # Handle image upload
-        if 'image' in request.files:
-            file = request.files['image']
-            if file.filename and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file_path = os.path.join(CARS_UPLOAD_FOLDER, filename)
+        # Update car brand
+        car.brand_id = car_data.get('brand')
 
-                os.makedirs(CARS_UPLOAD_FOLDER, exist_ok=True)
-                file.save(file_path)
+        # Handle image uploads
+        if 'images' in request.files:
+            files = request.files.getlist('images')
+            for file in files:
+                if file.filename and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    file_path = os.path.join(CARS_UPLOAD_FOLDER, filename)
+                    os.makedirs(CARS_UPLOAD_FOLDER, exist_ok=True)
+                    file.save(file_path)
+                    
+                    # Save the image
+                    new_image = Image(car_id=car.id, image_path=filename)
+                    db.session.add(new_image)
 
-                # Update image
-                image = Image.query.filter_by(car_id=car.id).first()
-                if image:
-                    image.image_path = filename
-                    db.session.commit()
+        # Handle image deletions (if any)
+        image_ids_to_delete = request.form.getlist('delete_images')
+        for image_id in image_ids_to_delete:
+            image = Image.query.get(image_id)
+            if image:
+                db.session.delete(image)
 
-        # Update car fields
+        # Update the car fields
         for key, value in car_data.items():
             setattr(car, key, value)
 
         db.session.commit()
         flash("Car updated successfully!", "success")
-        return redirect(url_for('car.get_all_cars'))
-    
+        return redirect(url_for('car.get_car', car_id=car_id))
+   
 @car_bp.route('/cars/delete/<int:car_id>', methods=['POST'])
 @admin_required
 def delete_car(car_id):
