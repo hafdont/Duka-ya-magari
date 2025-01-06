@@ -47,22 +47,28 @@
     </table>
 
     <!-- Add Category Form -->
-    <h3>Add New Category</h3>
-    <form class="form" action="{{ url_for('category.add_category') }}" method="POST">
-        <div class="mb-3">
-            <label for="category_name" class="form-label">Category Name</label>
-            <input type="text" class="form-control" id="category_name" name="category_name" required>
-        </div>
-        <div class="mb-3">
-            <label for="category_type" class="form-label">Category Type</label>
-            <select class="form-control" id="category_type" name="category_type" required>
-                {% for type in cats %}
-                <option value="{{ type.value }}">{{ type.value }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <button type="submit" class="btn btn-success">Add Category</button>
-    </form>
+
+    <div class="">
+        <form class="form" action="{{ url_for('category.add_category') }}" method="POST">
+            <h3 class="heading">Add New Category</h3>
+            <div class="mb-3">
+                <label for="category_name" class="form-label">Category Name</label>
+                <input type="text" class="form-control" id="category_name" name="category_name" required>
+            </div>
+            <div class="mb-3">
+                <label for="category_type" class="form-label">Category Type</label>
+                <select class="form-control" id="category_type" name="category_type" required>
+                    <option > Select A category Please.</option>
+                    {% for type in cats %}
+                    <option value="{{ type.value }}">{{ type.value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success">Add Category</button>
+        </form>
+    </div>
+    
+
 </div>
 
 {% endblock %}

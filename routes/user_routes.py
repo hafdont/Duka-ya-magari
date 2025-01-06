@@ -46,16 +46,6 @@ def get_user_data_from_form(form, current_user=None):
         'status': form.get('status'),
     }
 
-    # Only allow admins to modify the role
-    if current_user and current_user['role'] == 'admin':
-        data['role'] = form.get('role')
-    elif current_user:
-        # If not admin, ensure role stays unchanged (don't set it to null)
-        data['role'] = current_user['role']
-    else:
-        # If current_user is None, don't set a role (like in registration)
-        data['role'] = 'customer'  # Default to 'customer' role
-
     return data
 
 
@@ -269,16 +259,11 @@ def edit_profile(user_id):
                 user_to_edit.date_of_birth = datetime.strptime(user_data['date_of_birth'], '%Y-%m-%d')
             if user_data.get('gender'):
                 user_to_edit.gender = user_data['gender']
-            # Update role only if current user is an admin
-            if current_user['role']:
-                user_to_edit.role = user_data['role']
+
             # Commit changes
             db.session.commit()
 
             # Refresh the session if role changes
-
-            if user_data.get('role') != current_user['role']:
-                session['user']['role'] = user_data['role']  # Refresh the session's role
 
             flash("Profile updated successfully!", "success")
         except Exception as e:

@@ -56,8 +56,12 @@
         </div>
     
         <div class="col-lg-9 m-3 carholder">
-            <h2>All Cars (for Admins)</h2>
-            <a href="{{ url_for('car.create_car') }}" class="btn btn-primary mb-3">Add New Car</a>
+            <h2>All Cars (for Admins)</h2> 
+
+           
+            <a href="{{ url_for('car.create_car') }}" >
+                <button class="btn-login mb-3">  Add New Car</button>
+            </a>
     
             <div class="row" style="font-size: .6rem;">
             {% for car in cars %}

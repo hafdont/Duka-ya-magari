@@ -2,24 +2,63 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2>Edit Product</h2>
-    <form method="POST" action="{{ url_for('product.edit_product', product_id=product.id) }}" enctype="multipart/form-data">
+    
+    <form class="form" method="POST" action="{{ url_for('product.update_product', product_id=product.id) }}" enctype="multipart/form-data">
+        <h2 class="heading">Edit Product</h2>
         <div class="mb-3">
             <label for="name" class="form-label">Product Name</label>
             <input type="text" class="form-control" id="name" name="name" value="{{ product.name }}" required>
         </div>
+
+        <!-- Current Images Section -->
+        <div class="mb-3">
+            <label for="current_images" class="form-label">Current Images</label>
+            <div id="current_images">
+                {% for image in product.product_images %}
+                    <div class="image-item">
+                        <img src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" alt="Car Image" class="img-thumbnail" style="width: 150px;">
+                        <button type="button" class="btn btn-danger btn-sm delete-image" data-image-id="{{ image.id }}">X</button>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+         <!-- Stock Status -->
+        <div>
+            <label class="form-label mb-1 mt-1" for="category">Stock Status</label>
+            <div>
+                <select id="stock_status" name="stock_status" required class="form-select">
+                    <option value="{{ product.StockStatus }}"> {{ product.StockStatus.value }} </option>
+                    {% for stata in stockstatus %}
+                        <option value="{{ stata.name }}">{{ stata.value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+       
+         <!-- Category Type -->
+        <div>
+            <label class="form-label mb-1 mt-1" for="category">Stock Status</label>
+            <div>
+                <select id="category" name="category" required class="form-select">
+                    <option value="{{ product.category }}"> {{ product.category }} </option>
+                    {% for category in categories %}
+                        <option value="{{ category.name }}">{{ category.value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+                
+
+                
+                        
         <div class="mb-3">
             <label for="price" class="form-label">Price</label>
             <input type="number" step="0.01" class="form-control" id="price" name="price" value="{{ product.price }}" required>
         </div>
-        <div class="mb-3">
-            <label for="category" class="form-label">Category</label>
-            <select class="form-select" id="category" name="category" required>
-                {% for category in categories %}
-                <option value="{{ category.value }}" {% if product.category == category.value %}selected{% endif %}>{{ category.value }}</option>
-                {% endfor %}
-            </select>
-        </div>
+
         <div class="mb-3">
             <label for="stock" class="form-label">Stock</label>
             <input type="number" class="form-control" id="stock" name="stock" value="{{ product.stock }}" required>
@@ -35,4 +74,26 @@
         <button type="submit" class="btn btn-primary">Update Product</button>
     </form>
 </div>
+
+
+
+
+<script>
+    // JavaScript to handle the deletion of images
+    document.querySelectorAll('.delete-image').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const imageId = e.target.getAttribute('data-image-id');
+            
+            // Add the image id to a hidden input field (or form data to be submitted)
+            let deleteInput = document.createElement('input');
+            deleteInput.type = 'hidden';
+            deleteInput.name = 'delete_images';
+            deleteInput.value = imageId;
+            document.forms[0].appendChild(deleteInput);
+            
+            // Remove the image from the UI (optional)
+            e.target.closest('.image-item').remove();
+        });
+    });
+</script>
 {% endblock %}

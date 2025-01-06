@@ -114,7 +114,6 @@ def get_products():
     products = Product.query.all()
     return render_template('products/product_list.html', products=products, user=current_user)
 
-
 @product_bp.route('/products/<int:product_id>', methods=['GET'])
 def get_product(product_id):
     current_user = session.get('user', None)
@@ -164,14 +163,15 @@ def update_product(product_id):
     product = Product.query.get_or_404(product_id)
 
     if request.method == 'GET':
-        categories = [cat.value for cat in CategoryType]
+        categories = CategoryType
+        stockstatus = StockStatus
         specifications = ProductSpecification.query.filter_by(product_id=product.id).all()
-        return render_template('products/edit_product.html', product=product, categories=categories, specifications=specifications)
+        return render_template('products/edit_product.html', product=product, categories=categories, specifications=specifications,stockstatus=stockstatus)
     
     if request.method == 'POST':
         product.name = request.form.get('name')
         product.price = request.form.get('price')
-        product.stock = request.form.get('stock', 1)
+        product.stock = request.form.get('stock')
         product.StockStatus = request.form.get('stock_status')
         product.category = request.form.get('category')
         product.description = request.form.get('description')
