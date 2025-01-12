@@ -9,9 +9,7 @@ Log in
     <div class="row align-items-center justify-content-center w-100" >
 
         <div class="form login col-lg-4 col-md-6 bg-dark rounded shadow p-4" data-aos="zoom-out-up">
-            <div class="">
-                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="" width="48" height="24">
-            </div>
+ 
             <form action="{{ url_for('user.login') }}" method="POST" class="text-white" id="loginForm">
                 <h4 class="text-center">Log in here</h4>
                 <div class="mb-3">
@@ -28,9 +26,7 @@ Log in
             </form>
             <div class="text-center">
                 <p class="text-white mt-3 mb-3">Don't have an account? <a href="{{ url_for('user.register') }}" class="text-info">Register here</a></p>
-                    or 
-                <p><a href="{{ url_for('user.google_login') }}">Login with Google</a></p>
-                
+
             </div>
         </div>
         

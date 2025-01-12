@@ -45,7 +45,7 @@
                         <th>Name</th>
                         <th>Quantity Requested</th> <!-- New column for Quantity Requested -->
                         <th>Price</th>
-                        <th>View Details</th>
+
                     </tr>
                 </thead>
                 <tbody>
@@ -64,11 +64,7 @@
                             <td>{{ item.quantity }}</td> <!-- Quantity requested -->
 >
                             <td>{{ "{:,.2f}".format(item.price) }}</td>
-                            <td class="action-cell d-flex justify-content-around align-items-center">
-                                <a href="{{ url_for('order.edit_order', order_id=order.id) }}" class="text-info m-1">
-                                  <i class="fa-duotone fa-solid fa-pen-to-square fa-lg"></i>
-                                </a>
-                              </td>
+
 
 
                         </tr>

@@ -1,0 +1,75 @@
+{% extends "admin_base.html" %}
+{% block title %}  
+Edit Blog
+{% endblock %}
+
+{% block main_content %}
+
+<div class="container mt-5">
+    <h2>Edit Blog Post</h2>
+    <form class="mb-3 mt-2" action="{{ url_for('blogs.edit_blog', blog_id=blog.id) }}" method="POST" enctype="multipart/form-data">
+
+
+
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="title" name="title" value="{{ blog.title }}" required placeholder="Blog title">
+        </div>
+
+        <!-- Content Textarea with TinyMCE Editor -->
+        <div class="mb-3">
+            <label for="content" class="form-label">Content</label>
+            <script>
+                tinymce.init({
+                    selector: 'textarea',
+                    plugins: [
+                        'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'image', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
+                        'checklist', 'mediaembed', 'casechange', 'export', 'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste', 'advtable', 'advcode', 'editimage', 'advtemplate', 'ai', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown','importword', 'exportword', 'exportpdf'
+                    ],
+                    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+                    tinycomments_mode: 'embedded',
+                    tinycomments_author: 'Author name',
+                    mergetags_list: [
+                        { value: 'First.Name', title: 'First Name' },
+                        { value: 'Email', title: 'Email' },
+                    ],
+                    ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+                });
+            </script>
+            <textarea id="content" name="content">{{ blog.content }}</textarea>
+        </div>
+
+        <div class="mb-3 d-none">
+            <label for="user_id" class="form-label">User</label>
+            <input type="text" value="{{ user.id }}" class="form-control" id="user_id" name="user_id" >
+        </div>
+
+            <!-- Other form fields like title, content, etc. -->
+
+            <div class="mb-3">
+                <label for="images" class="form-label">Blog Images</label>
+                <input type="file" class="form-control" id="images" name="images" multiple>
+                <small class="form-text text-muted">You can upload new images or leave it empty to keep existing ones.</small>
+            </div>
+
+            {% if blog.images %}
+            <div class="mb-3">
+                <label for="current_images" class="form-label">Current Images</label>
+                <div class="row">
+                    {% for image in blog.images %}
+                        <div class="col-3 mb-2">
+                            <img src="{{ url_for('uploaded_file', folder='blogs', filename=image.image_path) }}"  class="img-fluid" alt="Blog image">
+                            <input type="checkbox" name="delete_images" value="{{ image.id }}"> Delete
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+        <button type="submit" class="btn btn-primary">Update Blog</button>
+    </form>
+</div>
+
+
+
+{% endblock %}

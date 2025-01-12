@@ -33,29 +33,11 @@ Home Page
     <!-- Product Stock Summary -->
     <div class="row mb-4">
         <!-- Low Stock and Out of Stock Products -->
-        <div class="col-12 col-lg-6 mb-4">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Product Stock Summary</h5>
-                </div>
-                <div class="card-body">
-                    <h6>Low Stock Products (Threshold: 5 units)</h6>
-                    <ul>
-                        {% for product in product_stock_data.low_stock_products %}
-                            <li>{{ product.name }} ({{ product.stock }} in stock)</li>
-                        {% endfor %}
-                    </ul>
-                    <h6>Out of Stock Products: {{ product_stock_data.out_of_stock_products }}</h6>
-                    <h6>Total Products: {{ product_stock_data.total_products }}</h6>
-                    <h6>Total Cars: {{ total_cars }}</h6>
-                </div>
-            </div>
-        </div>
 
         <div class="col-12 col-lg-6">
             <div class="card">
-                <div class="card-header">
-                    <h5>Product Stock Summary</h5>
+                <div class="card-header bg-dark">
+                    <h5 class="heading text-white">Product Stock Summary</h5>
                 </div>
                 <div class="card-body">
                     <h6>Low Stock Products (Threshold: 5 units)</h6>
@@ -69,21 +51,7 @@ Home Page
                 </div>
             </div>
 
-            <div class="card mt-4">
-                <div class="card-header">
-                    <h5>Product Stock Summary</h5>
-                </div>
-                <div class="card-body">
-                    <h6>Low Stock Products (Threshold: 5 units)</h6>
-                    <ul>
-                        {% for product in product_stock_data.low_stock_products %}
-                            <li>{{ product.name }} ({{ product.stock }} in stock)</li>
-                        {% endfor %}
-                    </ul>
-                    <h6>Out of Stock Products: {{ product_stock_data.out_of_stock_products }}</h6>
-                    <h6>Total Products: {{ product_stock_data.total_products }}</h6>
-                </div>
-            </div>
+
         </div>
     </div>
 </div>

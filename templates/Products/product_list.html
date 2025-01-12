@@ -53,14 +53,14 @@
 
                 <div class="mb-3 me-3">
                     <a href="{{ url_for('product.create_product') }}" >
-                        <button class="btn-login mb-3">  Add New Car</button>
+                        <button class="btn-login mb-3">  Add A Product</button>
                     </a>
                 </div>
         </div>
 
         <!-- Product Display Section -->
         <div class="row mb-5 bg-light Demo shadow">
-            <h2 class="mb-3 heading">Computers</h2>
+            <h2 class="mb-3 heading">Products</h2>
             {% for product in products %}
             <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
                 <div class="product" style="cursor: pointer;" onclick="location.href='{{ url_for('product.get_product', product_id=product.id) }}'">

@@ -1,3 +1,35 @@
-2025-01-06 16:32:50,925 - ERROR - Request to http://127.0.0.1:5000/static/img/whatsapp.png failed with status code 304.
-2025-01-06 16:32:55,622 - INFO - User osman (ID: 3) made a request to http://127.0.0.1:5000/products/17 at 2025-01-06 16:32:55.622675.
-2025-01-06 16:32:55,697 - INFO - Request to http://127.0.0.1:5000/products/17 completed successfully.
+2025-01-12 17:25:28,359 - INFO - User mey (ID: 2) made a request to http://127.0.0.1:5000/orders/18 at 2025-01-12 17:25:28.359158.
+2025-01-12 17:25:28,804 - INFO - Request to http://127.0.0.1:5000/orders/18 completed successfully.
+2025-01-12 17:25:28,938 - INFO - User mey (ID: 2) made a request to http://127.0.0.1:5000/static/css/style.css at 2025-01-12 17:25:28.938769.
+2025-01-12 17:25:28,942 - INFO - User mey (ID: 2) made a request to http://127.0.0.1:5000/static/css/system.css at 2025-01-12 17:25:28.942825.
+2025-01-12 17:25:29,107 - ERROR - Request to http://127.0.0.1:5000/static/css/style.css failed with status code 304.
+2025-01-12 17:25:29,116 - ERROR - Request to http://127.0.0.1:5000/static/css/system.css failed with status code 304.
+2025-01-12 17:25:30,084 - INFO - User mey (ID: 2) made a request to http://127.0.0.1:5000/static/img/logo.png at 2025-01-12 17:25:30.084732.
+2025-01-12 17:25:30,087 - ERROR - Request to http://127.0.0.1:5000/static/img/logo.png failed with status code 304.
+2025-01-12 17:25:30,109 - INFO - User mey (ID: 2) made a request to http://127.0.0.1:5000/uploads/users/princesssmey.png at 2025-01-12 17:25:30.109427.
+2025-01-12 17:25:30,110 - ERROR - 404 Error: http://127.0.0.1:5000/uploads/users/princesssmey.png - 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-01-12 17:25:30,125 - ERROR - Request to http://127.0.0.1:5000/uploads/users/princesssmey.png failed with status code 404.
+2025-01-12 17:25:30,145 - INFO - User mey (ID: 2) made a request to http://127.0.0.1:5000/static/img/whatsapp.png at 2025-01-12 17:25:30.145811.
+2025-01-12 17:25:30,148 - ERROR - Request to http://127.0.0.1:5000/static/img/whatsapp.png failed with status code 304.
+2025-01-12 17:25:30,253 - INFO - User mey (ID: 2) made a request to http://127.0.0.1:5000/uploads/users/princesssmey.png at 2025-01-12 17:25:30.253044.
+2025-01-12 17:25:30,254 - ERROR - 404 Error: http://127.0.0.1:5000/uploads/users/princesssmey.png - 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-01-12 17:25:30,255 - ERROR - Request to http://127.0.0.1:5000/uploads/users/princesssmey.png failed with status code 404.
+2025-01-12 17:25:30,286 - INFO - User mey (ID: 2) made a request to http://127.0.0.1:5000/static/service-worker.js at 2025-01-12 17:25:30.286919.
+2025-01-12 17:25:30,289 - INFO - Request to http://127.0.0.1:5000/static/service-worker.js completed successfully.
+2025-01-12 17:25:30,384 - INFO - User mey (ID: 2) made a request to http://127.0.0.1:5000/ at 2025-01-12 17:25:30.384343.
+2025-01-12 17:25:30,388 - INFO - User mey (ID: 2) made a request to http://127.0.0.1:5000/static/css/styles.css at 2025-01-12 17:25:30.388711.
+2025-01-12 17:25:30,389 - ERROR - 404 Error: http://127.0.0.1:5000/static/css/styles.css - 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-01-12 17:25:30,391 - INFO - User mey (ID: 2) made a request to http://127.0.0.1:5000/static/css/system.css at 2025-01-12 17:25:30.391322.
+2025-01-12 17:25:30,393 - ERROR - Request to http://127.0.0.1:5000/static/css/styles.css failed with status code 404.
+2025-01-12 17:25:30,398 - ERROR - Request to http://127.0.0.1:5000/static/css/system.css failed with status code 304.
+2025-01-12 17:25:30,453 - INFO - User mey (ID: 2) made a request to http://127.0.0.1:5000/static/img/logo.png at 2025-01-12 17:25:30.453170.
+2025-01-12 17:25:30,457 - ERROR - Request to http://127.0.0.1:5000/static/img/logo.png failed with status code 304.
+2025-01-12 17:25:30,463 - INFO - User mey (ID: 2) made a request to http://127.0.0.1:5000/static/img/logo.png at 2025-01-12 17:25:30.463871.
+2025-01-12 17:25:30,483 - INFO - Request to http://127.0.0.1:5000/static/img/logo.png completed successfully.
+2025-01-12 17:25:30,634 - INFO - Request to http://127.0.0.1:5000/ completed successfully.
+2025-01-12 17:25:31,682 - INFO - User mey (ID: 2) made a request to http://127.0.0.1:5000/static/img/logo.png at 2025-01-12 17:25:31.682685.
+2025-01-12 17:25:31,684 - INFO - Request to http://127.0.0.1:5000/static/img/logo.png completed successfully.
+2025-01-12 17:25:31,745 - INFO - Anonymous user made a request to http://127.0.0.1:5000/static/manifest.json at 2025-01-12 17:25:31.745732.
+2025-01-12 17:25:31,747 - INFO - Request to http://127.0.0.1:5000/static/manifest.json completed successfully.
+2025-01-12 17:25:31,810 - INFO - User mey (ID: 2) made a request to http://127.0.0.1:5000/static/img/logo.png at 2025-01-12 17:25:31.810553.
+2025-01-12 17:25:31,812 - ERROR - Request to http://127.0.0.1:5000/static/img/logo.png failed with status code 304.

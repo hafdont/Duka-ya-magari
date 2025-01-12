@@ -34,7 +34,7 @@ def create_blog():
 
     if request.method == 'POST':
         # Extract form data
-        blog_data = get_blog_data_from_form(request.form)  # Assuming you have a helper function to get form data
+        blog_data = get_blog_data_from_form(request.form)  
         
         # Handle saving blog post data
         new_blog = Blog(**blog_data)
@@ -53,15 +53,15 @@ def create_blog():
 
             # Process and save each uploaded image
             for file in files:
-                if not allowed_file(file.filename):  # Assuming `allowed_file` is a function to check valid file types
+                if not allowed_file(file.filename):  
                     print(f"Invalid file type for file: {file.filename}")
                     flash(f"Invalid file type for file: {file.filename}", "danger")
                     continue  # Skip invalid files
 
                 # Secure the filename and save the file
                 filename = secure_filename(file.filename)
-                file_path = os.path.join(BLOGS_UPLOAD_FOLDER, filename)  # Assuming BLOGS_UPLOAD_FOLDER is configured in your settings
-
+                file_path = os.path.join(BLOGS_UPLOAD_FOLDER, filename) 
+                
                 # Create directory if it doesn't exist
                 os.makedirs(BLOGS_UPLOAD_FOLDER, exist_ok=True)
                 print(f"Saving file to: {file_path}")
@@ -122,14 +122,14 @@ def view_blog(blog_id):
         comment_content = request.form['comment']
         if not current_user:
             flash("Kindly log in to comment.")
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('user.login'))
 
         if comment_content:
             user_id = current_user.id if isinstance(current_user, User) else current_user.get('id')
             new_comment = Comment(content=comment_content, user_id=user_id, blog_id=blog_id)
             db.session.add(new_comment)
             db.session.commit()
-            return redirect(url_for('blog_bp.view_blog', blog_id=blog.id)) # Redirect to avoid resubmission on refresh
+            return redirect(url_for('blogs.view_blog', blog_id=blog.id)) # Redirect to avoid resubmission on refresh
 
 
     comments = Comment.query.filter_by(blog_id=blog_id).all()
@@ -156,11 +156,46 @@ def view_blog(blog_id):
         liked_items=liked_items
     )
 
-@blog_bp.route('/blog/<int:blog_id>')
+@blog_bp.route('/blog/edit/<int:blog_id>', methods=['GET', 'POST'])
 @admin_required
 def edit_blog(blog_id):
     current_user = session.get('user', None)
-    # Fetch the specific blog by ID
     blog = Blog.query.get_or_404(blog_id)
-    # Render a template to display the full blog content
-    return render_template('blogs/edit_blog.html', blog=blog, user=current_user,)
+
+    if request.method == 'POST':
+        # Update blog title and content
+        blog.title = request.form['title']
+        blog.content = request.form['content']
+
+        # Handle image uploads (multiple images)
+        if 'images' in request.files:
+            files = request.files.getlist('images')
+            for file in files:
+                if file.filename and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    file_path = os.path.join(BLOGS_UPLOAD_FOLDER, filename)
+                    os.makedirs(BLOGS_UPLOAD_FOLDER, exist_ok=True)
+                    file.save(file_path)
+
+                    # Save new image in the database
+                    new_image = Image(blog_id=blog.id, image_path=filename)
+                    db.session.add(new_image)
+
+        # Handle image deletions (if any)
+        image_ids_to_delete = request.form.getlist('delete_images')
+        if image_ids_to_delete:
+            for image_id in image_ids_to_delete:
+                image = Image.query.get(image_id)  # Find the image by ID
+                if image:
+                    # Delete image file from the server
+                    os.remove(os.path.join(BLOGS_UPLOAD_FOLDER, image.image_path))  # Delete the image file
+                    db.session.delete(image)  # Remove image from the database
+
+        # Commit the changes to the database
+        db.session.commit()
+
+        flash('Blog updated successfully!', 'success')
+        return redirect(url_for('blogs.view_blog', blog_id=blog.id))  # Redirect to the updated blog page
+
+    # Render the form with the current blog data
+    return render_template('blogs/edit_blog.html', blog=blog, user=current_user)

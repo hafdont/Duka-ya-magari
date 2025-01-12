@@ -16,6 +16,7 @@
 
             <h2 class="heading">{{ blog.title }}</h2>
             <p><strong>Author:</strong> {{ blog.user.username }}</p>  <!-- Display the username of the author -->
+            <p class="heaidng"><small>Publishesd: {{ blog.created_at }}</small></p>
         </div>
 
         <div class="col-lg-6 mt-3 mb-3 p-3">
@@ -35,17 +36,7 @@
                     {% endif %}
                 </div>
 
-                {% if blog.images|length > 1 %}
-                <!-- Carousel Controls -->
-                <a class="carousel-control-prev" href="#carousel-{{ blog.id }}" role="button" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </a>
-                <a class="carousel-control-next" href="#carousel-{{ blog.id }}" role="button" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </a>
-                {% endif %}
+
             </div>
 
         </div>
@@ -69,119 +60,137 @@
         <!-- Social Media Share Buttons -->
         <div class="mt-0 col-lg-1">
             <h5>Share:</h5>
-                <div>
-                    <a href="https://wa.me/?text={{ url_for('blogs.view_blog', blog_id=blog.id, _external=True) }}" target="_blank" class="me-3 mt-1  mb-2">
-                        <i class="fab fa-whatsapp fa-2x"></i>
+
+                    <div class="socilalBlogs">
+                    <a href="https://www.instagram.com" target="_blank" " class="socialContainer containerOne">
+                        <svg class="socialSvg instagramSvg" viewBox="0 0 16 16">
+                        
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg>
+                        </svg>
                     </a>
-                    <!-- X (Twitter) Share Icon -->
-                    <a href="https://twitter.com/intent/tweet?url={{ url_for('blogs.view_blog', blog_id=blog.id, _external=True) }}&text={{ blog.title }}" target="_blank" class="me-3 mb-2">
-                        <i class="fab fa-twitter fa-2x"></i>
+
+                    <a href="https://twitter.com/intent/tweet?url={{ url_for('blogs.view_blog', blog_id=blog.id, _external=True) }}&text={{ blog.title }}" target="_blank" class="socialContainer containerTwo">
+                        <svg class="socialSvg twitterSvg" viewBox="0 0 16 16">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M459.4 151.7c.3 4.5 .3 9.1 .3 13.6 0 138.7-105.6 298.6-298.6 298.6-59.5 0-114.7-17.2-161.1-47.1 8.4 1 16.6 1.3 25.3 1.3 49.1 0 94.2-16.6 130.3-44.8-46.1-1-84.8-31.2-98.1-72.8 6.5 1 13 1.6 19.8 1.6 9.4 0 18.8-1.3 27.6-3.6-48.1-9.7-84.1-52-84.1-103v-1.3c14 7.8 30.2 12.7 47.4 13.3-28.3-18.8-46.8-51-46.8-87.4 0-19.5 5.2-37.4 14.3-53 51.7 63.7 129.3 105.3 216.4 109.8-1.6-7.8-2.6-15.9-2.6-24 0-57.8 46.8-104.9 104.9-104.9 30.2 0 57.5 12.7 76.7 33.1 23.7-4.5 46.5-13.3 66.6-25.3-7.8 24.4-24.4 44.8-46.1 57.8 21.1-2.3 41.6-8.1 60.4-16.2-14.3 20.8-32.2 39.3-52.6 54.3z"/></svg>
+
+                        </svg>
                     </a>
-                    <!-- Facebook Share Icon -->
-                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ url_for('blogs.view_blog', blog_id=blog.id, _external=True) }}" target="_blank" class="me-3 mb-2">
-                        <i class="fab fa-facebook fa-2x"></i>
+
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ url_for('blogs.view_blog', blog_id=blog.id, _external=True) }}" target="_blank" class="socialContainer containerThree">
+                        <svg class="socialSvg linkdinSvg" viewBox="0 0 448 512">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M512 256C512 114.6 397.4 0 256 0S0 114.6 0 256C0 376 82.7 476.8 194.2 504.5V334.2H141.4V256h52.8V222.3c0-87.1 39.4-127.5 125-127.5c16.2 0 44.2 3.2 55.7 6.4V172c-6-.6-16.5-1-29.6-1c-42 0-58.2 15.9-58.2 57.2V256h83.6l-14.4 78.2H287V510.1C413.8 494.8 512 386.9 512 256h0z"/></svg>                        
+                        </svg>
+
                     </a>
-                    <!-- Instagram Icon (No Sharing URL) -->
-                    <a href="https://www.instagram.com" target="_blank" class="me-3 mb-2">
-                        <i class="fab fa-instagram fa-2x"></i>
+
+                    <a href="https://wa.me/?text={{ url_for('blogs.view_blog', blog_id=blog.id, _external=True) }}" target="_blank" class="socialContainer containerFour">
+                        <svg class="socialSvg whatsappSvg" viewBox="0 0 16 16">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7 .9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
+                        </svg>
                     </a>
-                </div>
+                    </div>
+
+
+
+                
 
                 {% if session.user and session.user.role == 'admin' %}
-                    <div class="">
-                        <a href="{{ url_for('blogs.edit_blog', blog_id=blog.id) }}" class="btn btn-warning mb-2">Edit Blog</a>
-                        <a href=" " class="btn btn-danger">Delete Blog</a>
+                    <div class="action-cell d-flex justify-content-around align-items-center">
+                             
+                            <a href="{{ url_for('blogs.edit_blog', blog_id=blog.id) }}" class="text-info m-1">
+                                <button class="editBtn">
+                                    <svg height="1em" viewBox="0 0 512 512">
+                                      <path
+                                        d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1v32c0 8.8 7.2 16 16 16h32zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"
+                                      ></path>
+                                    </svg>
+                                  </button>
+                            </a>
+
                     </div>
                 {% endif %}
         </div>
     </div>
 
-                        
-<!-- Comment Section -->
-<div id="comments-section" class="row offset-1 col-lg-10 mt-0 mb-2 comments bg-light">
-    <!-- Like and Comment Icons with Counts -->
-    <div class="col-lg-12 offset-1">
-        <div class="d-flex align-items-center mt-2">
+  <!-- Display Existing Comments -->
+    <div class=" rounded mt-5 mb-5">
+        <div class="row col-lg-10 offset-1">
+            <div class="commentsReviews">
+                <span class="title">Reviews</span>
 
-            <!-- Like Icon -->
-            <a class="">
-                <i 
-                    id="like-icon-{{ blog.id }}" 
-                    class="fa-xl {{ 'fa-solid fa-heart' if blog.id in liked_items['blog'] else 'fa-regular fa-heart' }}" 
-                    style="color: #74C0FC;" 
-                    title="{{ 'Remove from Wishlist' if blog.id in liked_items['blog'] else 'Add to Wishlist' }}"
-                    onclick="event.stopPropagation(); toggleLike({{ blog.id }}, 'blog', '{{ 'unlike' if blog.id in liked_items['blog'] else 'like' }}', this)">
-                </i>
-            </a>
-            <small> {{ blog.likes_count }} likes</small>
-          
-            <small> <i class="fa-xl fa-solid fa-comment" style="color: #74C0FC;"></i> {{ blog.comments_count }} Comments </small>
-        </div>
-    </div>
-
-    <h5 class="col-lg-12">Leave a Comment:</h5>
-
-    <!-- User Profile Picture and Comment Text Area -->
-    <div class="d-flex align-items-center mb-3 ">
-
-            {% if user.profile_picture %}
-            <img src="{{ url_for('uploaded_file', folder='users', filename=user.profile_picture) }}" alt="" width="32" height="32" class="rounded-circle me-2">
-            {% else %}
-            <img src="{{ url_for('uploaded_file', folder='users', filename='defaultuser.jpg') }}" alt="" width="32" height="32" class="rounded-circle me-2">
-            {% endif %}
+                {% if blog.comments %}
+                {% for comment in blog.comments %}
         
-        <!-- Comment Form -->
-        <form method="POST" class="col-lg-10" action="{{ url_for('blogs.view_blog', blog_id=blog.id) }}" onsubmit="return validateComment()">
-            <div class="d-flex">
-                <input type="text" class="d-none" value="user.id" name="user.id">
-                <textarea class="form-control ms-3 col-lg-11" rows="2" placeholder="Write your comment..." name="comment" id="comment"></textarea>
-                <!-- Submit Button (Icon) -->
-                <button class="btn btn-primary ms-3 col-lg-1" type="submit">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-        </form>
-    </div>
+                    <div class="comments">
+                    <div class="comment-react">
+                        <button>
+                            <svg id="like-comment-{{ comment.id }}" 
+                            fill="{{ 'red' if comment.id in liked_items['comments'] else 'none' }}" 
+                            stroke="{{ 'none' if comment.id in liked_items['comments'] else '#707277' }}" 
+                            viewBox="0 0 24 24" height="16" width="16" xmlns="http://www.w3.org/2000/svg" 
+                            onclick="toggleLikeComment({{ comment.id }}, this)">
+                            <path d="M19.4626 3.99415C16.7809 2.34923 14.4404 3.01211 13.0344 4.06801C12.4578 4.50096 12.1696 4.71743 12 4.71743C11.8304 4.71743 11.5422 4.50096 10.9656 4.06801C9.55962 3.01211 7.21909 2.34923 4.53744 3.99415C1.01807 6.15294 0.221721 13.2749 8.33953 19.2834C9.88572 20.4278 10.6588 21 12 21C13.3412 21 14.1143 20.4278 15.6605 19.2834C23.7783 13.2749 22.9819 6.15294 19.4626 3.99415Z"></path>
+                        </svg>
+                        </button>
+                        <hr>
+                        <span> </span>
 
-    <!-- Display Existing Comments -->
-    <div class=" rounded ">
-        {% if blog.comments %}
-            {% for comment in blog.comments %}
-                <div class="d-flex align-items-start border mb-3 col-lg-10 offset-1 bg-light">
-                    <!-- User Profile Picture -->
 
-                    {% if comment.user.profile_picture %}
-                        <img src="{{ url_for('uploaded_file', folder='users', filename=comment.user.profile_picture) }}" alt="" width="32" height="32" class="rounded-circle me-2">
-                    {% else %}
-                        <img src="{{ url_for('uploaded_file', folder='users', filename='defaultuser.jpg') }}" alt="Default Icon" width="32" height="32" class="rounded-circle me-2">
-                    {% endif %}
 
-                    <!-- Comment Content -->
-                    <div class="ms-3">
-                        <a href="{{ url_for('user.view_profile', user_id=comment.user.id) }}" class="fw-bold">{{ comment.user.username }}</a>
-                        <p>{{ comment.content }}</p>
-                        <div class="d-flex align-items-center">
-                            <!-- Like Icon for Comment -->
-                            <a href="#" class="me-2">
-                                <i 
-                                    id="like-icon-{{ comment.id }}" 
-                                    class="fa-xs {{ 'fa-solid fa-heart' if comment.id in liked_items['comment'] else 'fa-regular fa-heart' }}" 
-                                    style="color: #74C0FC;" 
-                                    title="{{ 'Like comment' if comment.id in liked_items['comment'] else 'Unlike a comment' }}"
-                                    onclick="event.stopPropagation(); toggleLike({{ comment.id }}, 'comment', '{{ 'unlike' if comment.id in liked_items['comment'] else 'like' }}', this)">
-
-                                </i>
-
-                            </a>
-                            <span class="ml-1 ">{{ comments_likes_count[comment.id] }} Likes</span>
-                        </div>
                     </div>
+                    <div class="comment-container">
+                        <div class="user">
+                        <div class="user-pic">
+        
+
+                            {% if comment.user.profile_picture %}
+                            <img src="{{ url_for('uploaded_file', folder='users', filename=comment.user.profile_picture) }}" alt="" width="32" height="32" class="rounded-circle me-2">
+                            {% else %}
+                                <img src="{{ url_for('uploaded_file', folder='users', filename='defaultuser.jpg') }}" alt="Default Icon" width="32" height="32" class="rounded-circle me-2">
+                            {% endif %}
+                
+                        </div>
+                        <div class="user-info">
+                            <span>{{ comment.user.username }}</span>
+                            <p>{{ comment.created_at }}</p>
+                        </div>
+                        </div>
+                        <p class="comment-content">
+                            {{ comment.content }}
+                        </p>
+                        
+                        
+    
+                    </div>
+                    </div>
+                    {% endfor %}
+                
+                {% else %}
+                <p>Be the first to comment!</p>
+                {% endif %}
+        
+                {% if user %}
+                <div class="text-box">
+                  <div class="box-container">
+                    <form class="form" action="{{ url_for('blogs.view_blog', blog_id=blog.id) }}" method="POST">
+                      <textarea type="text" name="comment" rows="2" placeholder="Reply"></textarea>    
+                      <input type="text" class="d-none" value="user.id" name="user.id">         
+    
+   
+    
+                      <button type="submit" class="btn btn-primary"> Comment</button>
+                    </form>
+                  </div>
                 </div>
-            {% endfor %}
-        {% else %}
-            <!-- If no comments exist, display this message -->
-            <p>Be the first to comment!</p>
-        {% endif %}
+                {% else %}
+                    <p class="heading">Please <a href="{{ url_for('user.login') }}">log in</a> to leave a review.</p>
+                {% endif %}
+              
+        
+        
+        
+            </div>
+        </div>
     </div>
 
 </div>
@@ -198,9 +207,76 @@
     }
 </script>
 
+<script>
+    function toggleLikeComment(commentId, svgElement) {
+        // Toggle the liked state for the comment
+        const isLiked = svgElement.getAttribute('fill') === 'red';
+        const newFill = isLiked ? 'none' : 'red'; // Change fill color
+        const newStroke = isLiked ? '#707277' : 'none'; // Change stroke color
+
+        // Update the SVG styles
+        svgElement.setAttribute('fill', newFill);
+        svgElement.setAttribute('stroke', newStroke);
+
+        // Here you can make an AJAX call to the server to update the like status
+        // Example using fetch (this will need server-side handling to update the liked state):
+        fetch(`/like-comment/${commentId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'  // Assuming you're using Django CSRF token
+            },
+            body: JSON.stringify({
+                liked: !isLiked  // Send the opposite of the current state
+            })
+        });
+    }
+</script>
+
 </div>
 
 
 {% endblock %}
 
 
+
+<form action="" method="POST" class="d-inline-block">
+    <button class="bin-button">
+        <svg
+          class="bin-top"
+          viewBox="0 0 39 7"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <line y1="5" x2="39" y2="5" stroke="white" stroke-width="4"></line>
+          <line
+            x1="12"
+            y1="1.5"
+            x2="26.0357"
+            y2="1.5"
+            stroke="white"
+            stroke-width="3"
+          ></line>
+        </svg>
+        <svg
+          class="bin-bottom"
+          viewBox="0 0 33 39"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <mask id="path-1-inside-1_8_19" fill="white">
+            <path
+              d="M0 0H33V35C33 37.2091 31.2091 39 29 39H4C1.79086 39 0 37.2091 0 35V0Z"
+            ></path>
+          </mask>
+          <path
+            d="M0 0H33H0ZM37 35C37 39.4183 33.4183 43 29 43H4C-0.418278 43 -4 39.4183 -4 35H4H29H37ZM4 43C-0.418278 43 -4 39.4183 -4 35V0H4V35V43ZM37 0V35C37 39.4183 33.4183 43 29 43V35V0H37Z"
+            fill="white"
+            mask="url(#path-1-inside-1_8_19)"
+          ></path>
+          <path d="M12 6L12 29" stroke="white" stroke-width="4"></path>
+          <path d="M21 6V29" stroke="white" stroke-width="4"></path>
+        </svg>
+      </button>
+      
+</form>

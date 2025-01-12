@@ -3,8 +3,24 @@
 {% block content %}
 
 <div class="container mt-4">   
-    
+
+
+    {% if session.user and session.user.role == 'admin' %}
+
     <div class="row">
+        <h1 class="mt-5 heading">Blogs Home</h1>
+        <div class="col-md-6">
+            <a href="{{ url_for('blogs.create_blog') }}" class="btn btn-primary mb-3">New blog
+
+            </a>
+        </div>
+    </div>
+
+    {% endif %}
+
+
+    
+    <div class="row vh-100">
         {% for blog in blogs %}
         <div class="col-md-4 mb-4"> <!-- 2 blogs per row -->
             <!-- Wrap the whole card in an anchor tag -->

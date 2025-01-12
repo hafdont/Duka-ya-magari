@@ -68,8 +68,8 @@
                 <div class="mb-3">
                     <label for="brand_id" class="form-label">Brand</label>
                     <select class="form-select" id="brand_id" name="brand_id" required>
+                        <option > Select the car's brand</option>
                         {% for brand in brands %}
-                            <option > Select the car's brand</option>
                             <option value="{{ brand.id }}">{{ brand.brand_name }}</option>
                         {% endfor %}
                     </select>
@@ -77,7 +77,7 @@
                 
                 <div class="mb-3">
                     <label for="category_id" class="form-label">Category</label>
-                    <select class="form-select" id="category_id" name="category_id" required>
+                    <select class="form-select" id="category_id" name="category_id">
                         {% for category in categories %}
                             <option value="{{ category.id }}">{{ category.category_name }}</option>
                         {% endfor %}

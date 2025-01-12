@@ -1,6 +1,8 @@
 from flask import Blueprint, jsonify, request, session, flash, redirect, render_template, url_for, session
-from app import db
+from app import db,app,mail
+from flask_mail import Message
 from models import  Car, Product, Cart, Order, Item
+
 
 cart_bp = Blueprint('cart', __name__)
 
@@ -164,7 +166,6 @@ def checkout_cart():
     data = request.get_json()
     cart_items = data.get('items', [])
     
-    print("Received cart items:", cart_items)  # Debugging: print received cart items
 
     if not cart_items:
         return jsonify({"status": "error", "message": "Your cart is empty."}), 400
@@ -193,14 +194,12 @@ def checkout_cart():
         current_user = session['user']
         new_order = Order(user_id=user_id, total_price=total_price, message=data.get('message'))
         print(f"Created new order with ID: {new_order.id}")  # Debugging: print order ID
+        user_name = current_user.get('name')
 
     # Add the order to the database
     db.session.add(new_order)
     db.session.flush()  # Get the order ID before creating items
-
-    # Debugging: print the flushed order ID
-    print(f"Flushed order ID: {new_order.id}")
-    
+   
     # Add each item (product or car) to the order
     for cart_item in cart_items:
         total_item_price = float(cart_item['price']) * cart_item['quantity']
@@ -227,19 +226,17 @@ def checkout_cart():
 
         # Add the item to the database
         db.session.add(new_item)
-        print(f"Added item to order {new_order.id} with ID: {new_item.id}")  # Debugging: item ID
-
+        
     # Commit all changes (create the order and all items)
     db.session.commit()
-
-    # Debugging: confirm that the commit was successful
-    print(f"Committed order {new_order.id} and all items.")
 
     # Clear the cart after the order is placed
     Cart.query.filter_by(user_id=user_id).delete()  # Clear cart items from the database
     db.session.commit()  # Commit changes to database
-    print("Cleared the cart for user:", user_id)  # Debugging: confirm cart clearance
 
+    # Send the order notification to the admin
+    send_checkout_notification_to_admin(new_order, cart_items, user_name)
+    
     # Return a success response with order ID
     return jsonify({
         "status": "success",
@@ -247,3 +244,37 @@ def checkout_cart():
         "order_id": new_order.id  # Send order ID for use in the frontend
     })
 
+def send_checkout_notification_to_admin(order, cart_items, user_name=None):
+    """
+    Sends an email notification to the admin when an order is placed through the checkout process.
+    
+    :param order: The Order object that was created.
+    :param cart_items: The items in the cart.
+    :param user_name: The name of the user placing the order, or None if it's a guest.
+    """
+    admin_email = app.config['MAIL_USERNAME']  # Admin email from config
+    subject = f"New Order #{order.id} Placed"
+
+    # Prepare email body with order and item details
+    email_body = f"""
+    A new order has been placed:
+    
+    Order ID: {order.id}
+    Customer: {user_name if user_name else 'Guest'}
+    Total Price: ${order.total_price}
+    
+    Items:
+    """
+
+    # Add item details to the email
+    for item in cart_items:
+        item_name = item.get('name', 'Unknown')  # Assuming each cart item has a 'name' field
+        item_price = item.get('price', 0)
+        item_quantity = item.get('quantity', 0)
+        total_item_price = item_price * item_quantity
+        email_body += f"\n- {item_name} (x{item_quantity}) - ${total_item_price:.2f}"
+
+    # Send the email
+    msg = Message(subject, recipients=[admin_email])
+    msg.body = email_body
+    mail.send(msg)

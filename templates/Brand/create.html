@@ -6,8 +6,9 @@
 
 
         <div class="col-lg-8 vh-100">
-            <h1 class="heading mt-4 mb-4">Create Brand</h1>
+            
             <form class="form" action="{{ url_for('brand_bp.create_brand') }}" method="POST" enctype="multipart/form-data">
+                <h1 class="heading mt-4 mb-4">Create Brand</h1>
                 <div class="form-group mb-2 mt-2">
                     <input type="text" class="form-control" id="brand_name" name="brand_name" placeholder="Brand Name:" required>
                 </div>
@@ -17,9 +18,11 @@
                 <div class="mb-3">
                     <label for="category" class="form-label col-lg-4">Category Type</label>
                     <select type="select" class="form-control col-lg-7" id="category" name="category" required>
-                        <option value="">Select A brand</option>
-                        {% for type in cats %}
-                        <option value="{{ type.value }}">{{ type.value }}</option>
+                        <option value="">Select A Category</option>
+                        {% for category_type in cats %}
+                        <option name="category" id="category" name="category"  value="{{ category_type.value }}" {% if category == category_type.value %}selected{% endif %}>
+                            {{ category_type.value }}
+                        </option>
                         {% endfor %}
                     </select>
                 </div>

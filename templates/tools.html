@@ -2,114 +2,67 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2>Product List</h2>
-    <div class="d-flex justify-content-end mb-3">
-        <!-- Toggle Buttons -->
-        <button class="btn btn-primary me-2" id="toggle-detailed" onclick="toggleView('detailed')">Detailed View</button>
-        <button class="btn btn-secondary" id="toggle-grid" onclick="toggleView('grid')">Grid View</button>
-    </div>
-    <!-- Detailed View -->
-    <div id="detailed-view" class="row">
-        {% for product in products %}
-            <div class="col-12 mb-4">
-                <!-- Add anchor tag to make the whole card clickable -->
-                <a href="{{ url_for('product.get_product', product_id=product.id) }}" class="text-decoration-none text-dark">
-                    <div class="row border rounded p-3">
-                        <div class="col-md-4">
-                            <div id="carousel-{{ product.id }}" class="carousel slide" data-bs-ride="carousel">
-                                <div class="carousel-inner">
-                                    {% if product.product_images|length > 0 %}
-                                        {% for image in product.product_images %}
-                                        <div class="carousel-item {% if loop.first %}active{% endif %}">
-                                            <img class="d-block w-100" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" alt="Product Image" style="height: 200px; object-fit: cover;">
-                                        </div>
-                                        {% endfor %}
-                                    {% else %}
-                                        <div class="carousel-item active">
-                                            <img src="path/to/default-image.jpg" class="d-block w-100" alt="Default Thumbnail" style="height: 200px; object-fit: cover;">
-                                        </div>
-                                    {% endif %}
+
+    <div class="row mb-5 bg-light Demo shadow">
+        <h2 class="heading mb-3">Tools List</h2>
+
+        <div class="row">
+            {% for product in products %}
+            <div class="col-lg-3 col-md-6 col-sm-6 mb-4 product-row">
+                <div class="product" style="cursor: pointer;" onclick="location.href='{{ url_for('product.get_product', product_id=product.id) }}'event.stopPropagation();">
+                    <!-- Image Carousel Section -->
+                    <div class="image-container">
+                        <div id="carousel-{{ product.id }}" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                {% if product.product_images|length > 0 %}
+                                    {% for image in product.product_images %}
+                                    <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                        <img class="d-block w-100 rounded" 
+                                            src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" 
+                                            alt="Product Image" 
+                                            style="height: 200px; object-fit: cover;">
+                                    </div>
+                                    {% endfor %}
+                                {% else %}
+                                <div class="carousel-item active">
+                                    <img src="path/to/default-image.jpg" class="d-block w-100 rounded" alt="Default Thumbnail" style="height: 200px; object-fit: cover;">
                                 </div>
+                                {% endif %}
                             </div>
                         </div>
-
-                        <div class="col-md-7 offset-md-1">
-                            <h4 class="heading">{{ product.name }}</h4>
-                            <p><strong>Description:</strong> {{ product.description }}</p>
-                            <p><strong>Category:</strong> {{ product.category.value }}</p>
-                            <p><strong>Price:</strong> ${{ "{:,.2f}".format(product.price) }}</p>
-                            <!-- Buttons Section -->
-                            <div class="mt-3 d-flex gap-3">
-                                <!-- Add to Cart Button -->
-                                <button class="btn btn-outline-primary d-flex align-items-center">
-                                    <i class="bi bi-cart me-2"></i> Add to Cart
-                                </button>
-                                <!-- Like Button -->
-                                <button class="btn btn-outline-warning d-flex align-items-center">
-                                    <i class="bi bi-star me-2"></i> Like
-                                </button>
-                                <!-- Make an Order Button -->
-                                <button class="btn btn-success d-flex align-items-center">
-                                    <i class="bi bi-bag-check me-2"></i> Make an Order
-                                </button>
-                            </div>
-                        </div>
+                        <div class="price"> KES{{ "{:,.2f}".format(product.price) }} </div> 
                     </div>
-                </a>
-            </div>
 
-        {% endfor %}
-    </div>
-    <!-- Grid View -->
-    <div id="grid-view" class="row" style="display: none;">
-        {% for product in products %}
-        <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
-            <div class="card" style="cursor: pointer;" onclick="location.href='{{ url_for('product.get_product', product_id=product.id) }}'">
-                <div id="carousel-{{ product.id }}" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        {% if product.product_images|length > 0 %}
-                            {% for image in product.product_images %}
-                            <div class="carousel-item {% if loop.first %}active{% endif %}">
-                                <img class="d-block w-100" src="{{ url_for('uploaded_file', folder='products', filename=image.image_path) }}" alt="Product Image" style="height: 200px; object-fit: cover;">
-                            </div>
-                            {% endfor %}
-                        {% else %}
-                            <div class="carousel-item active">
-                                <img src="path/to/default-image.jpg" class="d-block w-100" alt="Default Thumbnail" style="height: 200px; object-fit: cover;">
-                            </div>
-                        {% endif %}
+                    <!-- Price Section -->
+                    <label class="favorite">
+                        <input type="checkbox" id="like-checkbox-{{ product.id }}"
+                            {% if product.id in liked_items['products'] %}checked{% endif %}
+                            onclick="event.stopPropagation(); toggleLike({{ product.id }}, 'product', this)">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="heart-icon">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+                        </svg>
+                    </label>
+
+                    <!-- Product Information Section -->
+                    <div class="content">
+                        <div class="brand heading">{{ product.name }}</div>
+                        <div class="product-name heading">{{ product.description }}</div>
+                        <div class="rating">({{ product.reviews_count }})</div>
+                    </div>
+
+                    <!-- Action Buttons Section -->
+                    <div class="button-container">
+                        <button class="buy-button button" onclick="location.href='{{ url_for('product.get_product', product_id=product.id) }}'">Buy Now</button>
+                        <button class="cart-button button">
+                            <i id="add-to-cart-icon-{{ product.id }}" class="fa-xs fa-duotone fa-solid fa-cart-shopping" 
+                            style="color: #74C0FC;" title="Add to Cart" 
+                            onclick="event.stopPropagation(); addToCart({{ product.id }}, 'product')"></i>
+                        </button>
                     </div>
                 </div>
-                <div class="card-body">
-                    <h5 class="card-title">{{ product.name }}</h5>
-                    <p class="card-text"><strong>Price:</strong> ${{ product.price }}</p>
-                </div>
-                <div class="card-footer d-flex justify-content-around py-3">
-                    <!-- Add to Cart Button -->
-                     <div class="">
-                        <button class="btn btn-sm btn-outline-primary d-flex align-items-center">
-                            <i class="bi bi-cart me-2">Add to Cart</i> 
-                        </button>
-                     </div>
-                     <div class="">
-                        <!-- Like Button -->
-                        <button class="btn btn-sm btn-outline-warning d-flex align-items-center">
-                            <i class="bi bi-star me-2">Like</i> 
-                        </button>
-                     </div>
-                     <div class="">
-                        <!-- Make an Order Button -->
-                        <button class="btn btn-sm btn-success d-flex align-items-center">
-                            <i class="bi bi-bag-check me-2">Order</i> 
-                        </button>
-                     </div>
-                    
-
-
-                </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
     
 </div>

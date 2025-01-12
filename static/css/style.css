@@ -8,7 +8,7 @@
     --body-bg-color: #ebebeb; /* Background color for body */
     --body-text-color: #070b0f; /* Text color for body */
     --card-bg-color: #fdfdfd; /* Background color for cards, forms, and tables */
-    --secondary-bg-color: ;
+    --secondary-bg-color:#007fff ;
     --heading-color: #3498DB; /* Color for headings */
     --icon-color: #7F8C8D; /* Color for icons */
     --primary-btn-color: #3498DB; /* Primary button color */
@@ -457,13 +457,13 @@ body {
 
 .footer-title-01 {
   font-size: 16px;
-  margin: 0 0 20px;
+  margin: 10px;
   font-weight: 600;
 }
 
 .footer-title-01 {
   font-size: 16px;
-  margin: 0 0 20px;
+  margin: 10px;
   font-weight: 600
 }
 
@@ -1729,3 +1729,6 @@ button:hover .hover-btn {
 
 
 /* End of Cooments and Reviews  */
+
+
+

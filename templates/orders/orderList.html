@@ -4,6 +4,17 @@
 <div class="container mt-4">
     <h2 class="heading">Orders by Status</h2>
 
+    <form method="GET" action="{{ url_for('order.get_orders') }}" class="mb-4 form">
+        <div class="row">
+            <div class="col-md-4">
+                <input type="text" name="search_query" class="form-control" placeholder="Search by name, email, phone, or order ID" value="{{ request.args.get('search_query', '') }}">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </div>
+    </form>
+
     <!-- Bootstrap Tabs -->
     <ul class="nav nav-tabs" id="orderStatusTabs" role="tablist">
         {% for status in ['pending', 'approved', 'rejected', 'completed'] %}
@@ -28,6 +39,7 @@
                                 <th class="mt-1 mb-1" scope="col">Created At</th>
                                 <th class="mt-1 mb-1" scope="col">Total Price</th>
                                 <th class="mt-1 mb-1" scope="col">Status</th>
+                                <th class="mt-1 mb-1 " scope="col"> Edit Order</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -59,6 +71,12 @@
                                             {{ order.get_status_display() | upper }}
                                         </span>
                                     </td>
+                                    <td>
+                                            <a href="{{ url_for('order.edit_order', order_id=order.id) }}" class="text-info m-1">
+                                                <i class="fa-duotone fa-solid fa-pen-to-square fa-lg"></i>
+                                              </a>
+                                    </td>
+
 
                                 </tr>
                                 

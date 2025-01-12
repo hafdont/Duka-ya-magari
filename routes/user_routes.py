@@ -29,6 +29,17 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+##google = oauth.register(
+    name='google',
+    client_id=os.getenv('GOOGLE_CLIENT_ID'),
+    client_secret=os.getenv('GOOGLE_CLIENT_SECRET'),
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+    authorize_params=None,
+    access_token_url='https://accounts.google.com/o/oauth2/token',
+    access_token_params=None,
+    client_kwargs={'scope': 'email profile'}
+##)
+
 def get_user_data_from_form(form, current_user=None):
     data = {
         'username': form.get('username'),
@@ -45,7 +56,6 @@ def get_user_data_from_form(form, current_user=None):
         'gender': form.get('gender'),
         'status': form.get('status'),
     }
-
     return data
 
 
@@ -82,6 +92,7 @@ def login():
                 'username': user.username,
                 'firstname': user.firstname,
                 'lastname': user.lastname,
+                'email': user.email,
                 'profile_picture': user.profile_picture,
                 'role': user.role.value,
             }
@@ -188,7 +199,6 @@ def google_login():
     redirect_uri = url_for('user_bp.google_register', _external=True)
     return google.authorize_redirect(redirect_uri)
 
-
 # Edit User Profile
 @user_bp.route('/editProfile/<int:user_id>', methods=['GET', 'POST'])
 def edit_profile(user_id):
@@ -237,6 +247,7 @@ def edit_profile(user_id):
 
         # Update user fields with validation
         try:
+            print(user_data)
             if user_data.get('username'):
                 user_to_edit.username = user_data['username']
             if user_data.get('firstname'):
@@ -255,6 +266,8 @@ def edit_profile(user_id):
                 user_to_edit.location = user_data['location']
             if user_data.get('bio'):
                 user_to_edit.bio = user_data['bio']
+            if user_data.get('country'):
+                user_to_edit.country = user_data['country']
             if user_data.get('date_of_birth'):
                 user_to_edit.date_of_birth = datetime.strptime(user_data['date_of_birth'], '%Y-%m-%d')
             if user_data.get('gender'):
@@ -340,8 +353,6 @@ def view_profile(user_id):
                            likes_count=user_likes_count,
                            cars_count=user_cars_count,
                            reviews_count=user_reviews_count)
-
-
 
 @user_bp.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():

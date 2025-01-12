@@ -15,9 +15,9 @@ def index():
     # Limited queries for products    TOOLS_MACHINERY = 'Tools_and_Machinery'
     cars = Car.query.order_by(Car.added_at.desc()).limit(8).all()
     computers = Product.query.filter_by(category=CategoryType.COMPUTERS).order_by(Product.added_at.desc()).limit(8).all()
-    tools = Product.query.filter_by(category=CategoryType.TOOLS_MACHINERY).order_by(Product.added_at.desc()).limit(8).all()
-    household = Product.query.filter_by(category=CategoryType.HOUSEHOLD_ITEMS).order_by(Product.added_at.desc()).limit(8).all()
-    carParts = Product.query.filter_by(category=CategoryType.CAR_PARTS).order_by(Product.added_at.desc()).limit(8).all()
+    tools = Product.query.filter_by(category=CategoryType.TOOLSMACHINERY).order_by(Product.added_at.desc()).limit(8).all()
+    household = Product.query.filter_by(category=CategoryType.HOUSEHOLDITEMS).order_by(Product.added_at.desc()).limit(8).all()
+    carParts = Product.query.filter_by(category=CategoryType.CARPARTS ).order_by(Product.added_at.desc()).limit(8).all()
     print(tools,cars)
 
     liked_items = {}
@@ -110,7 +110,7 @@ def carParts():
     
     
     # Build the base query for products and brands
-    query = Product.query.filter(Product.category == 'Car_Parts') 
+    query = Product.query.filter(Product.category == 'CarParts') 
     
     # Apply the search filter (search by name only)
     if search_query:
@@ -134,7 +134,7 @@ def carParts():
     products = query.all()
 
     # Fetch categories related to 'Car_Parts' to display in the filter
-    categories = Category.query.filter_by(category_type='Car_Parts').all()
+    categories = Category.query.filter_by(category_type='CarParts').all()
     
     # Fetch distinct brands that are associated with the products in this category
     brand_ids = {product.brand_id for product in products if product.brand_id is not None}
@@ -155,10 +155,68 @@ def carParts():
 
 @home_bp.route('/tools')
 def tools():
-    current_user = session.get('user')  
-    products = Product.query.filter_by(category=CategoryType.TOOLS_MACHINERY).all()
-    print(products)
-    return render_template('tools.html',  user=current_user,  products=products)
+
+    current_user = session.get('user')
+
+    # Get the search query (if any)
+    search_query = request.args.get('search', '')
+    
+    # Get the category filter (if any)
+    category_filter = request.args.get('category', '')
+    
+    # Get price filters (if any)
+    price_min = request.args.get('price_min', type=float)
+    price_max = request.args.get('price_max', type=float)
+    
+    # Get brand filter (if any)
+    brand_filter = request.args.get('brand', '')  
+    
+ 
+    query = Product.query.filter(Product.category == 'ToolsToolMachinery') 
+
+
+        # Apply the search filter (search by name only)
+    if search_query:
+        query = query.filter(Product.name.ilike(f"%{search_query}%"))
+    
+    # Apply the category filter
+    if category_filter:
+        query = query.filter(Product.category == category_filter)
+    
+    # Apply price filters (min and max)
+    if price_min is not None:
+        query = query.filter(Product.price >= price_min)
+    if price_max is not None:
+        query = query.filter(Product.price <= price_max)
+    
+    # Apply the brand filter (if any)
+    if brand_filter:
+        query = query.filter(Product.brand_id == brand_filter)
+    
+    # Fetch products based on the filtered query
+    products = query.all()
+
+    products = Product.query.filter_by(category=CategoryType.TOOLSMACHINERY).all()
+    # Build the base query for products and brands
+
+
+        # Fetch distinct brands that are associated with the products in this category
+    brand_ids = {product.brand_id for product in products if product.brand_id is not None}
+    brands = Brand.query.filter(Brand.id.in_(brand_ids)).all()  # Get the brands associated with these products
+    # Fetch categories related to 'Car_Parts' to display in the filter
+    categories = Category.query.filter_by(category_type='ToolMachinery').all()
+
+
+    liked_items = {}
+    if current_user:
+        user_id = current_user.get('id')
+        liked_items['products'] = [like.product_id for like in Like.query.filter_by(user_id=user_id, target_type='product').all()]
+    
+    return render_template('tools.html',    user=current_user, 
+                                            products=products, 
+                                            liked_items=liked_items, 
+                                            categories=categories, 
+                                            brands=brands )
 
 
 @home_bp.route('/househldItems')
@@ -179,7 +237,7 @@ def househldItems():
     brand_filter = request.args.get('brand', '')
     
     # Build the base query for products
-    query = Product.query.filter(Product.category == 'Household_Items')
+    query = Product.query.filter(Product.category == 'HouseholdItems')
 
     # Apply the search filter (search by name only)
     if search_query:
@@ -207,7 +265,7 @@ def househldItems():
     brands = Brand.query.filter(Brand.id.in_(brand_ids)).all()  # Get the brands associated with these products
 
     # Fetch categories related to 'Household_Items' to display in the filter
-    categories = Category.query.filter_by(category_type='Household_Items').all()
+    categories = Category.query.filter_by(category_type='HouseholdItems').all()
 
     print(brands)
 

@@ -4,6 +4,7 @@
 <div class="container mt-4">
         <div class="mt-1 mb-3">
             <h2 class="heading">Order Details</h2>
+            <p>{{ order.order_status }}</p>
             <p>{{ order.created_at.strftime('%d-%m-%Y- %H:%M:%S') }}</p>
             <p class="bubble col-lg-2"> {{ order.get_status_display() }}</p>
         </div>
@@ -132,6 +133,38 @@
                             </button>
                         </form>
                     </div>
+
+
+                    <div class="col-lg-10">
+                        </div>
+
+                        <div class="col-lg-10">
+                            <form action="{{ url_for('order.pay', order_id=order.id) }}" method="POST">
+                                <div class="mb-3">
+                                    <label for="phone_number" class="form-label">Phone Number</label>
+                                    <input class="form-control" 
+                                           type="number" 
+                                           id="phone_number" 
+                                           name="phone_number" 
+                                           value="{{ order.guest_phone if order.guest_phone else (order.user.phone_number if order.user else '') }}" 
+                                           placeholder="Enter your phone number">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="amount" class="form-label">Amount</label>
+                                    <input class="form-control" 
+                                           type="number" 
+                                           id="amount" 
+                                           name="amount" 
+                                           value="{{ order.total_price }}" 
+                                           readonly>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    Initiate Payment
+                                </button>
+                            </form>
+                        </div>
+
+                    
             </div>
 </div>
 

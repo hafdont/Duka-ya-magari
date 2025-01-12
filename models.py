@@ -38,11 +38,12 @@ class targetType(Enum):
 
 # Updated Category Enum
 class CategoryType(Enum):
-    TOOLS_MACHINERY = 'Tools_and_Machinery'
-    CAR_PARTS = 'Car_Parts'
-    HOUSEHOLD_ITEMS = 'Household_Items'
+    
+    CARPARTS = 'CarParts'
+    HOUSEHOLDITEMS = 'HouseholdItems'
     COMPUTERS = 'Computers'
     CARS = 'Cars'
+    TOOLSMACHINERY = 'ToolMachinery'
 
 class Category(db.Model):
     __tablename__ = 'categories'
@@ -269,7 +270,7 @@ class Car(db.Model):
     __tablename__ = 'cars'
     id = db.Column(db.Integer, primary_key=True)
     brand_id = db.Column(db.Integer, db.ForeignKey('brands.id'), nullable=True)
-    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)  
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=True)  
     model = db.Column(db.String(50), nullable=False)
     year = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Numeric(10, 2), nullable=False)

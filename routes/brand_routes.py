@@ -32,14 +32,14 @@ def view_all_brands():
     
     # Filter brands by category
     brands_by_category = {
-        'tools_machinery': Brand.query.filter_by(category='tools_machinery').all(),
-        'car_parts': Brand.query.filter_by(category='car_parts').all(),
-        'household_items': Brand.query.filter_by(category='household_items').all(),
-        'computers': Brand.query.filter_by(category='computers').all(),
-        'cars': Brand.query.filter_by(category='cars').all(),
+        'tools_machinery': Brand.query.filter_by(category='ToolsMachinery').all(),
+        'car_parts': Brand.query.filter_by(category='CarParts').all(),
+        'household_items': Brand.query.filter_by(category='HouseholdItems').all(),
+        'computers': Brand.query.filter_by(category='Computers').all(),
+        'cars': Brand.query.filter_by(category='Cars').all(),
     }
 
-    # Additional grouping logic if needed (optional)
+   
     grouped_brands = {}
     for category in CategoryType:
         grouped_brands[category.name] = [
@@ -67,12 +67,13 @@ def create_brand():
         category = request.form.get('category')
         brand_name = request.form.get('brand_name')
         file = request.files.get('brand_logo')
+        print(category)
 
         # Validate the brand name
         if not brand_name or not category:
             flash("Brand name is required!", "danger")
             return redirect(url_for('brand_bp.create_brand'))
-
+        
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file_path = os.path.join(BRAND_UPLOAD_FOLDER, filename)
@@ -93,7 +94,6 @@ def create_brand():
             flash("Invalid file format or no file uploaded!", "danger")
             return redirect(url_for('brand_bp.create_brand'))
         
-
 # Read One Brand
 @brand_bp.route('/brand/<int:brand_id>', methods=['GET'])
 @admin_required
@@ -170,7 +170,6 @@ def delete_brand(brand_id):
     current_user = session.get('user', None)
     brand = Brand.query.get_or_404(brand_id)
 
-    # Update all cars that reference this brand to set their brand_id to None
     # Ensure that all related cars have their brand_id set to NULL
     cars_to_update = Car.query.filter_by(brand_id=brand.id).all()
     products_to_update = Product.query.filter_by(brand_id=brand_id).all()

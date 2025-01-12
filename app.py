@@ -13,8 +13,9 @@ from logging.handlers import RotatingFileHandler
 from datetime import datetime
 from flask_apscheduler import APScheduler
 from flask_mail import Mail, Message
-import smtplib
+import smtplib 
 from datetime import timedelta
+import time, requests 
 
 
 # Initialize pymysql
@@ -49,6 +50,14 @@ mail = Mail(app)
 # In your Flask app setup (typically app.py)
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=6)
 app.config['SESSION_PERMANENT'] = True
+
+
+api_key = os.getenv("API_KEY")
+api_secret = os.getenv("API_SECRET")
+
+# Store token and expiration time
+access_token = None
+token_expiry_time = 0
 
 
 # Log error details to email (optional)
@@ -189,6 +198,8 @@ def uploaded_file(folder, filename):
         return send_from_directory(os.path.join(app.root_path, 'uploads', folder), filename)
     except FileNotFoundError:
         abort(404)  # Return a 404 error if the file is not found
+
+
 
 
 # Run the application

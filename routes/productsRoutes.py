@@ -175,7 +175,34 @@ def update_product(product_id):
         product.StockStatus = request.form.get('stock_status')
         product.category = request.form.get('category')
         product.description = request.form.get('description')
+
+        # Handle image uploads
+        if 'images' in request.files:
+            files = request.files.getlist('images')
+            for file in files:
+                if file.filename and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    file_path = os.path.join(PRODUCTS_UPLOAD_FOLDER, filename)
+                    os.makedirs(PRODUCTS_UPLOAD_FOLDER, exist_ok=True)
+                    file.save(file_path)
+                    
+                    # Save the image
+                    new_image = Image(product_id=product.id, image_path=filename)
+                    db.session.add(new_image)
+        # Handle image deletions (if any)
+
+        image_ids_to_delete = request.form.getlist('delete_images')
+        if image_ids_to_delete:
+            for image_id in image_ids_to_delete:
+                image = Image.query.get(image_id)  # Find the image by ID
+                if image:
+                    # Optionally, delete the image file from the server
+                    os.remove(os.path.join(PRODUCTS_UPLOAD_FOLDER, image.image_path))  # Delete the image file
+                    db.session.delete(image)  # Remove image from the database
+
+
         db.session.commit()
+
 
         # Update specifications
         specs = request.form.getlist('specifications[]')

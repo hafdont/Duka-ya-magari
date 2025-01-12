@@ -140,7 +140,7 @@
                 {% else %}
                 <h4 class="heading">Interested in this vehicle?</h4>
                 <form action="{{ url_for('order.create_order') }}" method="POST">
-                    <input type="hidden" name="product_id" value="{{ car.id }}">
+                    <input type="hidden" name="car_id" value="{{ car.id }}">
                     <input type="hidden" name="total_price" value="{{ car.price }}">
                     <div class="mb-3">
                         <label for="guest_name" class="form-label">Name:</label>
@@ -248,6 +248,10 @@
                     <p class="comment-content">
                         {{ review.comment }}
                     </p>
+                    
+                    <span> Rating: {{ review.rating }}</span>
+                    
+
                 </div>
                 </div>
                 {% endfor %}
@@ -259,17 +263,29 @@
             {% if user %}
             <div class="text-box">
               <div class="box-container">
-                <form action="{{ url_for('review.add_review', car_id=car.id) }}" method="POST">
-                  <textarea name="comment" rows="2" placeholder="Reply"></textarea>    
+                <form class="form" action="{{ url_for('review.add_review', car_id=car.id) }}" method="POST">
+                  <textarea type="text" name="comment" rows="2" placeholder="Reply"></textarea>    
                   <input type="hidden" name="car_id" value="{{ car.id }}">              
-                  <div class="d-flex">
-                    <label class="form-check-label">Rating:</label>
-                    <input type="radio" name="rating" value="1" required> 1
-                    <input type="radio" name="rating" value="2" required> 2
-                    <input type="radio" name="rating" value="3" required> 3
-                    <input type="radio" name="rating" value="4" required> 4
-                    <input type="radio" name="rating" value="5" required> 5
+
+
+                  <div class="rating d-flex">
+                    <input value="1" name="rating" id="star1" type="radio">
+                    <label title="text" for="star1"></label>
+
+                    <input value="2" name="rating" id="star2" type="radio">
+                    <label title="text" for="star2"></label>
+                    <input value="3" name="rating" id="star3" type="radio">
+                    <label title="text" for="star3"></label>
+
+                    <input value="4" name="rating" id="star4" type="radio">
+                    <label title="text" for="star4"></label>
+
+                    <input value="5" name="rating" id="star5" type="radio">
+                    <label title="text" for="star5"></label>
+
                   </div>
+
+
                   <button type="submit" class="btn btn-primary"> Leave a review</button>
                 </form>
               </div>
